@@ -4,15 +4,17 @@ import viteLogo from '/vite.svg'
 import './App.css'
 import daisyui from 'daisyui'
 
-// function App() {
-//   return (
-//   )
-// }
-
 function searchBar() {
   return (
     <input type="text" placeholder="search" className="searchBar"/>
   )
 }
 
-export default searchBar
+function bigSubmitButton() {
+  return (
+    <button className='bigSubmitButton'>submit</button>
+  )
+}
+
+
+export default bigSubmitButton
