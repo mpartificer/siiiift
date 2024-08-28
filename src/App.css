@@ -1,6 +1,6 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss/base.css';
+@import 'tailwindcss/components.css';
+@import 'tailwindcss/utilities.css';
 
 body {
   background-color: #F8EFEA;
@@ -9,8 +9,31 @@ body {
   display: flex;
 }
 
+button {
+  background-color: #192F01 !important;
+  transition: none !important;
+}
+
+button:focus {
+  outline: none !important;
+}
+
+button:focus-visible{
+  outline: none !important;
+}
+
+button:hover {
+  border-color: #192F01 !important;
+}
+
 .footer {
-  font-size: x-large;
+  display:flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  width:100vw;
+  background-color: #192F01;
+  padding-top:5px;
+  padding-bottom:5px;
 }
 
 .searchBar {
@@ -35,3 +58,8 @@ body {
   padding-top: 10px;
   padding-bottom:10px;
 }
+
+/* .navIcons {
+  padding-top:5px;
+  padding-bottom:5px;
+} */

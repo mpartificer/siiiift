@@ -1,8 +1,14 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 import daisyui from 'daisyui'
+import { House } from 'lucide-react'
+import { Search } from 'lucide-react'
+import { Plus } from 'lucide-react'
+import { BookOpen } from 'lucide-react'
+import { User } from 'lucide-react'
+
+
+
 
 function searchBar() {
   return (
@@ -16,5 +22,28 @@ function bigSubmitButton() {
   )
 }
 
+function footer() {
+  return(
+    <>
+      <div className="btn footer">
+        <button className='navIcons'>
+          <House size={36} color="#FAE2D5" />
+        </button>
+        <button className='navIcons'>
+          <Search size={36} color="#FAE2D5"/>
+        </button>
+        <button className='navIcons'>
+          <Plus size={36} color="#FAE2D5"/>
+        </button>
+        <button className='navIcons'>
+        <BookOpen size={36} color="#FAE2D5"/>
+        </button>
+        <button className='navIcons'>
+        <User size={36} color="#FAE2D5"/>
+        </button>
+      </div>
+    </>
+  )
+}
 
-export default bigSubmitButton
+export default footer
