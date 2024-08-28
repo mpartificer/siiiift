@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import './App.css'
+import React from 'react'
 import daisyui from 'daisyui'
 import { House } from 'lucide-react'
 import { Search } from 'lucide-react'
@@ -25,7 +26,7 @@ function bigSubmitButton() {
 function footer() {
   return(
     <>
-      <div className="btn footer">
+      <div className="footer btm-nav">
         <button className='navIcons'>
           <House size={36} color="#FAE2D5" />
         </button>
@@ -46,4 +47,16 @@ function footer() {
   )
 }
 
-export default footer
+function userEntry() {
+  return (
+    <input type="text" placeholder="username" className="loginBar"/>
+  )
+}
+
+function passwordEntry() {
+  return (
+    <input type="text" placeholder="password" className="loginBar"/>
+  )
+}
+
+export default passwordEntry
