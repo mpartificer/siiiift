@@ -7,6 +7,7 @@ import { Search } from 'lucide-react'
 import { Plus } from 'lucide-react'
 import { BookOpen } from 'lucide-react'
 import { User } from 'lucide-react'
+import {Settings} from 'lucide-react'
 
 
 
@@ -55,6 +56,14 @@ function Footer() {
   )
 }
 
+function PageTitle() {
+  return (
+    <div className='pageTitle'>
+      username
+    </div>
+  )
+}
+
 function LoginEntry(prop) {
   let entryValue = prop;
   return (
@@ -65,6 +74,59 @@ function LoginEntry(prop) {
 function PasswordEntry() {
   return (
     <input type="text" placeholder="password" className="loginBar"/>
+  )
+}
+
+function SettingsButton() {
+  return(
+    <div className='settingsButton'>
+      <Settings size={24} color='#192F01'/>
+    </div>
+  )
+}
+
+function ProfileBlurb() {
+  return (
+    <div className='profileBlurb'>
+      short profile blurb
+    </div>
+  )
+}
+
+function ProfileSummary() {
+  return (
+    <div className='profileSummary'>
+      <FollowBar />
+      <ProfileBlurb />
+    </div>
+  )
+}
+
+function ProfilePlateTop() {
+  return (
+    <div className='profilePlateTop'>
+      <PageTitle />
+      <SettingsButton />
+    </div>
+  )
+}
+
+function ProfilePlateBottom() {
+  return (
+    <div className='profilePlateBottom'>
+      <User size={140} color='#192F01'/>
+      <ProfileSummary />
+    </div>
+  )
+}
+
+function ProfilePlate() {
+  return (
+    <div className='profilePlate'>
+      <Header />
+      <ProfilePlateTop />
+      <ProfilePlateBottom />
+    </div>
   )
 }
 
@@ -112,6 +174,7 @@ function SearchResult() {
 function FollowersView() {
   return (
     <div className='followersView'>
+      <Header />
       <FollowBar />
       <SearchBar />
       <SearchResult />
@@ -122,4 +185,4 @@ function FollowersView() {
 }
 
 
-export default FollowersView
+export default ProfilePlate

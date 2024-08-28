@@ -7,6 +7,8 @@ body {
   font-family: 'Inria Serif';
   width: 100vw;
   display: flex;
+  flex-direction:column;
+  justify-items: flex-start;
 }
 
 button {
@@ -29,6 +31,8 @@ button:hover {
 .header {
   font-size: 38px;
   color:#192F01;
+  align-self: flex-start;
+  padding-left: 20px;
 }
 
 .footer {
@@ -41,6 +45,54 @@ button:hover {
   padding-bottom:5px;
 }
 
+.pageTitle {
+  font-size: 20px;
+  color: #192F01;
+  align-self: flex-start;
+  padding-left: 20px;
+}
+
+.settingsButton {
+  align-self: flex-end;
+  padding-right:20px;
+}
+
+.profileBlurb {
+  font-size: 15px;
+  border-radius: 20px;
+  background-color: #FAE2D5;
+  color:#192F01; 
+  height:100%;
+  padding:10px;
+}
+
+.profileSummary {
+  display: flex;
+  flex-direction: column;
+  justify-items: center;
+  gap:10px;
+}
+
+.profilePlateTop {
+  display:flex;
+  flex-direction:row;
+  justify-content: space-between;
+  width:100vw;
+}
+
+.profilePlateBottom {
+  display:flex;
+  flex-direction: row;
+  justify-content:space-evenly;
+  width:100vw;
+}
+
+.profilePlate {
+  display: flex;
+  flex-direction: column;
+  gap:10px;
+}
+
 .followTab {
   text-align:center;
   color:#192F01;
@@ -50,7 +102,8 @@ button:hover {
   display: flex;
   flex-direction: row;
   justify-content: space-around;
-  width:100vw;
+  width:100%;
+  gap:25px;
 }
 
 .searchBar {
