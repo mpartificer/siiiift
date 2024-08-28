@@ -41,17 +41,29 @@ button:hover {
   padding-bottom:5px;
 }
 
+.followTab {
+  text-align:center;
+  color:#192F01;
+}
+
+.followBar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  width:100vw;
+}
+
 .searchBar {
-  width: 95vw;
+  width: 350px;
   text-align: center;
   background-color: #EADDFF;
   color: #192F01;
   border-radius: 20px;
-  padding: 5px;
+  padding: 0px;
   border-style:solid;
   border-width: 1px;
   font-family: 'Inria Serif';
-  font-size: 15px;
+  font-size: 16px;
 }
 
 .searchDetail {
@@ -87,6 +99,14 @@ button:hover {
   border-radius: 20px;
   width:350px;
   height:87px;
+}
+
+.followersView {
+  display: flex;
+  flex-direction: column;
+  gap:10px;
+  width: 100vw;
+  align-items: center;
 }
 
 .loginBar {

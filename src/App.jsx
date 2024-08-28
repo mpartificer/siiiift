@@ -55,15 +55,34 @@ function Footer() {
   )
 }
 
-function UserEntry() {
+function LoginEntry(prop) {
+  let entryValue = prop;
   return (
-    <input type="text" placeholder="username" className="loginBar"/>
+    <input type="text" placeholder="{entryValue}" className="loginBar"/>
   )
 }
 
 function PasswordEntry() {
   return (
     <input type="text" placeholder="password" className="loginBar"/>
+  )
+}
+
+function FollowTab() {
+  return (
+    <div className='followTab'>
+      3 <br />followers
+    </div>
+  )
+}
+
+function FollowBar() {
+  return (
+    <div className='followBar'>
+      <FollowTab />
+      <FollowTab />
+      <FollowTab />
+    </div>
   )
 }
 
@@ -90,5 +109,17 @@ function SearchResult() {
   )
 }
 
+function FollowersView() {
+  return (
+    <div className='followersView'>
+      <FollowBar />
+      <SearchBar />
+      <SearchResult />
+      <SearchResult />
+      <SearchResult />
+    </div>
+  )
+}
 
-export default SearchResult
+
+export default FollowersView
