@@ -26,6 +26,11 @@ button:hover {
   border-color: #192F01 !important;
 }
 
+.header {
+  font-size: 38px;
+  color:#192F01;
+}
+
 .footer {
   display:flex;
   flex-direction: row;
@@ -47,6 +52,41 @@ button:hover {
   border-width: 1px;
   font-family: 'Inria Serif';
   font-size: 15px;
+}
+
+.searchDetail {
+  color:#FAE2D5;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-size: 15px;
+  padding-left:15px;
+}
+
+.searchResultButton {
+  background-color: #FAE2D5 !important;
+  color:#192F01;
+  border-radius: 20px;
+  border-style: solid;
+  border-width:1px;
+  text-align:center;
+  font-size:15px;
+  width: 72px;
+  height:32px;
+  padding:5px;
+  border-color: #192F01;
+  margin-right:15px;
+}
+
+.searchResult {
+  background-color: #192F01;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 20px;
+  width:350px;
+  height:87px;
 }
 
 .loginBar {

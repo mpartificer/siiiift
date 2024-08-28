@@ -11,19 +11,27 @@ import { User } from 'lucide-react'
 
 
 
-function searchBar() {
+function SearchBar() {
   return (
     <input type="text" placeholder="search" className="searchBar"/>
   )
 }
 
-function bigSubmitButton() {
+function BigSubmitButton() {
   return (
     <button className='bigSubmitButton'>submit</button>
   )
 }
 
-function footer() {
+function Header() {
+  return (
+    <div className='header'>
+      siiiift
+    </div>
+  )
+}
+
+function Footer() {
   return(
     <>
       <div className="footer btm-nav">
@@ -37,26 +45,50 @@ function footer() {
           <Plus size={36} color="#FAE2D5"/>
         </button>
         <button className='navIcons'>
-        <BookOpen size={36} color="#FAE2D5"/>
+          <BookOpen size={36} color="#FAE2D5"/>
         </button>
         <button className='navIcons'>
-        <User size={36} color="#FAE2D5"/>
+          <User size={36} color="#FAE2D5"/>
         </button>
       </div>
     </>
   )
 }
 
-function userEntry() {
+function UserEntry() {
   return (
     <input type="text" placeholder="username" className="loginBar"/>
   )
 }
 
-function passwordEntry() {
+function PasswordEntry() {
   return (
     <input type="text" placeholder="password" className="loginBar"/>
   )
 }
 
-export default passwordEntry
+function SearchDetail() {
+  return (
+    <div className='searchDetail'>
+      <User size={50} color='#EADDFF' /> username
+    </div>
+  )
+}
+
+function SearchButton() {
+  return (
+    <button className='searchResultButton'>accept</button>
+  )
+}
+
+function SearchResult() {
+  return (
+    <div className='searchResult'>
+      <SearchDetail />
+      <SearchButton />
+    </div>
+  )
+}
+
+
+export default SearchResult
