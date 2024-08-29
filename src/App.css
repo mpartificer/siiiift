@@ -143,6 +143,14 @@ button:hover {
   margin-right:15px;
 }
 
+.searchFilter {
+  padding-top: 0px;
+  padding-bottom:0px;
+  padding-left:15px;
+  padding-right: 15px;
+  font-size:15px;
+}
+
 .searchResult {
   background-color: #192F01;
   display: flex;
@@ -173,6 +181,23 @@ button:hover {
   border-width:1px;
   text-align: center;
   color:#000000;
+}
+
+.logInGreeting {
+  font-size: 38px;
+  color:#192F01;
+}
+
+.logInSubGreeting {
+  font-size: 20px;
+  color: #192F01;
+}
+
+.signUpButton {
+  font-size: 16px;
+  background-color: #F8EFEA !important;
+  color:#192F01;
+  text-decoration: underline;
 }
 
 .bigSubmitButton {

@@ -64,6 +64,26 @@ function PageTitle() {
   )
 }
 
+function LogInGreeting() {
+  return (
+    <div className='logInGreeting'>get siiiift-ing</div>
+  )
+}
+
+function LogInSubGreeting() {
+  return (
+    <div className='logInSubGreeting'>
+      forgot password?
+    </div>
+  )
+}
+
+function SignUpButton() {
+  return (
+    <button className='signUpButton'>sign up</button>
+  )
+}
+
 function LoginEntry(prop) {
   let entryValue = prop;
   return (
@@ -148,11 +168,19 @@ function FollowBar() {
   )
 }
 
-function SearchDetail() {
+function SearchDetail(props) {
+  const searchReturnValue = props;
   return (
     <div className='searchDetail'>
-      <User size={50} color='#EADDFF' /> username
+      <User size={50} color='#EADDFF' /> {searchReturnValue}
     </div>
+  )
+}
+
+function SearchFilter(props) {
+  const filterValue = props;
+  return (
+    <button className='searchFilter'>{filterValue}</button>
   )
 }
 
@@ -185,4 +213,4 @@ function FollowersView() {
 }
 
 
-export default ProfilePlate
+export default SearchFilter
