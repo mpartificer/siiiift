@@ -1,6 +1,6 @@
-@import 'tailwindcss/base.css';
-@import 'tailwindcss/components.css';
-@import 'tailwindcss/utilities.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 body {
   background-color: #F8EFEA;
@@ -43,6 +43,13 @@ button:hover {
   background-color: #192F01;
   padding-top:5px;
   padding-bottom:5px;
+}
+
+.postReactionBox {
+  display:flex;
+  flex-direction:row;
+  gap:10px;
+  padding-left: 20px;
 }
 
 .pageTitle {

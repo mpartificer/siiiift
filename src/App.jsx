@@ -1,15 +1,41 @@
 import { useState } from 'react'
-import './App.css'
+import './index.css'
+import './App.css';
+import '/Users/meggo/Documents/Coding Projects/siiiift/style.css';
 import React from 'react'
-import daisyui from 'daisyui'
 import { House } from 'lucide-react'
 import { Search } from 'lucide-react'
 import { Plus } from 'lucide-react'
 import { BookOpen } from 'lucide-react'
 import { User } from 'lucide-react'
-import {Settings} from 'lucide-react'
+import { Settings } from 'lucide-react'
+import { Heart } from 'lucide-react';
+import { MessageCircle} from 'lucide-react'
+import { History } from 'lucide-react'
+import {Croissant} from 'lucide-react'
 
 
+
+function CheckBox() {
+  return (
+    <div className="form-control">
+      <label className="cursor-pointer label">
+        <span className="label-text">Remember me</span>
+        <input type="checkbox" defaultChecked className="checkbox checkbox-success" />
+      </label>
+    </div>
+  )
+}
+
+function PostReactionBox() {
+  return (
+    <div className='postReactionBox'>
+      <Heart size={40} color='#192F01'/>
+      <MessageCircle size={40} color='#192F01'/>
+      <History size={40} color='#192F01'/>
+    </div>
+  )
+}
 
 
 function SearchBar() {
@@ -63,6 +89,12 @@ function PageTitle(props) {
     <div className='pageTitle'>
       {props.pageTitle}
     </div>
+  )
+}
+
+function RandomButton() {
+  return (
+    <button className='btn-secondary btn-large' />
   )
 }
 
@@ -290,4 +322,27 @@ function SearchView() {
   )
 }
 
-export default SearchView
+function SignUpView() {
+  return (
+    <div className='logInView'>
+      <LogInGreeting openingTitle='siiiift' />
+      <LoginEntry entryValue='username' />
+      <LoginEntry entryValue='password' />
+      <LoginEntry entryValue='reenter password' />
+      <BigSubmitButton submitValue='sign up' />
+    </div>
+  )
+}
+
+function HomeView() {
+  return (
+    <div className='homeCard'>
+      <Header />
+      <PageTitle pageTitle='username made cupcakes' />
+      <Croissant size={390} />
+      <PostReactionBox />
+    </div>
+  )
+}
+
+export default HomeView
