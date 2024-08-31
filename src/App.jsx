@@ -18,9 +18,10 @@ function SearchBar() {
   )
 }
 
-function BigSubmitButton() {
+function BigSubmitButton(props) {
+  const submitValue = props;
   return (
-    <button className='bigSubmitButton'>submit</button>
+    <button className='bigSubmitButton'>{props.submitValue}</button>
   )
 }
 
@@ -56,17 +57,19 @@ function Footer() {
   )
 }
 
-function PageTitle() {
+function PageTitle(props) {
+  const pageTitle = props;
   return (
     <div className='pageTitle'>
-      username
+      {props.pageTitle}
     </div>
   )
 }
 
-function LogInGreeting() {
+function LogInGreeting(props) {
+  const openingTitle = props;
   return (
-    <div className='logInGreeting'>get siiiift-ing</div>
+    <div className='logInGreeting'>{props.openingTitle}</div>
   )
 }
 
@@ -78,22 +81,17 @@ function LogInSubGreeting() {
   )
 }
 
-function SignUpButton() {
+function SignUpButton(props) {
+  const signUpLinkText = props;
   return (
-    <button className='signUpButton'>sign up</button>
+    <button className='signUpButton'>{props.signUpLinkText}</button>
   )
 }
 
-function LoginEntry(prop) {
-  let entryValue = prop;
+function LoginEntry(props) {
+  const entryValue = props;
   return (
-    <input type="text" placeholder="{entryValue}" className="loginBar"/>
-  )
-}
-
-function PasswordEntry() {
-  return (
-    <input type="text" placeholder="password" className="loginBar"/>
+    <input type="text" placeholder="{props.entryValue}" className="loginBar"/>
   )
 }
 
@@ -105,10 +103,19 @@ function SettingsButton() {
   )
 }
 
-function ProfileBlurb() {
+// function ProfileBlurb({profileDescription}) {
+//   return (
+//     <div className='profileBlurb'>
+//       {profileDescription}
+//     </div>
+//   )
+// }
+
+function ProfileBlurb(props) {
+  const profileDescription = props;
   return (
     <div className='profileBlurb'>
-      short profile blurb
+      {props.profileDescription}
     </div>
   )
 }
@@ -116,26 +123,28 @@ function ProfileBlurb() {
 function ProfileSummary() {
   return (
     <div className='profileSummary'>
-      <FollowBar />
-      <ProfileBlurb />
+      <FollowBar>
+        <FollowTab measure="followers"/>
+        <FollowTab measure="following"/>
+        <FollowTab measure="bakes"/>
+      </FollowBar>
+      <ProfileBlurb profileDescription="jusalittlesomething"/>
     </div>
   )
 }
 
-function ProfilePlateTop() {
+function ProfilePlateTop(props) {
   return (
     <div className='profilePlateTop'>
-      <PageTitle />
-      <SettingsButton />
+      {props.children}
     </div>
   )
 }
 
-function ProfilePlateBottom() {
+function ProfilePlateBottom(props) {
   return (
     <div className='profilePlateBottom'>
-      <User size={140} color='#192F01'/>
-      <ProfileSummary />
+      {props.children}
     </div>
   )
 }
@@ -144,26 +153,31 @@ function ProfilePlate() {
   return (
     <div className='profilePlate'>
       <Header />
-      <ProfilePlateTop />
-      <ProfilePlateBottom />
+      <ProfilePlateTop>
+        <PageTitle />
+        <SettingsButton />
+      </ProfilePlateTop>
+      <ProfilePlateBottom>
+        <User size={140} color='#192F01'/>
+        <ProfileSummary />
+      </ProfilePlateBottom>
     </div>
   )
 }
 
-function FollowTab() {
+function FollowTab(props) {
+  const {number, measure} = props;
   return (
     <div className='followTab'>
-      3 <br />followers
+      {props.number} <br />{props.measure}
     </div>
   )
 }
 
-function FollowBar() {
+function FollowBar(props) {
   return (
     <div className='followBar'>
-      <FollowTab />
-      <FollowTab />
-      <FollowTab />
+      {props.children}
     </div>
   )
 }
@@ -172,7 +186,7 @@ function SearchDetail(props) {
   const searchReturnValue = props;
   return (
     <div className='searchDetail'>
-      <User size={50} color='#EADDFF' /> {searchReturnValue}
+      <User size={50} color='#EADDFF' /> {props.searchReturnValue}
     </div>
   )
 }
@@ -180,21 +194,31 @@ function SearchDetail(props) {
 function SearchFilter(props) {
   const filterValue = props;
   return (
-    <button className='searchFilter'>{filterValue}</button>
+    <button className='searchFilter'>{props.filterValue}</button>
   )
 }
 
-function SearchButton() {
+function SearchFilterBar() {
   return (
-    <button className='searchResultButton'>accept</button>
+    <div className='searchFilterBar'>
+      <SearchFilter filterValue='users' />
+      <SearchFilter filterValue='recipes' />
+    </div>
   )
 }
 
-function SearchResult() {
+function SearchButton(props) {
+  const buttonValue = props;
+  return (
+    <button className='searchResultButton'>{props.buttonValue}</button>
+  )
+}
+
+function SearchResult(props) {
   return (
     <div className='searchResult'>
-      <SearchDetail />
-      <SearchButton />
+      <SearchDetail searchReturnValue={props.searchReturnValue}/>
+      <SearchButton buttonValue={props.buttonValue}/>
     </div>
   )
 }
@@ -203,14 +227,67 @@ function FollowersView() {
   return (
     <div className='followersView'>
       <Header />
-      <FollowBar />
+      <FollowBar>
+        <FollowTab number="43" measure="followers"/>
+        <FollowTab number="43" measure="following"/>
+        <FollowTab number="43" measure="bakes"/>
+      </FollowBar>
       <SearchBar />
-      <SearchResult />
-      <SearchResult />
-      <SearchResult />
+      <SearchResult searchReturnValue="username" buttonValue="follow"/>
+      <SearchResult searchReturnValue="username" buttonValue="follow"/>
+      <SearchResult searchReturnValue="username" buttonValue="follow"/>
     </div>
   )
 }
 
+function FollowRequestView() {
+  return (
+    <div className='followersView'>
+      <Header />
+      <PageTitle pageTitle='follow requests' />
+      <SearchBar />
+      <SearchResult searchReturnValue="username" buttonValue="accept"/>
+      <SearchResult searchReturnValue="username" buttonValue="accept"/>
+      <SearchResult searchReturnValue="username" buttonValue="accept"/>
+    </div>
+  )
+}
 
-export default SearchFilter
+function LogInView() {
+  return (
+    <div className='logInView'>
+      <LogInGreeting openingTitle='get siiiift-ing' />
+      <LoginEntry entryValue='username' />
+      <LoginEntry entryValue='password' />
+      <BigSubmitButton submitValue='submit' />
+      <SignUpButton signUpLinkText='sign up' />
+      <SignUpButton signUpLinkText='forgot password?' />
+    </div>
+  )
+}
+
+function ForgotPasswordView() {
+  return (
+    <div className='logInView'>
+      <LogInGreeting openingTitle='siiiift' />
+      <LogInSubGreeting />
+      <LoginEntry entryValue='username' />
+      <BigSubmitButton submitValue='enter' />
+    </div>
+  )
+}
+
+function SearchView() {
+  return (
+    <div className='followersView'>
+      <Header />
+      <SearchBar />
+      <SearchFilterBar />
+      <SearchResult searchReturnValue="username" buttonValue="accept"/>
+      <SearchResult searchReturnValue="username" buttonValue="accept"/>
+      <SearchResult searchReturnValue="username" buttonValue="accept"/>
+    </div>
+  )
+}
+
+export default SearchView
