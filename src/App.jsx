@@ -12,7 +12,8 @@ import { Settings } from 'lucide-react'
 import { Heart } from 'lucide-react';
 import { MessageCircle} from 'lucide-react'
 import { History } from 'lucide-react'
-import {Croissant} from 'lucide-react'
+import { Croissant } from 'lucide-react'
+import { Image } from 'lucide-react'
 
 
 
@@ -273,6 +274,56 @@ function SearchResult(props) {
   )
 }
 
+function EditBio() {
+  return (
+    <div className='upperBioFlexParent'>
+      <Image size={100} color="#192F01"/>
+      <textarea className='profileBlurb' />
+    </div>
+  )
+}
+
+function SettingNoToggle(props) {
+  return (
+    <div className='settingNoToggle'>
+      {props.settingName}
+    </div>
+  )
+}
+
+function SettingWithToggle(props) {
+  return (
+    <div className='settingWithToggle'>
+      {props.settingName}
+      <Toggle />
+    </div>
+  )
+}
+
+function Toggle() {
+  return (
+    <div className="form-control w-52">
+    <label className="label cursor-pointer">
+      <input type="checkbox" className="toggle toggle-accent" defaultChecked />
+    </label>
+  </div>
+  )
+}
+
+function SettingsManagementView(props) {
+  return (
+    <div className='settingsManagementView'>
+      <Header />
+      <PageTitle pageTitle='username' />
+      <EditBio />
+      <SettingWithToggle settingName='public/private' />
+      <SettingNoToggle settingName='review follow requests' />
+      <SettingWithToggle settingName='toggle AI insights' />
+      <SettingNoToggle settingName='log out' />
+    </div>
+  )
+}
+
 function FollowersView() {
   return (
     <div className='followersView'>
@@ -381,4 +432,4 @@ function WebsiteRetrievalView() {
   )
 }
 
-export default FollowersView
+export default SettingsManagementView
