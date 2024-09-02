@@ -16,13 +16,37 @@ import {Croissant} from 'lucide-react'
 
 
 
-function CheckBox() {
+function CheckBox(props) {
   return (
-    <div className="form-control">
+    <div className="form-control bottomPanel">
       <label className="cursor-pointer label">
-        <span className="label-text">Remember me</span>
-        <input type="checkbox" defaultChecked className="checkbox checkbox-success" />
+        <span>confirm {props.confirmRecipeItem}?</span>
+        <input type="checkbox" className="checkbox checkbox-success" />
       </label>
+    </div>
+  )
+}
+
+function RecipeCheckPanel(props) {
+  const propInsert = props.propInsert;
+  const myComponentList = propInsert.map((item, index) => (
+    <li key={index}>{item}</li>));
+
+  return (
+    <div className='recipeCheckPanel'>
+      <RecipeCheckTitle recipeCheckTitle={props.confirmRecipeItem} />
+      <ul className='recipeCheckPanelList'>
+      {myComponentList}
+      </ul>
+      <CheckBox confirmRecipeItem={props.confirmRecipeItem} />
+    </div>
+  )
+}
+
+function RecipeCheckTitle(props) {
+  return (
+    <div className='recipeCheckTitle'>
+      {props.recipeCheckTitle}
     </div>
   )
 }
@@ -89,12 +113,6 @@ function PageTitle(props) {
     <div className='pageTitle'>
       {props.pageTitle}
     </div>
-  )
-}
-
-function RandomButton() {
-  return (
-    <button className='btn-secondary btn-large' />
   )
 }
 
@@ -315,9 +333,9 @@ function SearchView() {
       <Header />
       <SearchBar />
       <SearchFilterBar />
-      <SearchResult searchReturnValue="username" buttonValue="accept"/>
-      <SearchResult searchReturnValue="username" buttonValue="accept"/>
-      <SearchResult searchReturnValue="username" buttonValue="accept"/>
+      <SearchResult searchReturnValue="username" buttonValue="follow"/>
+      <SearchResult searchReturnValue="username" buttonValue="follow"/>
+      <SearchResult searchReturnValue="username" buttonValue="follow"/>
     </div>
   )
 }
@@ -345,4 +363,22 @@ function HomeView() {
   )
 }
 
-export default RandomButton
+function WebsiteRetrievalView() {
+  return (
+    <div className='websiteRetrievalView'>
+      <Header />
+      <SearchBar />
+      <RecipeCheckPanel propInsert={['brownies']} confirmRecipeItem='recipe title' />
+      <RecipeCheckPanel propInsert={['sugar', 'butter', 'bread']} confirmRecipeItem='ingredients' />
+      <RecipeCheckPanel propInsert={['preheat oven', 'roll out dough', 'eat and enjoy']} confirmRecipeItem='instructions' />
+      <RecipeCheckPanel propInsert={['45 minutes']} confirmRecipeItem='prep time' />
+      <RecipeCheckPanel propInsert={['15 minutes']} confirmRecipeItem='cook time' />
+      <RecipeCheckPanel propInsert={['1 hour']} confirmRecipeItem='total time' />
+      <RecipeCheckPanel propInsert={['Sallys Baking Addiction']} confirmRecipeItem='original author' />
+      <RecipeCheckPanel propInsert={['']} confirmRecipeItem='default image' />
+      <BigSubmitButton submitValue='submit' />
+    </div>
+  )
+}
+
+export default FollowersView

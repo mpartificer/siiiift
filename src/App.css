@@ -28,6 +28,20 @@ button:hover {
   border-color: #192F01 !important;
 }
 
+ul {
+  list-style-type: circle;
+}
+
+.recipeCheckPanelList {
+  margin-left: 40px;
+}
+
+.bottomPanel {
+  margin-left:20px;
+  margin-right:20px;
+  margin-top:10px;
+}
+
 .header {
   font-size: 38px;
   color:#192F01;
@@ -45,6 +59,20 @@ button:hover {
   padding-bottom:5px;
 }
 
+.recipeCheckPanel {
+  background-color: #FAE2D5;
+  border-radius: 20px;
+  color:#192F01 !important;
+  width:350px;
+}
+
+.websiteRetrievalView {
+  display: flex;
+  flex-direction: column;
+  gap:10px;
+  align-items: center;
+}
+
 .postReactionBox {
   display:flex;
   flex-direction:row;
@@ -57,6 +85,15 @@ button:hover {
   color: #192F01;
   align-self: flex-start;
   padding-left: 20px;
+}
+
+.recipeCheckTitle {
+  font-size: 20px;
+  color: #192F01;
+  align-self: flex-start;
+  padding-left: 20px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .settingsButton {
@@ -234,4 +271,5 @@ button:hover {
   padding-right:20px;
   padding-top: 10px;
   padding-bottom:10px;
+  margin-bottom:10px;
 }
