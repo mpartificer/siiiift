@@ -116,7 +116,16 @@ ul {
   color:#192F01; 
   height:100%;
   padding:10px;
-  width:fit-content;
+  width:100%;
+}
+
+.customModification {
+  font-size: 15px;
+  border-radius: 20px;
+  background-color: #FAE2D5;
+  color:#192F01; 
+  padding:10px;
+  width:350px;
 }
 
 .profileSummary {
@@ -131,6 +140,8 @@ ul {
   flex-direction:row;
   justify-content: space-between;
   width:100vw;
+  margin-right: 20px;
+  margin-left:20px;
 }
 
 .profilePlateBottom {
@@ -144,6 +155,7 @@ ul {
   display: flex;
   flex-direction: column;
   gap:10px;
+  width:100vw;
 }
 
 .followTab {
@@ -307,4 +319,34 @@ ul {
   padding-right:20px;
   color:#192F01;
   font-size:20px;
+}
+
+.modificationDropDown {
+  width: 350px;
+  height: 50px;
+  background-color: #FAE2D5;
+  font-family:'Inria Serif';
+  font-size:15px;
+  border-radius:20px;
+  border-style:solid;
+  border-width:1px;
+  text-align: center;
+  color:#000000;
+  align-self: center;
+}
+
+.dayMonthDateEntry {
+  background-color: #FAE2D5;
+  color:#192F01;
+  border-radius: 20px;
+  width: 12%;
+  padding-left: 10px;
+}
+
+.yearDateEntry {
+  background-color: #FAE2D5;
+  color:#192F01;
+  border-radius: 20px;
+  width: 24%;
+  padding-left: 10px;
 }
