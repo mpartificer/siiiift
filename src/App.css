@@ -1,9 +1,9 @@
-@tailwind base;
+/* @tailwind base;
 @tailwind components;
-@tailwind utilities;
+@tailwind utilities; */
 
 body {
-  background-color: #F8EFEA;
+  background-color: #EADDFF;
   font-family: 'Inria Serif';
   width: 100vw;
   display: flex;
@@ -349,4 +349,12 @@ ul {
   border-radius: 20px;
   width: 24%;
   padding-left: 10px;
+}
+
+.recipeBoxCardImg {
+  max-height:250px;
+}
+
+.standardMargins {
+  margin-left:20px;
 }
