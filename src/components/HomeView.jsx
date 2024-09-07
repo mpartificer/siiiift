@@ -1,6 +1,6 @@
 import '../App.css';
-import { Header } from './Header.jsx';
-import { PageTitle } from './PageTitle.jsx';
+import Header from './multipurpose/Header.jsx';
+import PageTitle from './multipurpose/PageTitle.jsx';
 import { Croissant } from 'lucide-react';
 import { Heart } from 'lucide-react';
 import { MessageCircle } from 'lucide-react';

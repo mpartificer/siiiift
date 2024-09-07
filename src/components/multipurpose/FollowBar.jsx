@@ -6,6 +6,6 @@ function FollowBar(props) {
         {props.children}
       </div>
     )
-  }
+}
 
-  export default FollowBar
+export default FollowBar

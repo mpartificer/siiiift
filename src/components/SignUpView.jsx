@@ -1,4 +1,8 @@
-import '../../App.css'
+import '../App.css'
+import LogInGreeting from './multipurpose/LogInGreeting.jsx'
+import LoginEntry from './multipurpose/LoginEntry.jsx'
+import BigSubmitButton from './multipurpose/BigSubmitButton.jsx'
+
 
 function SignUpView() {
     return (

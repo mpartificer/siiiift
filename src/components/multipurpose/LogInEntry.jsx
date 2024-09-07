@@ -1,4 +1,4 @@
-import '../App.css';
+import '../../App.css';
 
 function LogInEntry(props) {
     const entryValue = props;

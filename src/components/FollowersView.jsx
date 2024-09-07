@@ -1,9 +1,9 @@
-import '../../App.css'
-import { Header } from './multipurpose/Header.jsx'
-import { FollowBar } from './multipurpose/FollowBar.jsx'
-import { FollowTab } from './multipurpose/FollowTab.jsx'
-import { SearchBar } from './multipurpose/SearchBar.jsx'
-import { SearchResult } from './multipurpose/SearchResult.jsx'
+import '../App.css'
+import Header from './multipurpose/Header.jsx'
+import FollowBar from './multipurpose/FollowBar.jsx'
+import FollowTab from './multipurpose/FollowTab.jsx'
+import SearchBar from './multipurpose/SearchBar.jsx'
+import SearchResult from './multipurpose/SearchResult.jsx'
 
 function FollowersView() {
     return (

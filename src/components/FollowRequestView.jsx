@@ -1,8 +1,8 @@
-import '../../App.css'
-import { Header } from './multipurpose/Header.jsx'
-import { PageTitle } from './multipurpose/PageTitle.jsx'
-import { SearchBar } from './multipurpose/SearchBar.jsx'
-import { SearchResult } from './multipurpose/SearchResult.jsx'
+import '../App.css'
+import Header from './multipurpose/Header.jsx'
+import PageTitle from './multipurpose/PageTitle.jsx'
+import SearchBar from './multipurpose/SearchBar.jsx'
+import SearchResult from './multipurpose/SearchResult.jsx'
 
 function FollowRequestView() {
     return (

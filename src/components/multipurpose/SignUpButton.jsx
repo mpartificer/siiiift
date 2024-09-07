@@ -1,4 +1,4 @@
-import '../App.css';
+import '../../App.css';
 
 function SignUpButton(props) {
     const signUpLinkText = props;

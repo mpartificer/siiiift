@@ -1,5 +1,5 @@
 import { House, Search, Plus, BookOpen, User } from 'lucide-react';
-import '../App.css';
+import '../../App.css';
 
 function Footer() {
     return(

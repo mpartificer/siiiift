@@ -1,4 +1,4 @@
-import '../App.css';
+import '../../App.css';
 
 function LogInGreeting(props) {
     const openingTitle = props;

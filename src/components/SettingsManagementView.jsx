@@ -1,8 +1,8 @@
-import '../../App.css'
+import '../App.css'
 import Toggle from './multipurpose/Toggle.jsx'
 import { Image } from 'lucide-react'
-import { PageTitle } from './multipurpose/PageTitle.jsx'
-import { Header } from './multipurpose/Header.jsx'
+import PageTitle from './multipurpose/PageTitle.jsx'
+import Header from './multipurpose/Header.jsx'
 
 function EditBio() {
     return (

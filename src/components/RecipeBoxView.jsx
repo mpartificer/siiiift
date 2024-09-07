@@ -1,8 +1,8 @@
-import '../../App.css'
-import { PageTitle } from './multipurpose/PageTitle.jsx'
+import '../App.css'
+import PageTitle from './multipurpose/PageTitle.jsx'
 import { Plus } from 'lucide-react'
-import { Toggle } from './multipurpose/Toggle.jsx'
-import { Header } from './multipurpose/Header.jsx'
+import Toggle from './multipurpose/Toggle.jsx'
+import Header from './multipurpose/Header.jsx'
 
 
 

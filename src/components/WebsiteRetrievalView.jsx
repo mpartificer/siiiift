@@ -1,8 +1,8 @@
-import '../../App.css'
-import { CheckBox } from './multipurpose/CheckBox.jsx'
-import { Header } from './multipurpose/Header.jsx'
-import { SearchBar } from './multipurpose/SearchBar.jsx'
-import { BigSubmitButton } from './multipurpose/BigSubmitButton.jsx'
+import '../App.css'
+import CheckBox from './multipurpose/CheckBox.jsx'
+import Header from './multipurpose/Header.jsx'
+import SearchBar from './multipurpose/SearchBar.jsx'
+import BigSubmitButton from './multipurpose/BigSubmitButton.jsx'
 
 
 function RecipeCheckPanel(props) {

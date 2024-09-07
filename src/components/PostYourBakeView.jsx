@@ -1,6 +1,6 @@
-import '../../App.css'
-import { BigSubmitButton } from './multipurpose/BigSubmitButton.jsx'
-import { Header } from './multipurpose/Header.jsx'
+import '../App.css'
+import BigSubmitButton from './multipurpose/BigSubmitButton.jsx'
+import Header from './multipurpose/Header.jsx'
 import { Image } from 'lucide-react'
 
 

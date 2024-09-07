@@ -1,6 +1,6 @@
 import '../../App.css'
-import { SearchButton } from './SearchButton.jsx'
-import { SearchDetail } from './SearchDetail.jsx'
+import SearchButton from './SearchButton.jsx'
+import SearchDetail from './SearchDetail.jsx'
 
 function SearchResult(props) {
     return (

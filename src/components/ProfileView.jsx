@@ -1,8 +1,8 @@
-import { FollowBar } from './multipurpose/FollowBar.jsx'
-import { FollowTab } from './multipurpose/FollowTab.jsx'
+import FollowBar from '../components/multipurpose/FollowBar.jsx'
+import FollowTab from '../components/multipurpose/FollowTab.jsx'
 import { User } from 'lucide-react'
 import { Settings } from 'lucide-react'
-import { Header } from './multipurpose/Header.jsx'
+import Header from './multipurpose/Header.jsx'
 
 function SettingsButton() {
     return(
@@ -64,6 +64,14 @@ function ProfilePlate() {
         </ProfilePlateBottom>
       </div>
     )
+}
+
+function ProfileView() {
+  return (
+    <div>
+      <ProfilePlate />
+    </div>
+  )
 }
 
 export default ProfileView
