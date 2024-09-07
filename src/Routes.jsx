@@ -1,10 +1,26 @@
 import { createBrowserRouter } from "react-router-dom"
+// import HomeView from "./App.jsx"
+import ProfileView from "./components/ProfileView.jsx"
+import FollowersView from "./components/FollowersView.jsx"
+import FollowRequestView from "./components/FollowRequestView.jsx"
+// import BakeHistoryView from "./App.jsx"
+import PostYourBakeView from "./components/PostYourBakeView.jsx"
+// import RecipeView from "./App.jsx"
+import SearchView from "./components/SearchView.jsx"
+import RecipeBoxView from "./components/RecipeBoxView.jsx"
+import LogInView from "./components/LogInView.jsx"
+import ForgotPasswordView from "./components/ForgotPasswordView.jsx"
+import SignUpView from "./components/SignUpView.jsx"
+import WebsiteRetrievalView from "./components/WebsiteRetrievalView.jsx"
+import SettingsManagementView from "./components/SettingsManagementView.jsx"
+
+
 
 const router = createBrowserRouter([
     { basename: import.meta.env.DEV ? "/" : "/siiiift/" },
     {
         path: "/",
-        element: <Home />,
+        element: <HomeView />,
     },
     {
         path: "/profile",
@@ -48,7 +64,7 @@ const router = createBrowserRouter([
     },
     {
         path: "/login",
-        element: <LoginView />,
+        element: <LogInView />,
     },
     {
         path: "/login/forgot-password",
