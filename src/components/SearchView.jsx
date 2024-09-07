@@ -2,6 +2,7 @@ import '../App.css'
 import Header from './multipurpose/Header.jsx'
 import SearchBar from './multipurpose/SearchBar.jsx'
 import SearchResult from './multipurpose/SearchResult.jsx'
+import Footer from './multipurpose/Footer.jsx'
 
 
 function SearchFilter(props) {
@@ -27,9 +28,10 @@ function SearchView() {
         <Header />
         <SearchBar />
         <SearchFilterBar />
-        <SearchResult searchReturnValue="username" buttonValue="follow"/>
-        <SearchResult searchReturnValue="username" buttonValue="follow"/>
-        <SearchResult searchReturnValue="username" buttonValue="follow"/>
+        <SearchResult searchReturnValue="username" buttonValue="follow" path="/profile" />
+        <SearchResult searchReturnValue="username" buttonValue="follow" path="/profile" />
+        <SearchResult searchReturnValue="username" buttonValue="follow" path="/profile" />
+        <Footer />
       </div>
     )
   }

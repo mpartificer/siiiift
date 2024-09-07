@@ -5,7 +5,7 @@ import SearchDetail from './SearchDetail.jsx'
 function SearchResult(props) {
     return (
       <div className='searchResult'>
-        <SearchDetail searchReturnValue={props.searchReturnValue}/>
+        <SearchDetail searchReturnValue={props.searchReturnValue} path={props.path}/>
         <SearchButton buttonValue={props.buttonValue}/>
       </div>
     )

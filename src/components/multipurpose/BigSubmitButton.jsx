@@ -1,17 +1,12 @@
 import '../../App.css'
-import { Router} from 'react-router-dom'
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function BigSubmitButton(props) {
-    const submitValue = props;
     const path = props.path;
+    const navigate = useNavigate();
   
     return (
-      <Router>
-        <Link to={path}>
-          <button className='bigSubmitButton' >{props.submitValue}</button>
-        </Link>
-      </Router>
+          <button className='bigSubmitButton' onClick={() => navigate(path)}>{props.submitValue}</button>
     )
 }
 

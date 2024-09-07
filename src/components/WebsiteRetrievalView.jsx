@@ -3,6 +3,8 @@ import CheckBox from './multipurpose/CheckBox.jsx'
 import Header from './multipurpose/Header.jsx'
 import SearchBar from './multipurpose/SearchBar.jsx'
 import BigSubmitButton from './multipurpose/BigSubmitButton.jsx'
+import Footer from './multipurpose/Footer.jsx'
+
 
 
 function RecipeCheckPanel(props) {
@@ -43,6 +45,7 @@ function WebsiteRetrievalView() {
         <RecipeCheckPanel propInsert={['Sallys Baking Addiction']} confirmRecipeItem='original author' />
         <RecipeCheckPanel propInsert={['']} confirmRecipeItem='default image' />
         <BigSubmitButton submitValue='submit' />
+        <Footer />
       </div>
     )
 }

@@ -3,6 +3,8 @@ import PageTitle from './multipurpose/PageTitle.jsx'
 import { Plus } from 'lucide-react'
 import Toggle from './multipurpose/Toggle.jsx'
 import Header from './multipurpose/Header.jsx'
+import Footer from './multipurpose/Footer.jsx'
+import { useNavigate } from 'react-router-dom'
 
 
 
@@ -18,7 +20,7 @@ function RecipeBoxHeader() {
   
 function RecipeBoxSubHeader() {
     return (
-      <div className='profilePlateTop standardMargins'>
+      <div className='profilePlateTop'>
         <ToggleBox />
         <SortByBox />
       </div>
@@ -28,7 +30,7 @@ function RecipeBoxSubHeader() {
 function ToggleBox() {
     return (
       <div>
-        <Toggle />
+        <Toggle justify='justify-start' />
         filter by attempted
       </div>
     )
@@ -47,18 +49,19 @@ function SortByBox() {
   }
 
 function RecipeCard() {
+    const navigate = useNavigate()
     return (
-      <div className="card card-side bg-base-100 shadow-xl max-w-96 standardMargins">
+      <div className="card card-side bg-base-100 shadow-xl max-w-350">
         <figure>
           <img
-            src="https://cakesbymk.com/wp-content/uploads/2023/01/Template-Size-for-Blog-Photos-15-802x1024.jpg"
+            src="src/assets/TempImage.jpg"
             alt="recipe image" className='recipeBoxCardImg' />
         </figure>
         <div className="card-body">
           <h2 className="card-title">brownies</h2>
           <p>ready in 45 minutes</p>
           <div className="card-actions justify-end">
-            <button className="btn btn-primary">Watch</button>
+            <button className="btn btn-secondary" onClick={() => navigate('/recipeid')}>Watch</button>
           </div>
         </div>
       </div>
@@ -68,11 +71,12 @@ function RecipeCard() {
 
 function RecipeBoxView() {
     return (
-      <div>
+      <div className='followersView'>
         <Header />
         <RecipeBoxHeader />
         <RecipeBoxSubHeader />
         <RecipeCard />
+        <Footer />
       </div>
     )
   }

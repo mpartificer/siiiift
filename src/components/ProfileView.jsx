@@ -3,11 +3,16 @@ import FollowTab from '../components/multipurpose/FollowTab.jsx'
 import { User } from 'lucide-react'
 import { Settings } from 'lucide-react'
 import Header from './multipurpose/Header.jsx'
+import Footer from './multipurpose/Footer.jsx'
+import PageTitle from './multipurpose/PageTitle.jsx'
+import { useNavigate } from 'react-router-dom';
+import '../App.css'
 
 function SettingsButton() {
+  const navigate = useNavigate();
     return(
       <div className='settingsButton'>
-        <Settings size={24} color='#192F01'/>
+        <Settings size={24} color='#192F01' onClick={() => navigate('/profile/settings')} />
       </div>
     )
 }
@@ -22,11 +27,12 @@ function ProfileBlurb(props) {
 }
   
 function ProfileSummary() {
+  const navigate = useNavigate();
     return (
       <div className='profileSummary'>
         <FollowBar>
-          <FollowTab measure="followers"/>
-          <FollowTab measure="following"/>
+          <FollowTab measure="followers" onClick={() => navigate('/profile/followers')}/>
+          <FollowTab measure="following" onClick={() => navigate('/profile/following')}/>
           <FollowTab measure="bakes"/>
         </FollowBar>
         <ProfileBlurb profileDescription="jusalittlesomething"/>
@@ -53,9 +59,8 @@ function ProfilePlateBottom(props) {
 function ProfilePlate() {
     return (
       <div className='profilePlate'>
-        <Header />
         <ProfilePlateTop>
-          <PageTitle />
+          <PageTitle pageTitle="username" path={null} />
           <SettingsButton />
         </ProfilePlateTop>
         <ProfilePlateBottom>
@@ -69,7 +74,9 @@ function ProfilePlate() {
 function ProfileView() {
   return (
     <div>
+      <Header />
       <ProfilePlate />
+      <Footer />
     </div>
   )
 }

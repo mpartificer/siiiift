@@ -46,17 +46,16 @@ ul {
   font-size: 38px;
   color:#192F01;
   align-self: flex-start;
-  padding-left: 20px;
+  /* padding-left: 20px; */
 }
 
-.footer {
-  display:flex;
-  flex-direction: row;
-  justify-content: space-evenly;
-  width:100vw;
+.navIcons {
+  border-radius: 0px;
+  border-width: 0px;
+}
+
+.footerBackground {
   background-color: #192F01;
-  padding-top:5px;
-  padding-bottom:5px;
 }
 
 .recipeCheckPanel {
@@ -77,14 +76,13 @@ ul {
   display:flex;
   flex-direction:row;
   gap:10px;
-  padding-left: 20px;
 }
 
 .pageTitle {
   font-size: 20px;
   color: #192F01;
   align-self: flex-start;
-  padding-left: 20px;
+  /* padding-left: 20px; */
 }
 
 .recipeCheckTitle {
@@ -98,7 +96,10 @@ ul {
 
 .settingsButton {
   align-self: flex-end;
-  padding-right:20px;
+}
+
+.max-w-350 {
+  max-width: 350px;
 }
 
 .settingsManagementView {
@@ -139,23 +140,23 @@ ul {
   display:flex;
   flex-direction:row;
   justify-content: space-between;
-  width:100vw;
-  margin-right: 20px;
-  margin-left:20px;
+  width:350px;
+  /* margin-right: 20px;
+  margin-left:20px; */
 }
 
 .profilePlateBottom {
   display:flex;
   flex-direction: row;
   justify-content:space-evenly;
-  width:100vw;
+  width:350px;
 }
 
 .profilePlate {
   display: flex;
   flex-direction: column;
   gap:10px;
-  width:100vw;
+  max-width: 350px;
 }
 
 .followTab {
@@ -239,10 +240,13 @@ ul {
   display: flex;
   flex-direction: column;
   gap:10px;
-  width: 100vw;
+  width: 350px;
   align-items: center;
 }
 
+.homeCard {
+  margin-top: 20px;
+}
 .logInView {
   display:flex;
   flex-direction:column;
@@ -301,24 +305,18 @@ ul {
   display:flex;
   flex-direction:row;
   justify-content:space-between;
-  padding-left: 20px;
-  padding-right:20px;
 }
 
 .settingWithToggle {
   display:flex;
   flex-direction:row;
   justify-content:space-between;
-  padding-left:20px;
-  padding-right:20px;
   color:#192F01;
   align-items: center;
   font-size:20px
 }
 
 .settingNoToggle {
-  padding-left: 20px;
-  padding-right:20px;
   color:#192F01;
   font-size:20px;
 }
@@ -355,8 +353,4 @@ ul {
 
 .recipeBoxCardImg {
   max-height:250px;
-}
-
-.standardMargins {
-  margin-left:20px;
 }

@@ -1,9 +1,10 @@
 import '../../App.css';
+import { useNavigate } from 'react-router-dom';
 
 function SignUpButton(props) {
-    const signUpLinkText = props;
+    const navigate = useNavigate()
     return (
-      <button className='signUpButton'>{props.signUpLinkText}</button>
+      <button className='signUpButton' onClick={() => navigate(props.path)}>{props.signUpLinkText}</button>
     )
 }
 

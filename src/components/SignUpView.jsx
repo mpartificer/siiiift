@@ -2,6 +2,7 @@ import '../App.css'
 import LogInGreeting from './multipurpose/LogInGreeting.jsx'
 import LoginEntry from './multipurpose/LoginEntry.jsx'
 import BigSubmitButton from './multipurpose/BigSubmitButton.jsx'
+import Footer from './multipurpose/Footer.jsx'
 
 
 function SignUpView() {
@@ -11,7 +12,8 @@ function SignUpView() {
         <LoginEntry entryValue='username' />
         <LoginEntry entryValue='password' />
         <LoginEntry entryValue='reenter password' />
-        <BigSubmitButton submitValue='sign up' path="/postyourbake" />
+        <BigSubmitButton submitValue='sign up' path="/" />
+        <Footer />
       </div>
     )
   }

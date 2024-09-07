@@ -4,6 +4,7 @@ import FollowBar from './multipurpose/FollowBar.jsx'
 import FollowTab from './multipurpose/FollowTab.jsx'
 import SearchBar from './multipurpose/SearchBar.jsx'
 import SearchResult from './multipurpose/SearchResult.jsx'
+import Footer from './multipurpose/Footer.jsx'
 
 function FollowersView() {
     return (
@@ -18,6 +19,7 @@ function FollowersView() {
         <SearchResult searchReturnValue="username" buttonValue="follow"/>
         <SearchResult searchReturnValue="username" buttonValue="follow"/>
         <SearchResult searchReturnValue="username" buttonValue="follow"/>
+        <Footer />
       </div>
     )
   }
