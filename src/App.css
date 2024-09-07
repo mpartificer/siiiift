@@ -140,6 +140,7 @@ ul {
   display:flex;
   flex-direction:row;
   justify-content: space-between;
+  align-items: center;
   width:350px;
   /* margin-right: 20px;
   margin-left:20px; */
@@ -340,7 +341,8 @@ ul {
   color:#192F01;
   border-radius: 20px;
   width: 12%;
-  padding-left: 10px;
+  margin-left: 10px;
+  height: 40px;
 }
 
 .yearDateEntry {
@@ -348,7 +350,8 @@ ul {
   color:#192F01;
   border-radius: 20px;
   width: 24%;
-  padding-left: 10px;
+  margin-left: 10px;
+  height: 40px;
 }
 
 .recipeBoxCardImg {

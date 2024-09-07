@@ -10,10 +10,11 @@ import { useNavigate } from 'react-router-dom'
 
 
 function RecipeBoxHeader() {
+    const navigate = useNavigate();
     return (
       <div className='profilePlateTop'>
         <PageTitle pageTitle='usernames recipe box' />
-        <Plus size={30} color='#192F01' />
+        <Plus size={30} color='#192F01' onClick={() => navigate('/reciperetriever')}/>
       </div>
     )
 }

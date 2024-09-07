@@ -11,9 +11,9 @@ function FollowersView() {
       <div className='followersView'>
         <Header />
         <FollowBar>
-          <FollowTab number="43" measure="followers"/>
-          <FollowTab number="43" measure="following"/>
-          <FollowTab number="43" measure="bakes"/>
+          <FollowTab number="43" measure="followers" path='/profile/followers'/>
+          <FollowTab number="43" measure="following" path='/profile/following'/>
+          <FollowTab number="43" measure="bakes" path='/profile'/>
         </FollowBar>
         <SearchBar />
         <SearchResult searchReturnValue="username" buttonValue="follow"/>

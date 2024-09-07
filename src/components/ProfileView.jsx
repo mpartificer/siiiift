@@ -18,7 +18,6 @@ function SettingsButton() {
 }
   
 function ProfileBlurb(props) {
-    const profileDescription = props;
     return (
       <div className='profileBlurb'>
         {props.profileDescription}
@@ -27,12 +26,11 @@ function ProfileBlurb(props) {
 }
   
 function ProfileSummary() {
-  const navigate = useNavigate();
     return (
       <div className='profileSummary'>
         <FollowBar>
-          <FollowTab measure="followers" onClick={() => navigate('/profile/followers')}/>
-          <FollowTab measure="following" onClick={() => navigate('/profile/following')}/>
+          <FollowTab measure="followers" path='/profile/followers'/>
+          <FollowTab measure="following" path='/profile/following'/>
           <FollowTab measure="bakes"/>
         </FollowBar>
         <ProfileBlurb profileDescription="jusalittlesomething"/>

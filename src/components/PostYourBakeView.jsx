@@ -8,7 +8,7 @@ import Footer from './multipurpose/Footer.jsx'
 function ModificationDropDown(props) {
     const propInsert = props.modificationList;
     const myComponentList = propInsert.map((item, index) => (
-      <li key={index}>{item}</li>));
+      <li key={index}><a>{item}</a></li>));
     return (
       <div className="dropdown profilePlate">
         <PostSettingTitle settingTitle='modifications:' />
@@ -18,13 +18,13 @@ function ModificationDropDown(props) {
         </ul>
       </div>
     )
-  }
+}
 
 function PostSettingTitle(props) {
     return (
      <div className='recipeCheckTitle'>{props.settingTitle}</div>
     )
-   }
+}
   
 function ModificationRating() {
     return (
@@ -33,7 +33,7 @@ function ModificationRating() {
         <ModificationRatingSystem />
       </div>
     )
-  }
+}
   
 function ModificationRatingSystem() {
     return (
@@ -45,7 +45,7 @@ function ModificationRatingSystem() {
         <input type="radio" name="rating-1" className="mask mask-star" />
       </div>
     )
-  }
+}
   
 function BakePostDate() {
     return (
@@ -56,7 +56,7 @@ function BakePostDate() {
         <input type="text" placeholder="year" className='w-1/2 yearDateEntry' />
       </div>
     )
-  }
+}
 
 function PostYourBakeView() {
     return (
@@ -67,10 +67,10 @@ function PostYourBakeView() {
         <input type="text" placeholder="enter your modification" className="input w-80 max-w-xs customModification" />
         <ModificationRating />
         <BakePostDate />
-        <BigSubmitButton submitValue='post'/>
+        <BigSubmitButton submitValue='post' path='/' />
         <Footer />
       </div>
     )
-  }
+}
 
-  export default PostYourBakeView
+export default PostYourBakeView
