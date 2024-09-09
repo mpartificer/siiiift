@@ -12,7 +12,7 @@ body {
 }
 
 button {
-  background-color: #192F01 !important;
+  /* background-color: #192F01 !important; */
   transition: none !important;
 }
 
@@ -52,6 +52,7 @@ ul {
 .navIcons {
   border-radius: 0px;
   border-width: 0px;
+  background-color: #192F01;
 }
 
 .footerBackground {
@@ -98,8 +99,12 @@ ul {
   align-self: flex-end;
 }
 
-.max-w-350 {
-  max-width: 350px;
+.w-350 {
+  width: 350px;
+}
+
+.standardBorder {
+  border-radius: 20px;
 }
 
 .settingsManagementView {
@@ -161,7 +166,11 @@ ul {
 }
 
 .followTab {
+  display: flex;
+  flex-direction: column;
   text-align:center;
+  align-items: center;
+  justify-content: center;
   color:#192F01;
 }
 
@@ -343,6 +352,7 @@ ul {
   width: 12%;
   margin-left: 10px;
   height: 40px;
+  padding-left: 10px;
 }
 
 .yearDateEntry {
@@ -352,8 +362,13 @@ ul {
   width: 24%;
   margin-left: 10px;
   height: 40px;
+  padding-left: 10px;
 }
 
 .recipeBoxCardImg {
   max-height:250px;
+}
+
+.recipeImg {
+  max-width: 350px;
 }

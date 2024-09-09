@@ -52,17 +52,17 @@ function SortByBox() {
 function RecipeCard() {
     const navigate = useNavigate()
     return (
-      <div className="card card-side bg-base-100 shadow-xl max-w-350">
+      <div className="card card-side bg-base-100 shadow-xl w-350 standardBorder">
         <figure>
           <img
             src="src/assets/TempImage.jpg"
             alt="recipe image" className='recipeBoxCardImg' />
         </figure>
-        <div className="card-body">
+        <div className="card-body bg-primary overflow-hidden text-secondary">
           <h2 className="card-title">brownies</h2>
           <p>ready in 45 minutes</p>
           <div className="card-actions justify-end">
-            <button className="btn btn-secondary" onClick={() => navigate('/recipeid')}>Watch</button>
+            <button className="btn bg-accent" onClick={() => navigate('/recipeid')}>bake</button>
           </div>
         </div>
       </div>
