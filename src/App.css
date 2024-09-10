@@ -108,7 +108,7 @@ ul {
 }
 
 .settingsManagementView {
-  width:100vw;
+  width:350px;
   display:flex;
   flex-direction:column;
   justify-content: space-between;
@@ -370,5 +370,5 @@ ul {
 }
 
 .recipeImg {
-  max-width: 350px;
+  max-width: 330px;
 }

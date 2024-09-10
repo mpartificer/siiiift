@@ -82,10 +82,10 @@ function RecipeCheckPanel(props) {
 
 function TimeCheck() {
     return (
-        <div className='items-center '>
-         prep: 15 minutes <br />
-         cook: 15 minutes <br />
-         time: 30 minutes <br />
+        <div className='items-center text-lg'>
+         <b>prep</b><br /> 15 minutes <br />
+         <b>cook</b><br /> 15 minutes <br />
+         <b>total</b><br /> 30 minutes <br />
         </div>
     )
 }
@@ -144,8 +144,9 @@ function PopularityCounter(props) {
 
 function RecipeSummaryPanel() {
     return (
-        <div className='recipeCheckPanel grid grid-cols-2 border'>
+        <div className='recipeCheckPanel flex flex-row p-5 justify-between'>
             <TimeCheck />
+            <div className="divider divider-primary divider-horizontal"></div>
             <PopularityCheck />
         </div>
     )

@@ -2,6 +2,8 @@ import FollowBar from '../components/multipurpose/FollowBar.jsx'
 import FollowTab from '../components/multipurpose/FollowTab.jsx'
 import { User } from 'lucide-react'
 import { Settings } from 'lucide-react'
+import { Cookie } from 'lucide-react'
+import { BookOpen } from 'lucide-react'
 import Header from './multipurpose/Header.jsx'
 import Footer from './multipurpose/Footer.jsx'
 import PageTitle from './multipurpose/PageTitle.jsx'
@@ -70,11 +72,44 @@ function ProfilePlate() {
     )
 }
 
+function ContentCap() {
+  return (
+    <ul className="menu menu-horizontal bg-primary rounded-box mt-6 w-350 flex flex-row justify-evenly">
+      <li>
+        <a className="tooltip" data-tip="bakes">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor">
+            <Cookie color='#EADDFF'/>
+          </svg>
+        </a>
+      </li>
+      <div className="divider divider-horizontal divider-accent"></div>
+      <li>
+        <a className="tooltip" data-tip="recipe box">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor">
+            <BookOpen color='#EADDFF'/>
+          </svg>
+        </a>
+      </li>
+    </ul>
+  )
+}
+
 function ProfileView() {
   return (
     <div>
       <Header />
       <ProfilePlate />
+      <ContentCap />
       <Footer />
     </div>
   )
