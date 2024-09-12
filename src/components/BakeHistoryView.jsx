@@ -37,7 +37,7 @@ function BakeHistoryView() {
     return (
         <div className='followersView'>
             <Header />
-            <PageTitle pageTitle='recipe bakes by username' />
+            <PageTitle pageTitle='usernames recipe title bake history' />
             <BakeHistoryCard />
             <Footer />
         </div>
