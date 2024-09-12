@@ -92,7 +92,7 @@ function TimeCheck() {
 
 function PopularityCheck() {
     return (
-        <div className='grid grid-cols-2'>
+        <div className='grid grid-cols-2 '>
             <PopularityCounter Label='Heart' Count='100' />
             <PopularityCounter Label='Star' Count='4.5' />
             <PopularityCounter Label='ChefHat' Count='100' />

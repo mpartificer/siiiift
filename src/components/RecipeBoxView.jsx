@@ -21,7 +21,7 @@ function RecipeBoxHeader() {
   
 function RecipeBoxSubHeader() {
     return (
-      <div className='flex-row justify-around items-center w-350'>
+      <div className='flex flex-row justify-between items-center w-350'>
         <ToggleBox />
         <SortByBox />
       </div>
@@ -30,7 +30,7 @@ function RecipeBoxSubHeader() {
 
 function ToggleBox() {
     return (
-      <div className='flex-row gap-2 w-2/5'>
+      <div className='flex flex-row gap-2'>
         <Toggle justify='justify-start' />
         filter by attempted
       </div>
@@ -39,7 +39,7 @@ function ToggleBox() {
   
 function SortByBox() {
     return (
-      <div className="dropdown dropdown-bottom w-2/5">
+      <div className="dropdown dropdown-bottom">
         <div tabIndex={0} role="button" className="btn m-1">sort by</div>
         <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
           <li><a>Item 1</a></li>

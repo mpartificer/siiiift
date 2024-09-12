@@ -6,11 +6,23 @@ import Header from './multipurpose/Header.jsx'
 import Footer from './multipurpose/Footer.jsx'
 import { Link } from 'react-router-dom'
 
-function EditBio() {
+function EditBio(props) {
     return (
       <div className='upperBioFlexParent'>
         <Image size={100} color="#192F01"/>
-        <textarea className='profileBlurb' />
+        <TextAreaWithButton userBio={props.userBio} />
+      </div>
+    )
+  }
+
+  function TextAreaWithButton(props) {
+    const textArea = `<textarea className="textarea grow h-full overflow-x-hidden">${props.userBio}</textarea>`
+    return (
+      <div>
+        <label className="input input-bordered flex items-center gap-2 bg-secondary profileBlurb h-full">
+          {textArea}          
+          <button className='btn btn-primary self-end justify-self-end'>save</button>
+        </label>
       </div>
     )
   }
@@ -37,7 +49,7 @@ function SettingsManagementView(props) {
       <div className='settingsManagementView max-w-350'>
         <Header />
         <PageTitle pageTitle='username' />
-        <EditBio />
+        <EditBio userBio="this is my bio" />
         <SettingWithToggle settingName='public/private' />
         <SettingNoToggle settingName='review follow requests' path='/profile/settings/follow-requests'/>
         <SettingWithToggle settingName='toggle AI insights' />

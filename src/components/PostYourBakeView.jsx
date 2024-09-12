@@ -9,11 +9,12 @@ function ModificationDropDown(props) {
     const propInsert = props.modificationList;
     const myComponentList = propInsert.map((item, index) => (
       <li key={index}><a>{item}</a></li>));
+    const modificationType = props.modificationType + ' modifications:';
     return (
       <div className="dropdown profilePlate">
-        <PostSettingTitle settingTitle='modifications:' />
+        <PostSettingTitle settingTitle={modificationType} />
         <div tabIndex={0} role="button" className="btn m-1 w-80 modificationDropDown">choose a step to modify</div>
-        <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow modificationDropDown ">
+        <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow ">
           {myComponentList}
         </ul>
       </div>
@@ -63,7 +64,9 @@ function PostYourBakeView() {
       <div className='websiteRetrievalView'>
         <Header />
         <Image size={300} />
-        <ModificationDropDown modificationList={['1/2 cup sugar', 'bake for 45 minutes', 'rest the dough']} />
+        <ModificationDropDown modificationList={['1/2 cup sugar', 'bake for 45 minutes', 'rest the dough']} modificationType='ingredient'/>
+        <input type="text" placeholder="enter your modification" className="input w-80 max-w-xs customModification" />
+        <ModificationDropDown modificationList={['1/2 cup sugar', 'bake for 45 minutes', 'rest the dough']} modificationType='instruction'/>
         <input type="text" placeholder="enter your modification" className="input w-80 max-w-xs customModification" />
         <ModificationRating />
         <BakePostDate />
