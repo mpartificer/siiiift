@@ -9,6 +9,8 @@ import Footer from './multipurpose/Footer.jsx'
 import PageTitle from './multipurpose/PageTitle.jsx'
 import { useNavigate } from 'react-router-dom';
 import '../App.css'
+import HomeCard from './multipurpose/HomeCard.jsx'
+import RecipeCard from './multipurpose/RecipeCard.jsx'
 
 
 function SettingsButton() {
@@ -104,12 +106,30 @@ function ContentCap() {
   )
 }
 
+function ContentCarousel() {
+  return (
+    <div className="carousel w-350">
+      <div className="carousel-item w-full flex flex-column flex-wrap gap-2">
+        <HomeCard />
+        <HomeCard />
+        <HomeCard />
+      </div>
+      <div className="carousel-item w-full flex flex-column flex-wrap gap-2">
+        <RecipeCard />
+        <RecipeCard />
+        <RecipeCard />
+      </div>
+    </div>
+  )
+}
+
 function ProfileView() {
   return (
     <div>
       <Header />
       <ProfilePlate />
       <ContentCap />
+      <ContentCarousel />
       <Footer />
     </div>
   )

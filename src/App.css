@@ -56,7 +56,8 @@ ul {
 }
 
 .footerBackground {
-  background-color: #192F01;
+  background-color: #192F01 !important;
+  width:100vw !important;
 }
 
 .recipeCheckPanel {
