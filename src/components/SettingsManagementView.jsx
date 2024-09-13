@@ -16,7 +16,7 @@ function EditBio(props) {
   }
 
   function TextAreaWithButton(props) {
-    const textArea = `<textarea className="textarea grow h-full overflow-x-hidden">${props.userBio}</textarea>`
+    const textArea = <textarea className="textarea grow h-full overflow-x-hidden bg-secondary" value={props.userBio}></textarea>
     return (
       <div>
         <label className="input input-bordered flex items-center gap-2 bg-secondary profileBlurb h-full">

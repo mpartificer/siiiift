@@ -19,6 +19,6 @@ function RecipeCard() {
         </div>
       </div>
     )
-  }
+}
 
-  export default RecipeCard;
+export default RecipeCard

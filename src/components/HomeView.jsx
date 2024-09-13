@@ -4,9 +4,6 @@ import HomeCard from './multipurpose/HomeCard.jsx';
 import Footer from './multipurpose/Footer.jsx';
 
 
-
-
-
 function HomeView() {
   return (
     <div>
