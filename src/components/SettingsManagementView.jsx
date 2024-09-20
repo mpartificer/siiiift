@@ -5,6 +5,7 @@ import PageTitle from './multipurpose/PageTitle.jsx'
 import Header from './multipurpose/Header.jsx'
 import Footer from './multipurpose/Footer.jsx'
 import { Link } from 'react-router-dom'
+import { useState } from 'react'
 
 function EditBio(props) {
     return (
@@ -16,14 +17,23 @@ function EditBio(props) {
   }
 
   function TextAreaWithButton(props) {
-    const textArea = <textarea className="textarea grow h-full overflow-x-hidden bg-secondary" value={props.userBio}></textarea>
+    let [userBio, setUserBio] = useState('')
+    userBio = props.userBio
+
+    let textArea = <textarea className="textarea grow h-full overflow-x-hidden bg-secondary" value={userBio} onChange={(e) => setUserBio(e.target.value)}></textarea>
+
+    const handleSubmit = (e) => {
+      e.preventDefault()
+      console.log(userBio)
+    }
+    
     return (
-      <div>
+      <form onSubmit={handleSubmit}>
         <label className="input input-bordered flex items-center gap-2 bg-secondary profileBlurb h-full">
           {textArea}          
-          <button className='btn btn-primary self-end justify-self-end'>save</button>
+          <button type="submit"className='btn btn-primary self-end justify-self-end'>save</button>
         </label>
-      </div>
+      </form>
     )
   }
   

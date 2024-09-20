@@ -11,6 +11,8 @@ import { useNavigate } from 'react-router-dom';
 import '../App.css'
 import HomeCard from './multipurpose/HomeCard.jsx'
 import RecipeCard from './multipurpose/RecipeCard.jsx'
+import { useState, useEffect } from 'react';
+import { supabase } from '../supabaseClient.js'
 
 
 function SettingsButton() {
@@ -124,6 +126,46 @@ function ContentCarousel() {
 }
 
 function ProfileView() {
+  const [userDetails, setUserDetails] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function fetchUserDetails() {
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+        const parsedUserId = user.id;
+
+        const {data, error} = await supabase
+          .from('User_Profile')
+          .select()
+          .eq('user_auth_id', parsedUserId)
+
+        if (error) throw error;
+
+        if (isMounted) {
+          setUserDetails(data);
+          setIsLoading(false);
+        }
+      } catch (error) {
+        console.error('Error fetching User_Profile:', error);
+        if (isMounted) setIsLoading(false);
+      }
+    }
+
+  fetchUserDetails();
+
+    return () => {
+      isMounted = false;
+    };
+
+  }, []);
+
+  if (isLoading) return <div>Loading...</div>;
+
+  console.log(userDetails);
+  
   return (
     <div>
       <Header />

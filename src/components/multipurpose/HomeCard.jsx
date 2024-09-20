@@ -11,20 +11,21 @@ const supabase = createClient("https://iivozawppltyhsrkixlk.supabase.co", 'eyJhb
 function PostReactionBox() {
     const navigate = useNavigate();
   
-      return (
-        <div className='postReactionBox'>
-          <Heart size={40} color='#192F01'/>
-          <MessageCircle size={40} color='#192F01'/>
-          <History size={40} color='#192F01' onClick={() => navigate('/userid/recipeid')}/>
-        </div>
-      )
-  }
+    return (
+    <div className='postReactionBox'>
+      <Heart size={40} color='#192F01'/>
+      <MessageCircle size={40} color='#192F01'/>
+      <History size={40} color='#192F01' onClick={() => navigate('/userid/recipeid')}/>
+    </div>
+    )
+}
   
   
-  function HomeCard() {
+function HomeCard() {
 
     const [bakeDetails, setBakeDetails] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+
   
     useEffect(() => {
       let isMounted = true;
@@ -57,17 +58,19 @@ function PostReactionBox() {
   
     if (isLoading) return <div>Loading...</div>;
 
-    if (!bakeDetails || bakeDetails.length === 0) return <div>No bake details available</div>;
+    if (!bakeDetails || bakeDetails.length === 0) return <div>No user details available</div>;
 
+    const userId = bakeDetails[0].user_id.toString();
+    const recipeId = bakeDetails[0].recipe_id.toString();
+    const photos = bakeDetails[0].photos.toString();
 
-    console.log(bakeDetails);
       return (
         <div className='homeCard'>
-          <PageTitle pageTitle={[bakeDetails[0].user_id, bakeDetails[0].recipe_id]} path={['/profile', '/recipeid']} />
-          <img 
-                src={bakeDetails[0].photos[0]}
-                alt="new" className='recipeImg'
-                />
+          <PageTitle pageTitle={[userId, recipeId]} path={['/profile', '/recipeid']} />
+          {photos &&<img 
+                src={photos}
+                alt="recipe" className='recipeImg'
+                />}
           <PostReactionBox />
         </div>
       )
