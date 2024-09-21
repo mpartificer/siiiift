@@ -40,19 +40,10 @@ function SignUpView() {
 
         console.log('Signup successful:', data)
         alert('Check your email for the confirmation link!')
-        const fetchUser = async () => {
-          const { data: { user } } = await supabase.auth.getUser()
-          setUser(user)
-          console.log('Current user:', user)
-        }
-    
-        fetchUser()
-        
-        const { addUserProfile } = await supabase
-          .from('User_Profile')
-          .insert({ user_auth_id: user.id})
 
-        console.log(data)
+        //Postgres function that can run off of your database
+        //userId changes 
+
         navigate('/')
          // Log the response data
       } catch (error) {

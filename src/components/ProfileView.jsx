@@ -126,45 +126,45 @@ function ContentCarousel() {
 }
 
 function ProfileView() {
-  const [userDetails, setUserDetails] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  // const [userDetails, setUserDetails] = useState([]);
+  // const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    let isMounted = true;
+  // useEffect(() => {
+  //   let isMounted = true;
 
-    async function fetchUserDetails() {
-      try {
-        const { data: { user } } = await supabase.auth.getUser()
-        const parsedUserId = user.id;
+  //   async function fetchUserDetails() {
+  //     try {
+  //       const { data: { user } } = await supabase.auth.getUser()
+  //       const parsedUserId = user.id;
 
-        const {data, error} = await supabase
-          .from('User_Profile')
-          .select()
-          .eq('user_auth_id', parsedUserId)
+  //       const {data, error} = await supabase
+  //         .from('User_Profile')
+  //         .select()
+  //         .eq('user_auth_id', parsedUserId)
 
-        if (error) throw error;
+  //       if (error) throw error;
 
-        if (isMounted) {
-          setUserDetails(data);
-          setIsLoading(false);
-        }
-      } catch (error) {
-        console.error('Error fetching User_Profile:', error);
-        if (isMounted) setIsLoading(false);
-      }
-    }
+  //       if (isMounted) {
+  //         setUserDetails(data);
+  //         setIsLoading(false);
+  //       }
+  //     } catch (error) {
+  //       console.error('Error fetching User_Profile:', error);
+  //       if (isMounted) setIsLoading(false);
+  //     }
+  //   }
 
-  fetchUserDetails();
+  // fetchUserDetails();
 
-    return () => {
-      isMounted = false;
-    };
+  //   return () => {
+  //     isMounted = false;
+  //   };
 
-  }, []);
+  // }, []);
 
-  if (isLoading) return <div>Loading...</div>;
+  // if (isLoading) return <div>Loading...</div>;
 
-  console.log(userDetails);
+  // console.log(userDetails);
   
   return (
     <div>

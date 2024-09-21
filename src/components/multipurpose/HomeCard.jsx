@@ -41,6 +41,7 @@ function HomeCard() {
           if (isMounted) {
             setBakeDetails(data);
             setIsLoading(false);
+            console.log(data)
           }
         } catch (error) {
           console.error('Error fetching Bake_Details:', error);
@@ -60,13 +61,13 @@ function HomeCard() {
 
     if (!bakeDetails || bakeDetails.length === 0) return <div>No user details available</div>;
 
-    const userId = bakeDetails[0].user_id.toString();
-    const recipeId = bakeDetails[0].recipe_id.toString();
+    const username = bakeDetails[0].username.toString();
+    const recipeTitle = bakeDetails[0].recipe_title;
     const photos = bakeDetails[0].photos.toString();
 
       return (
         <div className='homeCard'>
-          <PageTitle pageTitle={[userId, recipeId]} path={['/profile', '/recipeid']} />
+          <PageTitle pageTitle={[username, recipeTitle]} path={['/profile', '/recipeid']} />
           {photos &&<img 
                 src={photos}
                 alt="recipe" className='recipeImg'

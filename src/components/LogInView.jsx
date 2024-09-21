@@ -1,6 +1,5 @@
 import '../App.css'
 import LogInGreeting from './multipurpose/LogInGreeting.jsx'
-import LoginEntry from './multipurpose/LoginEntry.jsx'
 import SignUpButton from './multipurpose/SignUpButton.jsx'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
