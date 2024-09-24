@@ -27,7 +27,7 @@ function LogInView() {
       <form className='logInView' onSubmit={handleSignIn}>
         <LogInGreeting openingTitle='get siiiift-ing' />
         <input className='loginBar' type='text' placeholder='email' name='email' value={email} onChange={(e) => setEmail(e.target.value)}/>
-        <input className='loginBar' type='text' placeholder='password' name='password' value={password} onChange={(e) => setPassword(e.target.value)}/>
+        <input className='loginBar' type='password' placeholder='password' name='password' value={password} onChange={(e) => setPassword(e.target.value)}/>
         <button className='bigSubmitButton' disabled={loading}>{loading ? 'Loading...' : 'login'}</button>
         <SignUpButton signUpLinkText='sign up' path='/signup'/>
         <SignUpButton signUpLinkText='forgot password?' path='/login/forgot-password'/>

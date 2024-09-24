@@ -4,8 +4,11 @@ import { Image } from 'lucide-react'
 import PageTitle from './multipurpose/PageTitle.jsx'
 import Header from './multipurpose/Header.jsx'
 import Footer from './multipurpose/Footer.jsx'
-import { Link } from 'react-router-dom'
 import { useState } from 'react'
+import SettingLogOut from './multipurpose/SettingLogOut.jsx'
+import { useNavigate } from 'react-router-dom'
+
+
 
 function EditBio(props) {
     return (
@@ -36,14 +39,15 @@ function EditBio(props) {
       </form>
     )
   }
-  
-function SettingNoToggle(props) {
-    return (
-      <div className='settingNoToggle'>
-        <Link to={props.path}>{props.settingName}</Link>
-      </div>
-    )
-  }
+
+  function SettingReviewFollowers(props) {
+    const navigate = useNavigate()
+      return (
+        <div className='settingNoToggle'>
+          <button type="submit" onClick={() => navigate(props.path)}>{props.settingName}</button>
+        </div>
+      )
+    }
   
 function SettingWithToggle(props) {
     return (
@@ -54,16 +58,18 @@ function SettingWithToggle(props) {
     )
   }
 
+
 function SettingsManagementView(props) {
+
     return (
       <div className='settingsManagementView max-w-350'>
         <Header />
         <PageTitle pageTitle='username' />
         <EditBio userBio="this is my bio" />
         <SettingWithToggle settingName='public/private' />
-        <SettingNoToggle settingName='review follow requests' path='/profile/settings/follow-requests'/>
+        <SettingReviewFollowers settingName='review follow requests' path='/profile/settings/follow-requests'/>
         <SettingWithToggle settingName='toggle AI insights' />
-        <SettingNoToggle settingName='log out' path='/login'/>
+        <SettingLogOut settingName='log out' path='/login'/>
         <Footer />
       </div>
     )

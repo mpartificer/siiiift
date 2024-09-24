@@ -12,7 +12,6 @@ function SignUpView() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [reenter_password, setReenter_password] = useState('')
-  const [user, setUser] = useState(null)
   const navigate = useNavigate()
 
 
@@ -57,8 +56,8 @@ function SignUpView() {
       <form className='logInView' onSubmit={handleSignUp}>
         <LogInGreeting openingTitle='siiiift' />
         <input className='loginBar' type='text' placeholder='email' name='email' value={email} onChange={(e) => setEmail(e.target.value)} />
-        <input className='loginBar' type='text' placeholder='password' name='password' value={password} onChange={(e) => setPassword(e.target.value)} />
-        <input className='loginBar' type='text' placeholder='reenter password' name='reenter_password' id='reenter_password' value={reenter_password} onChange={(e) => setReenter_password(e.target.value)}/>
+        <input className='loginBar' type='password' placeholder='password' name='password' value={password} onChange={(e) => setPassword(e.target.value)} />
+        <input className='loginBar' type='password' placeholder='reenter password' name='reenter_password' id='reenter_password' value={reenter_password} onChange={(e) => setReenter_password(e.target.value)}/>
         <button className='bigSubmitButton' type="submit" disabled={loading}>{loading ? 'Loading...' : 'sign up'}</button>
       </form>
     )

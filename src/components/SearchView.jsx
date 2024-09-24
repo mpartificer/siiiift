@@ -8,7 +8,7 @@ import Footer from './multipurpose/Footer.jsx'
 function SearchFilter(props) {
     const filterValue = props;
     return (
-      <button className='searchFilter'>{props.filterValue}</button>
+      <button className='searchFilter bg-primary text-secondary'>{props.filterValue}</button>
     )
   }
   
