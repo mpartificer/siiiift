@@ -3,6 +3,7 @@ import BigSubmitButton from './multipurpose/BigSubmitButton.jsx'
 import Header from './multipurpose/Header.jsx'
 import { Image } from 'lucide-react'
 import Footer from './multipurpose/Footer.jsx'
+import RecipeDropDown from './multipurpose/RecipeDropDown.jsx'
 
 
 function ModificationDropDown(props) {
@@ -64,6 +65,7 @@ function PostYourBakeView() {
       <div className='websiteRetrievalView'>
         <Header />
         <Image size={300} />
+        <RecipeDropDown />
         <ModificationDropDown modificationList={['1/2 cup sugar', 'bake for 45 minutes', 'rest the dough']} modificationType='ingredient'/>
         <input type="text" placeholder="enter your modification" className="input w-80 max-w-xs customModification" />
         <ModificationDropDown modificationList={['1/2 cup sugar', 'bake for 45 minutes', 'rest the dough']} modificationType='instruction'/>
