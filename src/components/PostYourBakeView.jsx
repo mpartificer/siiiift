@@ -1,9 +1,9 @@
 import '../App.css'
 import BigSubmitButton from './multipurpose/BigSubmitButton.jsx'
 import Header from './multipurpose/Header.jsx'
-import { Image } from 'lucide-react'
 import Footer from './multipurpose/Footer.jsx'
 import RecipeDropDown from './multipurpose/RecipeDropDown.jsx'
+import PostImageUpload from './multipurpose/PostImageUpload.jsx'
 
   
 function ModificationRating() {
@@ -38,17 +38,60 @@ function BakePostDate() {
     )
 }
 
+
+
 function PostYourBakeView() {
+
+  const PostYourBake = async () => {
+    try{
+    const avatarFile = event.target.files[0]
+
+    const { data, error } = await supabase
+      .storage
+      .from('avatars')
+      .upload('public/avatar1.png', avatarFile, {
+        cacheControl: '3600',
+        upsert: false
+  })
+
+    if (error) throw error
+    
+    }
+    catch (err) {
+      console.error('Error:', err)
+      setError(err.message)
+    }
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+    }
+    catch(err) {
+      console.error('Error:', err)
+      setError(err.message)
+    }
+      
+    try {
+      const { error } = await supabase
+        .from('Bake_Details')
+        .insert({ name: 'Denmark' })
+
+    }
+    catch (err) {
+      console.error('Error:', err)
+      setError(err.message)
+    }
+
+  }
     return (
-      <div className='websiteRetrievalView'>
+      <form className='websiteRetrievalView' onSubmit={PostYourBake}>
         <Header />
-        <Image size={300} />
+        <PostImageUpload />
         <RecipeDropDown />
         <ModificationRating />
         <BakePostDate />
-        <BigSubmitButton submitValue='post' path='/' />
+        <button type="submit" className='bigSubmitButton'>post</button>
         <Footer />
-      </div>
+      </form>
     )
 }
 

@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 body {
-  background-color: #EADDFF;
+  background-color: #F2F2F2;
   font-family: 'Inria Serif';
   width: 100vw;
   display: flex;
@@ -12,7 +12,7 @@ body {
 }
 
 button {
-  /* background-color: #192F01 !important; */
+  /* background-color: #496354 !important; */
   transition: none !important;
 }
 
@@ -25,7 +25,7 @@ button:focus-visible{
 }
 
 button:hover {
-  border-color: #192F01 !important;
+  border-color: #496354 !important;
 }
 
 ul {
@@ -44,7 +44,7 @@ ul {
 
 .header {
   font-size: 38px;
-  color:#192F01;
+  color:#496354;
   align-self: flex-start;
   /* padding-left: 20px; */
 }
@@ -52,18 +52,18 @@ ul {
 .navIcons {
   border-radius: 0px;
   border-width: 0px;
-  background-color: #192F01;
+  background-color: #496354;
 }
 
 .footerBackground {
-  background-color: #192F01 !important;
+  background-color: #496354 !important;
   width:100vw !important;
 }
 
 .recipeCheckPanel {
-  background-color: #FAE2D5;
+  background-color: #EBD2AD;
   border-radius: 20px;
-  color:#192F01 !important;
+  color:#496354 !important;
   width:350px;
 }
 
@@ -82,14 +82,14 @@ ul {
 
 .pageTitle {
   font-size: 20px;
-  color: #192F01;
+  color: #496354;
   align-self: flex-start;
   /* padding-left: 20px; */
 }
 
 .recipeCheckTitle {
   font-size: 20px;
-  color: #192F01;
+  color: #496354;
   align-self: flex-start;
   padding-left: 20px;
   margin-top: 10px;
@@ -119,8 +119,8 @@ ul {
 .profileBlurb {
   font-size: 15px;
   border-radius: 20px;
-  background-color: #FAE2D5;
-  color:#192F01; 
+  background-color: #EBD2AD;
+  color:#496354; 
   height:100%;
   padding:10px;
   width:100%;
@@ -129,8 +129,8 @@ ul {
 .customModification {
   font-size: 15px;
   border-radius: 20px;
-  background-color: #FAE2D5;
-  color:#192F01; 
+  background-color: #EBD2AD;
+  color:#496354; 
   padding:10px;
   width:350px;
 }
@@ -172,7 +172,7 @@ ul {
   text-align:center;
   align-items: center;
   justify-content: center;
-  color:#192F01;
+  color:#496354;
 }
 
 .followBar {
@@ -186,8 +186,8 @@ ul {
 .searchBar {
   width: 350px;
   text-align: center;
-  background-color: #EADDFF;
-  color: #192F01;
+  background-color: #F2F2F2;
+  color: #496354;
   border-radius: 20px;
   padding: 0px;
   border-style:solid;
@@ -197,7 +197,7 @@ ul {
 }
 
 .searchDetail {
-  color:#FAE2D5;
+  color:#EBD2AD;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -206,8 +206,8 @@ ul {
 }
 
 .searchResultButton {
-  background-color: #FAE2D5 !important;
-  color:#192F01;
+  background-color: #EBD2AD !important;
+  color:#496354;
   border-radius: 20px;
   border-style: solid;
   border-width:1px;
@@ -216,7 +216,7 @@ ul {
   width: 72px;
   height:32px;
   padding:5px;
-  border-color: #192F01;
+  border-color: #496354;
   margin-right:15px;
 }
 
@@ -237,7 +237,7 @@ ul {
 }
 
 .searchResult {
-  background-color: #192F01;
+  background-color: #496354;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -271,7 +271,7 @@ ul {
 .loginBar {
   width: 250px;
   height: 50px;
-  background-color: #FAE2D5;
+  background-color: #EBD2AD;
   font-family:'Inria Serif';
   font-size:24px;
   border-radius:20px;
@@ -283,25 +283,25 @@ ul {
 
 .logInGreeting {
   font-size: 38px;
-  color:#192F01;
+  color:#496354;
 }
 
 .logInSubGreeting {
   font-size: 20px;
-  color: #192F01;
+  color: #496354;
 }
 
 .signUpButton {
   font-size: 16px;
   background-color: #F8EFEA !important;
-  color:#192F01;
+  color:#496354;
   text-decoration: underline;
   padding:0px;
 }
 
 .bigSubmitButton {
-  background-color: #192F01;
-  color: #FAE2D5;
+  background-color: #496354;
+  color: #EBD2AD;
   font-size: 30px;
   border-radius: 20px;
   padding-left:20px;
@@ -322,20 +322,20 @@ ul {
   display:flex;
   flex-direction:row;
   justify-content:space-between;
-  color:#192F01;
+  color:#496354;
   align-items: center;
   font-size:20px
 }
 
 .settingNoToggle {
-  color:#192F01;
+  color:#496354;
   font-size:20px;
 }
 
 .modificationDropDown {
   width: 350px;
   height: 50px;
-  background-color: #FAE2D5;
+  background-color: #EBD2AD;
   font-family:'Inria Serif';
   font-size:15px;
   border-radius:20px;
@@ -347,8 +347,8 @@ ul {
 }
 
 .dayMonthDateEntry {
-  background-color: #FAE2D5;
-  color:#192F01;
+  background-color: #EBD2AD;
+  color:#496354;
   border-radius: 20px;
   width: 12%;
   margin-left: 10px;
@@ -357,8 +357,8 @@ ul {
 }
 
 .yearDateEntry {
-  background-color: #FAE2D5;
-  color:#192F01;
+  background-color: #EBD2AD;
+  color:#496354;
   border-radius: 20px;
   width: 24%;
   margin-left: 10px;

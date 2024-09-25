@@ -2,6 +2,52 @@ import { supabase } from '../../supabaseClient.js'
 import { useState, useEffect } from 'react'
 import '../../App.css'
 
+const ModificationItem = ({ items, placeholder, onChange, value }) => {
+    const [selectedItem, setSelectedItem] = useState(null)
+    const [isOpen, setIsOpen] = useState(false)
+
+    const handleSelect = (item) => {
+        setSelectedItem(item)
+        setIsOpen(false)
+    }
+
+    return (
+        <div className="flex flex-col mb-2">
+            <div className="dropdown mb-1">
+                <div 
+                    tabIndex={0} 
+                    role="button" 
+                    className="btn w-80 bg-secondary modificationDropDown"
+                    onClick={() => setIsOpen(!isOpen)}
+                >
+                    {selectedItem ? 
+                        (typeof selectedItem === 'object' ? 
+                            (selectedItem.instruction || `${selectedItem.amount} ${selectedItem.substance}`) 
+                            : selectedItem
+                        ) 
+                        : 'select item'}
+                </div>
+                {isOpen && (
+                    <ul tabIndex={0} className="dropdown-content menu bg-secondary rounded-box z-[1] w-52 p-2 shadow">
+                        {items.map((item, index) => (
+                            <li key={index} onClick={() => handleSelect(item)}>
+                                <a>{typeof item === 'object' ? (item.instruction || `${item.amount} ${item.substance}`) : item}</a>
+                            </li>
+                        ))}
+                    </ul>
+                )}
+            </div>
+            <input 
+                type="text" 
+                value={value}
+                onChange={onChange}
+                placeholder={placeholder} 
+                className="input w-80 max-w-xs customModification" 
+            />
+        </div>
+    )
+}
+
 const RecipeDropDown = (props) => {
     const [recipeData, setRecipeData] = useState(null)
     const [selectedRecipe, setSelectedRecipe] = useState(null)
@@ -9,6 +55,9 @@ const RecipeDropDown = (props) => {
     const [instructionData, setInstructionData] = useState(null)
     const [error, setError] = useState(null)
     const [loading, setLoading] = useState(true)
+    const [ingredientModifications, setIngredientModifications] = useState([''])
+    const [instructionModifications, setInstructionModifications] = useState([''])
+    const [isRecipeDropdownOpen, setIsRecipeDropdownOpen] = useState(false)
 
     const fetchModItems = async (recipeId) => {
         try {
@@ -20,7 +69,6 @@ const RecipeDropDown = (props) => {
 
             if (ingError) throw ingError
             setIngredientData(ingredientData.ingredients)
-            console.log(ingredientData)
 
             const { data: instructionData, error: instError } = await supabase
                 .from('recipe_profile')
@@ -30,9 +78,9 @@ const RecipeDropDown = (props) => {
 
             if (instError) throw instError
             setInstructionData(instructionData.instructions)
-            console.log(instructionData)
 
             setSelectedRecipe(recipeId)
+            setIsRecipeDropdownOpen(false) 
         } catch (err) {
             console.error('Error:', err)
             setError(err.message)
@@ -63,46 +111,80 @@ const RecipeDropDown = (props) => {
         fetchRecipes()
     }, [])
 
+    const addIngredientModification = () => {
+        setIngredientModifications([...ingredientModifications, ''])
+    }
+
+    const addInstructionModification = () => {
+        setInstructionModifications([...instructionModifications, ''])
+    }
+
+    const handleIngredientModificationChange = (index, value) => {
+        const newModifications = [...ingredientModifications]
+        newModifications[index] = value
+        setIngredientModifications(newModifications)
+    }
+
+    const handleInstructionModificationChange = (index, value) => {
+        const newModifications = [...instructionModifications]
+        newModifications[index] = value
+        setInstructionModifications(newModifications)
+    }
+
     if (loading) return <div>Loading...</div>
     if (error) return <div>Error: {error}</div>
 
     return (
         <div className="profilePlate">
             <div className="dropdown">
-                <div tabIndex={0} role="button" className="btn m-1 w-80 bg-secondary modificationDropDown">select a recipe:</div>
-                <ul tabIndex={0} className="dropdown-content menu bg-secondary rounded-box z-[1] w-52 p-2 shadow">
-                    {recipeData && recipeData.map((item) => (
-                        <li key={item.id} onClick={() => fetchModItems(item.id)}><a>{item.recipetitle}</a></li>
-                    ))}
-                </ul>
-            </div>
+                <div 
+                    tabIndex={0} 
+                    role="button" 
+                    className="btn m-1 w-80 bg-secondary modificationDropDown"
+                    onClick={() => setIsRecipeDropdownOpen(!isRecipeDropdownOpen)}
+                >
+                    {selectedRecipe ? recipeData.find(item => item.id === selectedRecipe)?.recipetitle : 'select a recipe:'}
+                </div>
+                {isRecipeDropdownOpen && (
+                    <ul tabIndex={0} className="dropdown-content menu bg-secondary rounded-box z-[1] w-52 p-2 shadow">
+                        {recipeData && recipeData.map((item) => (
+                            <li key={item.id} onClick={() => fetchModItems(item.id)}>
+                                <a>{item.recipetitle}</a>
+                            </li>
+                        ))}
+                    </ul>
+                )}
+                </div>
+                                    
             
             {selectedRecipe && (
                 <>
-                    <div className="dropdown">
-                        <div tabIndex={0} role="button" className="btn m-1 w-80 bg-secondary modificationDropDown">select an ingredient:</div>
-                        <ul tabIndex={0} className="dropdown-content menu bg-secondary rounded-box z-[1] w-52 p-2 shadow">
-                            {ingredientData && ingredientData.map((item, index) => (
-                                <li key={index}><a>{typeof item === 'object' ? `${item.amount} ${item.substance}` : item}</a></li>
-                            ))}
-                        </ul>
-                    </div>
-                    <input type="text" placeholder="enter your modification" className="input w-80 max-w-xs customModification" />
+                    <h3 className="mt-4 mb-2">ingredient modifications:</h3>
+                    {ingredientModifications.map((mod, index) => (
+                        <ModificationItem
+                            key={index}
+                            items={ingredientData || []}
+                            placeholder="enter your ingredient modification"
+                            value={mod}
+                            onChange={(e) => handleIngredientModificationChange(index, e.target.value)}
+                        />
+                    ))}
+                    <a href="#" onClick={addIngredientModification} className="mb-4">add another ingredient modification</a>
 
-
-                    <div className="dropdown">
-                        <div tabIndex={0} role="button" className="btn m-1 w-80 bg-secondary modificationDropDown">select an instruction:</div>
-                        <ul tabIndex={0} className="dropdown-content menu bg-secondary rounded-box z-[1] w-52 p-2 shadow">
-                            {instructionData && instructionData.map((item) => (
-                                <li key={item.id}><a>{item.instruction}</a></li>
-                            ))}
-                        </ul>
-                    </div>
-                    <input type="text" placeholder="enter your modification" className="input w-80 max-w-xs customModification" />
-
+                    <h3 className="mt-4 mb-2">instruction modifications:</h3>
+                    {instructionModifications.map((mod, index) => (
+                        <ModificationItem
+                            key={index}
+                            items={instructionData || []}
+                            placeholder="enter your instruction modification"
+                            value={mod}
+                            onChange={(e) => handleInstructionModificationChange(index, e.target.value)}
+                        />
+                    ))}
+                    <a href="#" onClick={addInstructionModification} >add another instruction modification</a>
                 </>
             )}
-                    </div>
+        </div>
     )
 }
 
