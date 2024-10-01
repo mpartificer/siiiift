@@ -1,13 +1,31 @@
 import '../../App.css'
 import { Link } from 'react-router-dom'
+import {useNavigate} from 'react-router-dom'
 
 function PageTitle(props) {
-  const propInsert = props.modificationList;
+
+  const navigate = useNavigate();
+
+
+  const userData = { "userName" : props.pageTitle[0], "userId" : props.userId}
+  const toUserProfile =() => {
+    navigate(props.path[0], {state: userData})
+  }
+
+  console.log(userData)
+
+  const recipeData = { "recipeName" : props.pageTitle[1], "recipeId" : props.recipeId}
+
+  const toRecipeProfile =() => {
+  navigate(props.path[1], {state: recipeData})
+}
+
+  console.log(recipeData)
 
   if (props.path) {
     return (
       <div className='pageTitle'>
-        <Link to={props.path[0]}>{props.pageTitle[0]}</Link> made <Link to={props.path[1]}>{props.pageTitle[1]}</Link>
+        <a onClick={()=>{toUserProfile()}}>{props.pageTitle[0]}</a> made <a onClick={()=>{toRecipeProfile()}}>{props.pageTitle[1]}</a>
       </div>
     )
 }

@@ -24,7 +24,7 @@ function RecipeCard() {
           if (isMounted) {
             setRecipeDetails(data);
             setIsLoading(false);
-            console.log(setRecipeDetails)
+            console.log(recipeDetails)
           }
         } catch (error) {
           console.error('Error fetching recipe_profile:', error);
@@ -46,21 +46,26 @@ function RecipeCard() {
 
     const recipeTitle = recipeDetails[0].title.toString();
     const totalTime = recipeDetails[0].total_time.toString();
-    const photos = recipeDetails[0].photos;
+    const recipeId = recipeDetails[0].id.toString();;
+
+    console.log(recipeDetails)
+    const photos = recipeDetails[0].images;
+
+    const recipeData = { "recipeName" : recipeTitle, "recipeId" : recipeId}
+    const toRecipeProfile =() => {
+      navigate(`/recipe/${recipeId}`, {state: recipeData})
+    }
 
     return (
-      <div className="card card-side bg-base-100 shadow-xl w-350 standardBorder overflow-hidden">
+      <div className="card card-side bg-base-100 shadow-xl w-350 standardBorder overflow-hidden mt-1.5" onClick={()=>{toRecipeProfile()}}>
         <figure>
           <img
             src={photos}
             alt="recipe image" className='recipeBoxCardImg' />
         </figure>
-        <div className="card-body card-compact bg-primary overflow-hidden text-secondary h-full">
+        <div className="card-body card-compact bg-primary overflow-hidden text-secondary p-4.5">
           <h2 className="card-title">{recipeTitle}</h2>
           <p>ready in {totalTime} minutes</p>
-          <div className="card-actions justify-end">
-            <button className="btn bg-accent" onClick={() => navigate('/recipeid')}>bake</button>
-          </div>
         </div>
       </div>
     )

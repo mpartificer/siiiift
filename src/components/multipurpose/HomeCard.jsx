@@ -8,14 +8,14 @@ import { createClient } from '@supabase/supabase-js'
 const supabase = createClient("https://iivozawppltyhsrkixlk.supabase.co", 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlpdm96YXdwcGx0eWhzcmtpeGxrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjYwODA3NDQsImV4cCI6MjA0MTY1Njc0NH0.aXIL8StA101tfblFh9yViIlXzwMHNjeoFfeiGu8fXGE')
 
 
-function PostReactionBox() {
+function PostReactionBox(props) {
     const navigate = useNavigate();
   
     return (
-    <div className='postReactionBox'>
-      <Heart size={40} color='#192F01'/>
-      <MessageCircle size={40} color='#192F01'/>
-      <History size={40} color='#192F01' onClick={() => navigate('/userid/recipeid')}/>
+    <div className='postReactionBox mt-1'>
+      <Heart size={40} color='#496354'/>
+      <MessageCircle size={40} color='#496354'/>
+      <History size={40} color='#496354' onClick={() => navigate(`/${props.username}/${props.recipeId}`)}/>
     </div>
     )
 }
@@ -64,15 +64,17 @@ function HomeCard() {
     const username = bakeDetails[0].username.toString();
     const recipeTitle = bakeDetails[0].recipe_title;
     const photos = bakeDetails[0].photos.toString();
+    const recipeId = bakeDetails[0].recipe_id.toString();
+    const userId = bakeDetails[0].user_id.toString();
 
       return (
         <div className='homeCard'>
-          <PageTitle pageTitle={[username, recipeTitle]} path={['/profile', '/recipeid']} />
+          <PageTitle pageTitle={[username, recipeTitle]} path={[`/profile/${username}`, `/recipe/${recipeId}`]} userId={userId} recipeId = {recipeId}/>
           {photos &&<img 
                 src={photos}
                 alt="recipe" className='recipeImg'
                 />}
-          <PostReactionBox />
+          <PostReactionBox username={username} recipeId={recipeId} />
         </div>
       )
   }

@@ -23,15 +23,15 @@ const router = createBrowserRouter([
         element: <HomeView />,
     },
     {
-        path: "/profile",
+        path: `/profile/:username`,
         element: <ProfileView />,
     },
     {
-        path: "/profile/following",
+        path: `/profile/:username/following`,
         element: <FollowersView />,
     },
     {
-        path: "/profile/followers",
+        path: `/profile/:username/followers`,
         element: <FollowersView />,
     },
     {
@@ -43,7 +43,7 @@ const router = createBrowserRouter([
         element: <FollowRequestView />,
     },
     {
-        path: "/userid/recipeid",
+        path: `/:username/:recipeid`,
         element: <BakeHistoryView />,
     },
     {
@@ -51,7 +51,7 @@ const router = createBrowserRouter([
         element: <PostYourBakeView />,
     },
     {
-        path: "/recipeid",
+        path: `/recipe/:recipeid`,
         element: <RecipeView />,
     },
     {

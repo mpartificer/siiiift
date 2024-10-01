@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import '../App.css'
 import HomeCard from './multipurpose/HomeCard.jsx'
 import RecipeCard from './multipurpose/RecipeCard.jsx'
+import { useLocation } from 'react-router-dom'
 import { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient.js'
 
@@ -32,15 +33,15 @@ function ProfileBlurb(props) {
     )
 }
   
-function ProfileSummary() {
+function ProfileSummary(props) {
     return (
       <div className='profileSummary'>
         <FollowBar>
-          <FollowTab measure="followers" path='/profile/followers'/>
-          <FollowTab measure="following" path='/profile/following'/>
-          <FollowTab measure="bakes"/>
+          <FollowTab number={props.followerCount} measure="followers" path='/profile/followers'/>
+          <FollowTab number={props.followingCount} measure="following" path='/profile/following'/>
+          <FollowTab number={props.bakes} measure="bakes"/>
         </FollowBar>
-        <ProfileBlurb profileDescription="jusalittlesomething"/>
+        <ProfileBlurb profileDescription={props.userBio}/>
       </div>
     )
 }
@@ -61,117 +62,110 @@ function ProfilePlateBottom(props) {
     )
 }
   
-function ProfilePlate() {
+function ProfilePlate(props) {
     return (
       <div className='profilePlate'>
         <ProfilePlateTop>
-          <PageTitle pageTitle="username" path={null} />
+          <PageTitle pageTitle={props.userName} path={null} />
           <SettingsButton />
         </ProfilePlateTop>
         <ProfilePlateBottom>
           <User size={140} color='#192F01'/>
-          <ProfileSummary />
+          <ProfileSummary bakes={props.bakes} followingCount={props.followingCount} followerCount={props.followerCount} userBio={props.userBio}/>
         </ProfilePlateBottom>
       </div>
     )
 }
 
 function ContentCap() {
-  return (
-    <ul className="menu menu-horizontal bg-primary rounded-box mt-6 w-350 flex flex-row justify-evenly">
-      <li>
-        <a className="tooltip" data-tip="bakes">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor">
-            <Cookie color='#EADDFF'/>
-          </svg>
-        </a>
-      </li>
-      <div className="divider divider-horizontal divider-accent"></div>
-      <li>
-        <a className="tooltip" data-tip="recipe box">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor">
-            <BookOpen color='#EADDFF'/>
-          </svg>
-        </a>
-      </li>
-    </ul>
-  )
-}
 
-function ContentCarousel() {
   return (
-    <div className="carousel w-350">
-      <div className="carousel-item w-full flex flex-column flex-wrap gap-2">
-        <HomeCard />
-        <HomeCard />
-        <HomeCard />
-      </div>
-      <div className="carousel-item w-full flex flex-column flex-wrap gap-2">
-        <RecipeCard />
-        <RecipeCard />
-        <RecipeCard />
-      </div>
+    <div role="tablist" className="tabs tabs-bordered w-350 menu menu-horizontal rounded-box">
+    <input type="radio" name="my_tabs_1" role="tab" className="tab grow" aria-label="bakes" />
+    <div role="tabpanel" className="tab-content">
+      <HomeCard />
     </div>
+  
+    <input
+      type="radio"
+      name="my_tabs_1"
+      role="tab"
+      className="tab grow"
+      aria-label="saves"
+      defaultChecked />
+    <div role="tabpanel" className="tab-content">
+      <RecipeCard />
+    </div>
+  
+  </div>
   )
 }
 
 function ProfileView() {
-  // const [userDetails, setUserDetails] = useState([]);
-  // const [isLoading, setIsLoading] = useState(true);
+  const location = useLocation();
 
-  // useEffect(() => {
-  //   let isMounted = true;
+  const userId = location.state.userId;
 
-  //   async function fetchUserDetails() {
-  //     try {
-  //       const { data: { user } } = await supabase.auth.getUser()
-  //       const parsedUserId = user.id;
+  const [userDetails, setUserDetails] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  //       const {data, error} = await supabase
-  //         .from('User_Profile')
-  //         .select()
-  //         .eq('user_auth_id', parsedUserId)
-
-  //       if (error) throw error;
-
-  //       if (isMounted) {
-  //         setUserDetails(data);
-  //         setIsLoading(false);
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching User_Profile:', error);
-  //       if (isMounted) setIsLoading(false);
-  //     }
-  //   }
-
-  // fetchUserDetails();
-
-  //   return () => {
-  //     isMounted = false;
-  //   };
-
-  // }, []);
-
-  // if (isLoading) return <div>Loading...</div>;
-
-  // console.log(userDetails);
   
+  useEffect(() => {
+    let isMounted = true;
+  
+    async function fetchUserDetails() {
+      try {
+        const { data, error } = await supabase
+          .from('user_profile')
+          .select('*')
+          .eq('user_auth_id', userId);
+
+          console.log(userId)
+
+        if (error) throw error;
+
+        if (isMounted) {
+          setUserDetails(data);
+          setIsLoading(false);
+          console.log(userDetails)
+        }
+      } catch (error) {
+        console.error('Error fetching user_profile:', error);
+        if (isMounted) setIsLoading(false);
+      }
+    }
+
+  fetchUserDetails();
+
+    return () => {
+      isMounted = false;
+    };
+
+  }, []);
+
+  if (isLoading) return <div>Loading...</div>;
+
+  if (!userDetails || userDetails.length === 0) return <div>No user details available</div>;
+
+  console.log(userDetails)
+
+  const followerCount = userDetails[0].followers ? userDetails[0]?.followers.length : 0;
+  const followingCount = userDetails[0].following ? userDetails[0]?.following.length : 0;
+  const userBio = userDetails[0]?.bio ;
+  const privacy = userDetails[0].private;
+  const bakes = userDetails[0].bakes ? userDetails[0]?.bakes.length : 0;
+  const recipes = userDetails[0].recipes ? userDetails[0]?.recipes : 0;
+  const userName = userDetails[0].username;
+
+  console.log(userDetails)
+  const photos = userDetails[0].images;
+
   return (
     <div>
       <Header />
-      <ProfilePlate />
+      <ProfilePlate userName={userName} followerCount={followerCount} followingCount={followingCount} 
+          userBio={userBio} bakes={bakes} recipes={recipes}/>
       <ContentCap />
-      <ContentCarousel />
       <Footer />
     </div>
   )

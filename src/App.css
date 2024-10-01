@@ -116,6 +116,20 @@ ul {
   gap:20px;
 }
 
+.carouselRecipeItem {
+  display: flex;
+    flex: none;
+    scroll-snap-align: start;
+}
+.carousel-start .carouselRecipeItem {
+  scroll-snap-align: start;
+}
+.carousel-center .carouselRecipeItem {
+  scroll-snap-align: center;
+}
+.carousel-end .carouselRecipeItem {
+  scroll-snap-align: end;
+}
 .profileBlurb {
   font-size: 15px;
   border-radius: 20px;
@@ -368,6 +382,8 @@ ul {
 
 .recipeBoxCardImg {
   max-height:250px;
+  min-height: 100%;
+  max-width:50%;
 }
 
 .recipeImg {
