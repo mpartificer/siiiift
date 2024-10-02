@@ -9,75 +9,75 @@ import { useLocation } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { supabase } from '../supabaseClient.js'
 
-function FollowersView(props) {
+function FollowersView() {
   const location = useLocation();
+  const { userId, userName, measure } = location.state || {};
 
-  const userId = location.state.userId;
-  console.log(userId, typeof userId)
-  const userName = location.state.userName
-
-  const [userDetails, setUserDetails] = useState([]);
+  const [userDetails, setUserDetails] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchResults, setSearchResults] = useState([]);
 
-  
   useEffect(() => {
-    let isMounted = true;
-  
     async function fetchUserDetails() {
+      if (!userId) {
+        console.error('No userId provided');
+        setIsLoading(false);
+        return;
+      }
+
       try {
         const { data, error } = await supabase
           .from('user_profile')
           .select('*')
-          .eq('user_auth_id', userId);
-
-          console.log(userId)
+          .eq('user_auth_id', userId)
+          .single();
 
         if (error) throw error;
 
-        if (isMounted) {
-          setUserDetails(data);
-          setIsLoading(false);
-          console.log(userDetails)
-        }
+        setUserDetails(data);
+        setSearchResults(data[measure] || []);
       } catch (error) {
         console.error('Error fetching user_profile:', error);
-        if (isMounted) setIsLoading(false);
+      } finally {
+        setIsLoading(false);
       }
     }
 
-  fetchUserDetails();
-
-    return () => {
-      isMounted = false;
-    };
-
-  }, []);
+    fetchUserDetails();
+  }, [userId, measure]);
 
   if (isLoading) return <div>Loading...</div>;
+  if (!userDetails) return <div>No user details available</div>;
 
-  if (!userDetails || userDetails.length === 0) return <div>No user details available</div>;
+  const followerCount = userDetails.followers?.length || 0;
+  const followingCount = userDetails.following?.length || 0;
+  const bakesCount = userDetails.bakes?.length || 0;
 
-  console.log(userDetails)
+  return (
+    <div className='followersView'>
+      <Header />
+      <FollowBar>
+        <FollowTab number={followerCount} measure="followers" username={userName} userId={userId} />
+        <FollowTab number={followingCount} measure="following" username={userName} userId={userId} />
+        <FollowTab number={bakesCount} measure="bakes" username={userName} userId={userId}/>
+      </FollowBar>
+      <SearchBar />
+      {searchResults.length > 0 ? (
+        searchResults.map(result => (
+          <SearchResult
+            key={result.id || result.user_id}
+            id={result.id || result.user_id}
+            username={result.username}
+            searchReturnValue={result.username}
+            // Add any other props that SearchResult expects
+          />
+        ))
+      ) : (
+        <div>No {measure} available</div>
+      )}
+      <Footer />
+    </div>
+  )
+}
 
-  const followerCount = userDetails[0].followers ? userDetails[0]?.followers.length : 0;
-  const followingCount = userDetails[0].following ? userDetails[0]?.following.length : 0;
-  const bakesCount = userDetails[0].bakes ? recipeDetails[0].bakes.length : 0;
-
-    return (
-      <div className='followersView'>
-        <Header />
-        <FollowBar>
-          <FollowTab number={followerCount} measure="followers" username={userName} userId={userId} />
-          <FollowTab number={followingCount} measure="following" username={userName} userId={userId} />
-          <FollowTab number={bakesCount} measure="bakes" username={userName} userId={userId}/>
-        </FollowBar>
-        <SearchBar />
-        <SearchResult searchReturnValue="username" buttonValue="follow"/>
-        <SearchResult searchReturnValue="username" buttonValue="follow"/>
-        <SearchResult searchReturnValue="username" buttonValue="follow"/>
-        <Footer />
-      </div>
-    )
-  }
-
-  export default FollowersView
+export default FollowersView

@@ -8,7 +8,7 @@ function FollowTab(props) {
   const followingPath = `/profile/${props.username}/following`
   const bakePath = `/profile/${props.username}`
 
-  const userData = { "userName" : props.username, "userId" : props.userId }
+  const userData = { "userName" : props.username, "userId" : props.userId, "measure" : props.measure }
   const toUserFollowers =() => {
     navigate(followerPath, {state: userData})
   }
