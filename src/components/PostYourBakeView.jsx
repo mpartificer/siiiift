@@ -1,5 +1,4 @@
 import '../App.css'
-import BigSubmitButton from './multipurpose/BigSubmitButton.jsx'
 import Header from './multipurpose/Header.jsx'
 import Footer from './multipurpose/Footer.jsx'
 import RecipeDropDown from './multipurpose/RecipeDropDown.jsx'

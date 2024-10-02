@@ -34,12 +34,13 @@ function ProfileBlurb(props) {
 }
   
 function ProfileSummary(props) {
+
     return (
       <div className='profileSummary'>
         <FollowBar>
-          <FollowTab number={props.followerCount} measure="followers" path='/profile/followers'/>
-          <FollowTab number={props.followingCount} measure="following" path='/profile/following'/>
-          <FollowTab number={props.bakes} measure="bakes"/>
+          <FollowTab number={props.followerCount} measure="followers" username={props.username} userId={props.userId} />
+          <FollowTab number={props.followingCount} measure="following"  username={props.username} userId={props.userId} />
+          <FollowTab number={props.bakes} measure="bakes" username={props.username} userId={props.userId} />
         </FollowBar>
         <ProfileBlurb profileDescription={props.userBio}/>
       </div>
@@ -71,13 +72,15 @@ function ProfilePlate(props) {
         </ProfilePlateTop>
         <ProfilePlateBottom>
           <User size={140} color='#192F01'/>
-          <ProfileSummary bakes={props.bakes} followingCount={props.followingCount} followerCount={props.followerCount} userBio={props.userBio}/>
+          <ProfileSummary bakes={props.bakes} followingCount={props.followingCount} followerCount={props.followerCount} username={props.userName} userId={props.userId} userBio={props.userBio}/>
         </ProfilePlateBottom>
       </div>
     )
 }
 
-function ContentCap() {
+function ContentCap(props) {
+
+  const recipes = props.recipes
 
   return (
     <div role="tablist" className="tabs tabs-bordered w-350 menu menu-horizontal rounded-box">
@@ -94,7 +97,19 @@ function ContentCap() {
       aria-label="saves"
       defaultChecked />
     <div role="tabpanel" className="tab-content">
-      <RecipeCard />
+    {recipes && recipes.length > 0 ? (
+        recipes.map(recipe => (
+          <RecipeCard
+            key={recipe.id}
+            recipeTitle={recipe.recipetitle}
+            totalTime={recipe.totaltime}
+            recipeId={recipe.id}
+            photo={recipe.photo}
+          />
+        ))
+      ) : (
+        <div>No recipes available</div>
+      )}
     </div>
   
   </div>
@@ -153,9 +168,11 @@ function ProfileView() {
   const followingCount = userDetails[0].following ? userDetails[0]?.following.length : 0;
   const userBio = userDetails[0]?.bio ;
   const privacy = userDetails[0].private;
-  const bakes = userDetails[0].bakes ? userDetails[0]?.bakes.length : 0;
-  const recipes = userDetails[0].recipes ? userDetails[0]?.recipes : 0;
+  const bakesCount = userDetails[0].bakes ? userDetails[0]?.bakes.length : 0;
+  const recipesCount = userDetails[0].recipes ? userDetails[0]?.recipeslength : 0;
   const userName = userDetails[0].username;
+  const bakes = userDetails[0].bakes
+  const recipes = userDetails[0].recipes
 
   console.log(userDetails)
   const photos = userDetails[0].images;
@@ -164,8 +181,8 @@ function ProfileView() {
     <div>
       <Header />
       <ProfilePlate userName={userName} followerCount={followerCount} followingCount={followingCount} 
-          userBio={userBio} bakes={bakes} recipes={recipes}/>
-      <ContentCap />
+          userBio={userBio} bakes={bakesCount} recipes={recipesCount} userId={userId} />
+      <ContentCap recipes={recipes} bakes={bakes} />
       <Footer />
     </div>
   )
