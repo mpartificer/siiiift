@@ -60,6 +60,10 @@ function Footer() {
     navigate(`/profile/${userName}`, { state: userData })
   }
 
+  const toUserRecipeBox = () => {
+    navigate('/recipebox', { state: userData })
+  }
+
   return (
     <div className="btm-nav footerBackground">
       <button className='navIcons' onClick={() => navigate('/')}>
@@ -71,7 +75,7 @@ function Footer() {
       <button className='navIcons' onClick={() => navigate('/postyourbake')}>
         <Plus size={36} color="#FAE2D5" />
       </button>
-      <button className='navIcons' onClick={() => navigate('/recipebox')}>
+      <button className='navIcons' onClick={toUserRecipeBox}>
         <BookOpen size={36} color="#FAE2D5" />
       </button>
       <button className='navIcons' onClick={toUserProfile}>

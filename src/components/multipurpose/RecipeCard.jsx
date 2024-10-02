@@ -3,55 +3,56 @@ import '../../App.css';
 import { useState, useEffect } from 'react';
 import { supabase } from "../../supabaseClient.js"
 
-function RecipeCard() {
-    const navigate = useNavigate()
+function RecipeCard(props) {
+    // const navigate = useNavigate()
 
-    const [recipeDetails, setRecipeDetails] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
+    // const [recipeDetails, setRecipeDetails] = useState([]);
+    // const [isLoading, setIsLoading] = useState(true);
 
   
-    useEffect(() => {
-      let isMounted = true;
+    // useEffect(() => {
+    //   let isMounted = true;
   
-      async function fetchRecipeDetails() {
-        try {
-          const { data, error } = await supabase
-            .from('recipe_profile')
-            .select('*');
+    //   async function fetchRecipeDetails() {
+    //     try {
+    //       const { data, error } = await supabase
+    //         .from('recipe_profile')
+    //         .select('*');
   
-          if (error) throw error;
+    //       if (error) throw error;
   
-          if (isMounted) {
-            setRecipeDetails(data);
-            setIsLoading(false);
-            console.log(recipeDetails)
-          }
-        } catch (error) {
-          console.error('Error fetching recipe_profile:', error);
-          if (isMounted) setIsLoading(false);
-        }
-      }
+    //       if (isMounted) {
+    //         setRecipeDetails(data);
+    //         setIsLoading(false);
+    //         console.log(recipeDetails)
+    //       }
+    //     } catch (error) {
+    //       console.error('Error fetching recipe_profile:', error);
+    //       if (isMounted) setIsLoading(false);
+    //     }
+    //   }
   
-    fetchRecipeDetails();
+    // fetchRecipeDetails();
   
-      return () => {
-        isMounted = false;
-      };
+    //   return () => {
+    //     isMounted = false;
+    //   };
 
-    }, []);
+    // }, []);
   
-    if (isLoading) return <div>Loading...</div>;
+    // if (isLoading) return <div>Loading...</div>;
 
-    if (!recipeDetails || recipeDetails.length === 0) return <div>No recipe details available</div>;
+    // if (!recipeDetails || recipeDetails.length === 0) return <div>No recipe details available</div>;
 
-    const recipeTitle = recipeDetails[0].title.toString();
-    const totalTime = recipeDetails[0].total_time.toString();
-    const recipeId = recipeDetails[0].id.toString();;
+    // const recipeTitle = recipeDetails[0].title.toString();
+    // const totalTime = recipeDetails[0].total_time.toString();
+    // const recipeId = recipeDetails[0].id.toString();;
 
-    console.log(recipeDetails)
-    const photos = recipeDetails[0].images;
+    // console.log(recipeDetails)
+    // const photos = recipeDetails[0].images;
 
-    const recipeData = { "recipeName" : recipeTitle, "recipeId" : recipeId}
+
+    const recipeData = { "recipeName" : props.recipeTitle, "recipeId" : props.recipeId}
     const toRecipeProfile =() => {
       navigate(`/recipe/${recipeId}`, {state: recipeData})
     }
@@ -60,12 +61,12 @@ function RecipeCard() {
       <div className="card card-side bg-base-100 shadow-xl w-350 standardBorder overflow-hidden mt-1.5" onClick={()=>{toRecipeProfile()}}>
         <figure>
           <img
-            src={photos}
+            src={props.photo}
             alt="recipe image" className='recipeBoxCardImg' />
         </figure>
         <div className="card-body card-compact bg-primary overflow-hidden text-secondary p-4.5">
-          <h2 className="card-title">{recipeTitle}</h2>
-          <p>ready in {totalTime} minutes</p>
+          <h2 className="card-title">{props.recipeTitle}</h2>
+          <p>ready in {props.totalTime} </p>
         </div>
       </div>
     )
