@@ -20,8 +20,6 @@ function PageTitle(props) {
   navigate(props.path[1], {state: recipeData})
 }
 
-  console.log(recipeData)
-
   if (props.path) {
     return (
       <div className='pageTitle'>
