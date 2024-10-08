@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from "../../supabaseClient.js"
 
 function RecipeCard(props) {
-    // const navigate = useNavigate()
+    const navigate = useNavigate()
 
     // const [recipeDetails, setRecipeDetails] = useState([]);
     // const [isLoading, setIsLoading] = useState(true);
@@ -54,7 +54,7 @@ function RecipeCard(props) {
 
     const recipeData = { "recipeName" : props.recipeTitle, "recipeId" : props.recipeId}
     const toRecipeProfile =() => {
-      navigate(`/recipe/${recipeId}`, {state: recipeData})
+      navigate(`/recipe/${props.recipeId}`, {state: recipeData})
     }
 
     return (

@@ -72,7 +72,7 @@ function FollowersView() {
             id={result.id || result.user_id}
             username={result.username}
             searchReturnValue={result.username}
-            currentUserId={result.id}
+            currentUserId={userId}
           />
         ))
       ) : (

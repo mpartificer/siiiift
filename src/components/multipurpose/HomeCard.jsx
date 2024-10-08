@@ -33,7 +33,7 @@ function HomeCard() {
       async function fetchBakeDetails() {
         try {
           const { data, error } = await supabase
-            .from('Bake_Details')
+            .from('bake_details_view')
             .select('*');
   
           if (error) throw error;

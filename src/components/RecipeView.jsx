@@ -128,7 +128,7 @@ function PopularityCheck(props) {
     return (
         <div className='grid grid-cols-2 '>
             <PopularityCounter Label='Heart' Count={props.likes} />
-            <PopularityCounter Label='Star' Count='4.5' />
+            <PopularityCounter Label='Star' Count={props.rating} />
             <PopularityCounter Label='ChefHat' Count={props.bakes} />
             <PopularityCounter Label='Bookmark' Count={props.saves} />
         </div>
@@ -181,7 +181,7 @@ function RecipeSummaryPanel(props) {
         <div className='recipeCheckPanel flex flex-row p-5 justify-between'>
             <TimeCheck totalTime={props.totalTime} cookTime={props.cookTime} prepTime={props.prepTime} />
             <div className="divider divider-primary divider-horizontal"></div>
-            <PopularityCheck likes={props.likes} saves={props.saves} bakes={props.bakes} />
+            <PopularityCheck likes={props.likes} saves={props.saves} bakes={props.bakes} rating={props.rating} />
         </div>
     )
 }
@@ -196,68 +196,67 @@ function RecipeCheckTitle(props) {
 }
 
 function RecipeView() {
-    const location = useLocation();
+        const location = useLocation();
+        const recipeId = location.state.recipeId;
+    
+        const [recipeDetails, setRecipeDetails] = useState(null);
+        const [ratingDetails, setRatingDetails] = useState(null);
+        const [isLoading, setIsLoading] = useState(true);
+    
+        useEffect(() => {
+            async function fetchData() {
+                try {
+                    const [recipeResponse, ratingResponse] = await Promise.all([
+                        supabase
+                            .from('recipe_profile')
+                            .select('*')
+                            .eq('id', recipeId)
+                            .single(),
+                        supabase
+                            .from('bake_recipe_ratings')
+                            .select('*')
+                            .eq('recipe_id', recipeId)
+                    ]);
+    
+                    if (recipeResponse.error) throw recipeResponse.error;
+                    if (ratingResponse.error) throw ratingResponse.error;
+    
+                    setRecipeDetails(recipeResponse.data);
+                    setRatingDetails(ratingResponse.data);
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                } finally {
+                    setIsLoading(false);
+                }
+            }
+    
+            fetchData();
+        }, [recipeId]);
+    
+        if (isLoading) return <div>Loading...</div>;
+        if (!recipeDetails) return <div>No recipe details available</div>;
 
-    const recipeId = location.state.recipeId;
+        console.log(ratingDetails)
 
-    console.log(recipeId)
+    const recipeTitle = recipeDetails.title.toString();
+    const totalTime = recipeDetails.total_time.toString();
+    const cookTime = recipeDetails.cook_time.toString();
+    const prepTime = recipeDetails.prep_time.toString();
+    const likes = recipeDetails.likes ? recipeDetails.likes.length : 0;
+    const bakes = recipeDetails.bakes ? recipeDetails.bakes.length : 0;
+    const saves = recipeDetails.saves ? recipeDetails.saves.length : 0;
+    const ingredients = recipeDetails?.ingredients || [];
+    const instructions = recipeDetails?.instructions || [];
+    const originalLink = recipeDetails.original_link;
+    const photos = recipeDetails.images;
 
-    const navigate = useNavigate()
+    let ratingSum = 0;
+    
+    for (let i=0; i<ratingDetails[0].all_ratings.length; i++) {
+        ratingSum += ratingDetails[0].all_ratings[i];
+    }
 
-    const [recipeDetails, setRecipeDetails] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-
-  
-    useEffect(() => {
-      let isMounted = true;
-  
-      async function fetchRecipeDetails() {
-        try {
-          const { data, error } = await supabase
-            .from('recipe_profile')
-            .select('*')
-            .eq('id', recipeId);
-
-            console.log(recipeId)
-  
-          if (error) throw error;
-  
-          if (isMounted) {
-            setRecipeDetails(data);
-            setIsLoading(false);
-            console.log(recipeDetails)
-          }
-        } catch (error) {
-          console.error('Error fetching recipe_profile:', error);
-          if (isMounted) setIsLoading(false);
-        }
-      }
-  
-    fetchRecipeDetails();
-  
-      return () => {
-        isMounted = false;
-      };
-
-    }, []);
-  
-    if (isLoading) return <div>Loading...</div>;
-
-    if (!recipeDetails || recipeDetails.length === 0) return <div>No recipe details available</div>;
-
-    const recipeTitle = recipeDetails[0].title.toString();
-    const totalTime = recipeDetails[0].total_time.toString();
-    const cookTime = recipeDetails[0].cook_time.toString();
-    const prepTime = recipeDetails[0].prep_time.toString();
-    const likes = recipeDetails[0].likes ? recipeDetails[0].likes.length : 0;
-    const bakes = recipeDetails[0].bakes ? recipeDetails[0].bakes.length : 0;
-    const saves = recipeDetails[0].saves ? recipeDetails[0].saves.length : 0;
-    const ingredients = recipeDetails[0]?.ingredients || [];
-    const instructions = recipeDetails[0]?.instructions || [];
-    const originalLink = recipeDetails[0].original_link;
-
-    console.log(recipeDetails)
-    const photos = recipeDetails[0].images;
+    let rating = ratingSum / ratingDetails[0].all_ratings.length;
 
     return (
         <div className='followersView'>
@@ -266,7 +265,7 @@ function RecipeView() {
             <img src={photos} alt="recipe image" className='recipeImg' />
             <RecipeOptions originalLink={originalLink} />
             <RecipeSummaryPanel totalTime={totalTime} cookTime={cookTime} prepTime={prepTime} 
-                                likes={likes} bakes={bakes} saves={saves}/>
+                                likes={likes} bakes={bakes} saves={saves} rating={rating} />
             <RecipeCheckPanel propInsert={ingredients} confirmRecipeItem='ingredients' />
             <RecipeCheckPanel propInsert={instructions} confirmRecipeItem='instructions' />
             <Footer />

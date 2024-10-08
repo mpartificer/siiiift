@@ -6,7 +6,6 @@ import { Cookie } from 'lucide-react'
 import { BookOpen } from 'lucide-react'
 import Header from './multipurpose/Header.jsx'
 import Footer from './multipurpose/Footer.jsx'
-import PageTitle from './multipurpose/PageTitle.jsx'
 import { useNavigate } from 'react-router-dom';
 import '../App.css'
 import HomeCard from './multipurpose/HomeCard.jsx'
@@ -64,11 +63,12 @@ function ProfilePlateBottom(props) {
 }
   
 function ProfilePlate(props) {
+  console.log(props.userName)
     return (
       <div className='profilePlate'>
         <ProfilePlateTop>
-          <PageTitle pageTitle={props.userName} path={null} />
-          <SettingsButton />
+        <div className='pageTitle'>{props.userName}</div>
+        <SettingsButton />
         </ProfilePlateTop>
         <ProfilePlateBottom>
           <User size={140} color='#192F01'/>
@@ -123,6 +123,8 @@ function ProfileView() {
 
   const [userDetails, setUserDetails] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [followerDetails, setFollowerDetails] = useState([]);
+  const [followingDetails, setFollowingDetails] = useState([]);
 
   
   useEffect(() => {
@@ -130,17 +132,30 @@ function ProfileView() {
   
     async function fetchUserDetails() {
       try {
-        const { data, error } = await supabase
-          .from('user_profile')
-          .select('*')
-          .eq('user_auth_id', userId);
+
+        const [userResponse, followingResponse, followerResponse, error] = await Promise.all([
+          supabase
+            .from('user_profile')
+            .select('*')
+            .eq('user_auth_id', userId),
+          supabase
+            .from('user_following_view')
+            .select('*')
+            .eq('user_id', userId),
+          supabase
+            .from('user_followers_view')
+            .select('*')
+            .eq('user_id', userId)
+      ]);
 
           console.log(userId)
 
         if (error) throw error;
 
         if (isMounted) {
-          setUserDetails(data);
+          setUserDetails(userResponse);
+          setFollowerDetails(followerResponse);
+          setFollowingDetails(followingResponse);
           setIsLoading(false);
           console.log(userDetails)
         }
@@ -163,19 +178,22 @@ function ProfileView() {
   if (!userDetails || userDetails.length === 0) return <div>No user details available</div>;
 
   console.log(userDetails)
+  console.log(followerDetails)
+  console.log(followingDetails)
 
-  const followerCount = userDetails[0].followers ? userDetails[0]?.followers.length : 0;
-  const followingCount = userDetails[0].following ? userDetails[0]?.following.length : 0;
-  const userBio = userDetails[0]?.bio ;
-  const privacy = userDetails[0].private;
-  const bakesCount = userDetails[0].bakes ? userDetails[0]?.bakes.length : 0;
-  const recipesCount = userDetails[0].recipes ? userDetails[0]?.recipeslength : 0;
-  const userName = userDetails[0].username;
-  const bakes = userDetails[0].bakes
-  const recipes = userDetails[0].recipes
+  const followerCount = followerDetails.data.length;
+  const followingCount = followingDetails.data.length;
+  console.log(followingCount)
+  const userBio = userDetails?.data[0].bio ;
+  const privacy = userDetails.data[0].private;
+  const bakesCount = userDetails.data[0].bakes ? userDetails?.data[0].bakes.length : 0;
+  const recipesCount = userDetails.data[0].recipes ? userDetails?.data[0].recipes.length : 0;
+  const userName = userDetails.data[0].username;
+  const bakes = userDetails.data[0].bakes
+  const recipes = userDetails.data[0].recipes
 
   console.log(userDetails)
-  const photos = userDetails[0].images;
+  const photos = userDetails.images;
 
   return (
     <div>
