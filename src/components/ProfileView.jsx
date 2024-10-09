@@ -63,7 +63,6 @@ function ProfilePlateBottom(props) {
 }
   
 function ProfilePlate(props) {
-  console.log(props.userName)
     return (
       <div className='profilePlate'>
         <ProfilePlateTop>
@@ -79,41 +78,57 @@ function ProfilePlate(props) {
 }
 
 function ContentCap(props) {
+  const { recipes, bakes } = props;
 
-  const recipes = props.recipes
+  const cookie = <Cookie size={24} className="mr-2" />
+
+  const bookOpen = <BookOpen size={24} className="mr-2" />
+
 
   return (
-    <div role="tablist" className="tabs tabs-bordered w-350 menu menu-horizontal rounded-box">
-    <input type="radio" name="my_tabs_1" role="tab" className="tab grow" aria-label="bakes" />
-    <div role="tabpanel" className="tab-content">
-      <HomeCard />
+    <div className="w-full">
+      <div role="tablist" className="tabs tabs-bordered w-full">
+        <input type="radio" name="my_tabs_1" role="tab" className="tab w-1/2" aria-label={cookie} />
+        <div role="tab" className="tab w-1/2 flex items-center justify-center">
+          
+        </div>
+
+        <input
+          type="radio"
+          name="my_tabs_1"
+          role="tab"
+          className="tab w-1/2"
+          aria-label={bookOpen}
+          defaultChecked
+        />
+        <div role="tab" className="tab w-1/2 flex items-center justify-center">
+          
+        </div>
+      </div>
+
+      <div className="tab-content mt-4">
+        <div role="tabpanel" className={`${props['aria-label'] === 'bakes' ? '' : 'hidden'}`}>
+          <HomeCard />
+        </div>
+
+        <div role="tabpanel" className={`${props['aria-label'] === 'recipes' ? '' : 'hidden'}`}>
+          {recipes && recipes.length > 0 ? (
+            recipes.map(recipe => (
+              <RecipeCard
+                key={recipe.id}
+                recipeTitle={recipe.recipetitle}
+                totalTime={recipe.totaltime}
+                recipeId={recipe.id}
+                photo={recipe.photo}
+              />
+            ))
+          ) : (
+            <div>No recipes available</div>
+          )}
+        </div>
+      </div>
     </div>
-  
-    <input
-      type="radio"
-      name="my_tabs_1"
-      role="tab"
-      className="tab grow"
-      aria-label="saves"
-      defaultChecked />
-    <div role="tabpanel" className="tab-content">
-    {recipes && recipes.length > 0 ? (
-        recipes.map(recipe => (
-          <RecipeCard
-            key={recipe.id}
-            recipeTitle={recipe.recipetitle}
-            totalTime={recipe.totaltime}
-            recipeId={recipe.id}
-            photo={recipe.photo}
-          />
-        ))
-      ) : (
-        <div>No recipes available</div>
-      )}
-    </div>
-  
-  </div>
-  )
+  );
 }
 
 function ProfileView() {
@@ -148,7 +163,6 @@ function ProfileView() {
             .eq('user_id', userId)
       ]);
 
-          console.log(userId)
 
         if (error) throw error;
 
@@ -157,7 +171,6 @@ function ProfileView() {
           setFollowerDetails(followerResponse);
           setFollowingDetails(followingResponse);
           setIsLoading(false);
-          console.log(userDetails)
         }
       } catch (error) {
         console.error('Error fetching user_profile:', error);
@@ -177,13 +190,9 @@ function ProfileView() {
 
   if (!userDetails || userDetails.length === 0) return <div>No user details available</div>;
 
-  console.log(userDetails)
-  console.log(followerDetails)
-  console.log(followingDetails)
 
   const followerCount = followerDetails.data.length;
   const followingCount = followingDetails.data.length;
-  console.log(followingCount)
   const userBio = userDetails?.data[0].bio ;
   const bakesCount = userDetails.data[0].bakes ? userDetails?.data[0].bakes.length : 0;
   const recipesCount = userDetails.data[0].recipes ? userDetails?.data[0].recipes.length : 0;
@@ -191,7 +200,6 @@ function ProfileView() {
   const bakes = userDetails.data[0].bakes
   const recipes = userDetails.data[0].recipes
 
-  console.log(userDetails)
   const photos = userDetails.images;
 
   return (

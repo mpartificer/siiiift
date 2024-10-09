@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import {useLocation} from 'react-router-dom'
 import { supabase } from '../supabaseClient.js';
 import '../App.css';
 import Header from './multipurpose/Header.jsx';
@@ -22,6 +22,11 @@ function SearchFilterBar({ activeFilter, setActiveFilter }) {
   return (
     <div className='searchFilterBar'>
       <SearchFilter 
+        filterValue='all' 
+        isActive={activeFilter === 'all'} 
+        onClick={setActiveFilter} 
+      />
+      <SearchFilter 
         filterValue='users' 
         isActive={activeFilter === 'users'} 
         onClick={setActiveFilter} 
@@ -41,45 +46,63 @@ function SearchView() {
   const currentUserId = location.state.userId;
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
-  const [activeFilter, setActiveFilter] = useState('users');
+  const [allSearchResults, setAllSearchResults] = useState([]);
+  const [filteredResults, setFilteredResults] = useState([]);
+  const [activeFilter, setActiveFilter] = useState('all');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const handleSearch = async (e) => {
-    e.preventDefault();
+  const performSearch = async () => {
     setIsLoading(true);
     setError(null);
 
     try {
       let results = [];
-      if (activeFilter === 'users' || activeFilter === 'all') {
-        const { data: userData, error: userError } = await supabase
-          .from('user_profile')
-          .select('user_auth_id, username')
-          .ilike('username', `%${searchTerm}%`);
+      const { data: userData, error: userError } = await supabase
+        .from('user_profile')
+        .select('user_auth_id, username')
+        .ilike('username', `%${searchTerm}%`);
 
-        if (userError) throw userError;
-        results = [...results, ...userData.map(user => ({ ...user, type: 'user' }))];
-      }
+      if (userError) throw userError;
+      results = [...results, ...userData.map(user => ({ ...user, type: 'user' }))];
 
-      if (activeFilter === 'recipes' || activeFilter === 'all') {
-        const { data: recipeData, error: recipeError } = await supabase
-          .from('recipe_profile')
-          .select('id, title')
-          .ilike('title', `%${searchTerm}%`);
+      const { data: recipeData, error: recipeError } = await supabase
+        .from('recipe_profile')
+        .select('id, title')
+        .ilike('title', `%${searchTerm}%`);
 
-        if (recipeError) throw recipeError;
-        results = [...results, ...recipeData.map(recipe => ({ ...recipe, type: 'recipe' }))];
-      }
+      if (recipeError) throw recipeError;
+      results = [...results, ...recipeData.map(recipe => ({ ...recipe, type: 'recipe' }))];
 
-      setSearchResults(results);
+      setAllSearchResults(results);
+      filterResults(results, activeFilter);
     } catch (error) {
       console.error('Error performing search:', error);
       setError('An error occurred while searching. Please try again.');
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const filterResults = (results, filter) => {
+    if (filter === 'all') {
+      setFilteredResults(results);
+    } else {
+      setFilteredResults(results.filter(result => result.type === filter.slice(0, -1)));
+    }
+  };
+
+  useEffect(() => {
+    filterResults(allSearchResults, activeFilter);
+  }, [activeFilter, allSearchResults]);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    performSearch();
+  };
+
+  const handleFilterChange = (filter) => {
+    setActiveFilter(filter);
   };
 
   return (
@@ -91,17 +114,17 @@ function SearchView() {
           onChange={(e) => setSearchTerm(e.target.value)} 
         />
       </form>
-      <SearchFilterBar activeFilter={activeFilter} setActiveFilter={setActiveFilter} />
+      <SearchFilterBar activeFilter={activeFilter} setActiveFilter={handleFilterChange} />
       {isLoading && <p>Loading...</p>}
       {error && <p className="error-message">{error}</p>}
-      {searchResults.map((result) => (
-      <SearchResult 
-        key={result.type === 'user' ? result.user_auth_id : result.id}
-        id={result.type === 'user' ? result.user_auth_id : result.id}
-        currentUserId={currentUserId} // Make sure to pass this from the parent component
-        searchReturnValue={result.type === 'user' ? result.username : result.title}
-        type={result.type}
-      />
+      {filteredResults.map((result) => (
+        <SearchResult 
+          key={result.type === 'user' ? result.user_auth_id : result.id}
+          id={result.type === 'user' ? result.user_auth_id : result.id}
+          currentUserId={currentUserId}
+          searchReturnValue={result.type === 'user' ? result.username : result.title}
+          type={result.type}
+        />
       ))}
       <Footer />
     </div>
