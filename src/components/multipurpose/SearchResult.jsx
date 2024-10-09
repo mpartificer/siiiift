@@ -1,78 +1,113 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../supabaseClient.js';
-import { User } from 'lucide-react';
+import { User, Book } from 'lucide-react';
 
-function SearchResult({ id, username, currentUserId, searchReturnValue }) {
-  const [isFollowing, setIsFollowing] = useState(false);
+function SearchResult({ id, currentUserId, searchReturnValue, type }) {
+  const [isFollowingOrSaved, setIsFollowingOrSaved] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    checkFollowStatus();
-  }, [id, currentUserId]);
+    checkStatus();
+  }, [id, currentUserId, type]);
 
-  async function checkFollowStatus() {
+  async function checkStatus() {
     setIsLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('followers')
-        .select('*')
-        .eq('follower_id', currentUserId)
-        .eq('following_id', id);
+      if (type === 'user') {
+        const { data, error } = await supabase
+          .from('followers')
+          .select('*')
+          .eq('follower_id', currentUserId)
+          .eq('following_id', id);
 
-      console.log(data)
+        if (error) throw error;
+        setIsFollowingOrSaved(data.length > 0);
+      } else if (type === 'recipe') {
+        const { data, error } = await supabase
+          .from('saves')
+          .select('*')
+          .eq('user_id', currentUserId)
+          .eq('recipe_id', id);
 
-      if (error) throw error;
-
-      setIsFollowing(data.length > 0);
+        if (error) throw error;
+        setIsFollowingOrSaved(data.length > 0);
+      }
     } catch (error) {
-      console.error('Error checking follow status:', error);
-      setError('Failed to check follow status');
+      console.error('Error checking status:', error);
+      setError('Failed to check status');
     } finally {
       setIsLoading(false);
     }
   }
 
-  async function toggleFollow() {
+  async function toggleAction() {
     setIsLoading(true);
     setError(null);
 
     try {
-      if (isFollowing) {
-        // Unfollow
-        const { error } = await supabase
-          .from('followers')
-          .delete()
-          .eq('follower_id', currentUserId)
-          .eq('following_id', id);
+      if (type === 'user') {
+        if (isFollowingOrSaved) {
+          // Unfollow
+          const { error } = await supabase
+            .from('followers')
+            .delete()
+            .eq('follower_id', currentUserId)
+            .eq('following_id', id);
 
-        if (error) throw error;
-      } else {
-        // Follow
-        const { error } = await supabase
-          .from('followers')
-          .insert({ follower_id: currentUserId, following_id: id });
+          if (error) throw error;
+        } else {
+          // Follow
+          const { error } = await supabase
+            .from('followers')
+            .insert({ follower_id: currentUserId, following_id: id });
 
-        if (error) throw error;
+          if (error) throw error;
+        }
+      } else if (type === 'recipe') {
+        if (isFollowingOrSaved) {
+          // Unsave
+          const { error } = await supabase
+            .from('saves')
+            .delete()
+            .eq('user_id', currentUserId)
+            .eq('recipe_id', id);
+
+          if (error) throw error;
+        } else {
+          // Save
+          const { error } = await supabase
+            .from('saves')
+            .insert({ user_id: currentUserId, recipe_id: id });
+
+          if (error) throw error;
+        }
       }
 
-      await checkFollowStatus(); // Re-check the status after toggling
+      await checkStatus(); // Re-check the status after toggling
     } catch (error) {
-      console.error('Error toggling follow status:', error);
-      setError('Failed to update follow status');
+      console.error('Error toggling status:', error);
+      setError('Failed to update status');
     } finally {
       setIsLoading(false);
     }
+  }
+
+  function getButtonText() {
+    if (isLoading) return 'Loading...';
+    if (type === 'user') return isFollowingOrSaved ? 'unfollow' : 'follow';
+    if (type === 'recipe') return isFollowingOrSaved ? 'unsave' : 'save';
+    return 'Action';
   }
 
   return (
     <div className='searchResult'>
       <div className='searchDetail'>
-        <User size={50} color='#EADDFF' /> 
+        {type === 'user' ? <User size={50} color='#EADDFF' /> : <Book size={50} color='#EADDFF' />}
         {searchReturnValue}
       </div>
-      <button className="searchResultButton" onClick={toggleFollow} disabled={isLoading}>
-        {isLoading ? 'Loading...' : isFollowing ? 'Unfollow' : 'Follow'}
+      <button className="searchResultButton" onClick={toggleAction} disabled={isLoading}>
+        {getButtonText()}
       </button>
       {error && <p className="error-message">{error}</p>}
     </div>

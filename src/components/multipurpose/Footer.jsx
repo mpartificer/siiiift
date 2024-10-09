@@ -64,12 +64,16 @@ function Footer() {
     navigate('/recipebox', { state: userData })
   }
 
+  const toSearch = () => {
+    navigate('/search', {state: userData})
+  }
+
   return (
     <div className="btm-nav footerBackground">
       <button className='navIcons' onClick={() => navigate('/')}>
         <House size={36} color="#FAE2D5" />
       </button>
-      <button className='navIcons' onClick={() => navigate('/search')}>
+      <button className='navIcons' onClick={toSearch}>
         <Search size={36} color="#FAE2D5" />
       </button>
       <button className='navIcons' onClick={() => navigate('/postyourbake')}>

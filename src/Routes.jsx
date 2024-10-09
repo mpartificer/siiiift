@@ -39,10 +39,6 @@ const router = createBrowserRouter([
         element: <SettingsManagementView />,
     },
     {
-        path: "/profile/settings/follow-requests",
-        element: <FollowRequestView />,
-    },
-    {
         path: `/:username/:recipeid`,
         element: <BakeHistoryView />,
     },

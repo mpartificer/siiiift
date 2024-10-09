@@ -185,7 +185,6 @@ function ProfileView() {
   const followingCount = followingDetails.data.length;
   console.log(followingCount)
   const userBio = userDetails?.data[0].bio ;
-  const privacy = userDetails.data[0].private;
   const bakesCount = userDetails.data[0].bakes ? userDetails?.data[0].bakes.length : 0;
   const recipesCount = userDetails.data[0].recipes ? userDetails?.data[0].recipes.length : 0;
   const userName = userDetails.data[0].username;

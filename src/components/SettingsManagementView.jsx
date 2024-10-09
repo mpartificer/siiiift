@@ -67,7 +67,6 @@ function SettingsManagementView(props) {
         <PageTitle pageTitle='username' />
         <EditBio userBio="this is my bio" />
         <SettingWithToggle settingName='public/private' />
-        <SettingReviewFollowers settingName='review follow requests' path='/profile/settings/follow-requests'/>
         <SettingWithToggle settingName='toggle AI insights' />
         <SettingLogOut settingName='log out' path='/login'/>
         <Footer />
