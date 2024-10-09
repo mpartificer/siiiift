@@ -1,82 +1,103 @@
-import { Heart, MessageCircle, History, Croissant } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Heart, MessageCircle, History } from 'lucide-react';
 import { useNavigate } from 'react-router-dom'; 
 import PageTitle from './PageTitle.jsx';
+import { supabase } from '../../supabaseClient';
 import '../../App.css';
-import { useState, useEffect } from 'react';
-import { createClient } from '@supabase/supabase-js'
 
-const supabase = createClient("https://iivozawppltyhsrkixlk.supabase.co", 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlpdm96YXdwcGx0eWhzcmtpeGxrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjYwODA3NDQsImV4cCI6MjA0MTY1Njc0NH0.aXIL8StA101tfblFh9yViIlXzwMHNjeoFfeiGu8fXGE')
+function PostReactionBox({ currentUserId, username, recipeId, userId, bakeId }) {
+  const navigate = useNavigate();
+  const [isLiked, setIsLiked] = useState(false);
 
+  useEffect(() => {
+    checkLikeStatus();
+  }, []);
 
-function PostReactionBox(props) {
-    const navigate = useNavigate();
-  
-    return (
-    <div className='postReactionBox mt-1'>
-      <Heart size={40} color='#496354'/>
-      <MessageCircle size={40} color='#496354'/>
-      <History size={40} color='#496354' onClick={() => navigate(`/${props.username}/${props.recipeId}`)}/>
-    </div>
-    )
-}
-  
-  
-function HomeCard() {
+  const checkLikeStatus = async () => {
+    const { data, error } = await supabase
+      .from('likes')
+      .select('*')
+      .eq('user_id', currentUserId)
+      .eq('bake_id', bakeId)
+      .single();
 
-    const [bakeDetails, setBakeDetails] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
+    if (error) {
+      console.error('Error checking like status:', error);
+    } else {
+      setIsLiked(!!data);
+    }
+  };
 
-  
-    useEffect(() => {
-      let isMounted = true;
-  
-      async function fetchBakeDetails() {
-        try {
-          const { data, error } = await supabase
-            .from('bake_details_view')
-            .select('*');
-  
-          if (error) throw error;
-  
-          if (isMounted) {
-            setBakeDetails(data);
-            setIsLoading(false);
-            console.log(data)
-          }
-        } catch (error) {
-          console.error('Error fetching Bake_Details:', error);
-          if (isMounted) setIsLoading(false);
-        }
+  const toggleLike = async () => {
+    if (isLiked) {
+      const { error } = await supabase
+        .from('likes')
+        .delete()
+        .eq('user_id', currentUserId)
+        .eq('bake_id', bakeId);
+
+      if (error) {
+        console.error('Error removing like:', error);
+      } else {
+        setIsLiked(false);
       }
-  
-    fetchBakeDetails();
-  
-      return () => {
-        isMounted = false;
-      };
+    } else {
+      const { error } = await supabase
+        .from('likes')
+        .insert({ user_id: currentUserId, bake_id: bakeId });
 
-    }, []);
-  
-    if (isLoading) return <div>Loading...</div>;
+      if (error) {
+        console.error('Error adding like:', error);
+      } else {
+        setIsLiked(true);
+      }
+    }
+  };
 
-    if (!bakeDetails || bakeDetails.length === 0) return <div>No user details available</div>;
+  return (
+    <div className='postReactionBox mt-1'>
+      <Heart
+        size={40}
+        color={isLiked ? 'palevioletred' : '#496354'}
+        fill={isLiked ? 'palevioletred' : 'none'}
+        onClick={toggleLike}
+        style={{ cursor: 'pointer' }}
+      />
+      <MessageCircle size={40} color='#496354'/>
+      <History 
+        size={40} 
+        color='#496354' 
+        onClick={() => navigate(`/${username}/${recipeId}`)}
+        style={{ cursor: 'pointer' }}
+      />
+    </div>
+  );
+}
 
-    const username = bakeDetails[0].username.toString();
-    const recipeTitle = bakeDetails[0].recipe_title;
-    const photos = bakeDetails[0].photos.toString();
-    const recipeId = bakeDetails[0].recipe_id.toString();
-    const userId = bakeDetails[0].user_id.toString();
+function HomeCard(props) {
+  return (
+    <div className='homeCard'>
+      <PageTitle 
+        pageTitle={props.pageTitle} 
+        path={[`/profile/${props.username}`, `/recipe/${props.recipeId}`]} 
+        userId={props.userId} 
+        recipeId={props.recipeId}
+      />
+      {props.photos && 
+        <img 
+          src={props.photos}
+          alt="recipe" 
+          className='recipeImg'
+        />
+      }
+      <PostReactionBox 
+        username={props.username} 
+        recipeId={props.recipeId} 
+        currentUserId={props.currentUserId} 
+        bakeId={props.bakeId}
+      />
+    </div>
+  );
+}
 
-      return (
-        <div className='homeCard'>
-          <PageTitle pageTitle={[username, recipeTitle]} path={[`/profile/${username}`, `/recipe/${recipeId}`]} userId={userId} recipeId = {recipeId}/>
-          {photos &&<img 
-                src={photos}
-                alt="recipe" className='recipeImg'
-                />}
-          <PostReactionBox username={username} recipeId={recipeId} />
-        </div>
-      )
-  }
-
-  export default HomeCard;
+export default HomeCard;

@@ -79,55 +79,35 @@ function ProfilePlate(props) {
 
 function ContentCap(props) {
   const { recipes, bakes } = props;
-
-  const cookie = <Cookie size={24} className="mr-2" />
-
-  const bookOpen = <BookOpen size={24} className="mr-2" />
-
+  const [activeTab, setActiveTab] = useState('recipes');
 
   return (
-    <div className="w-full">
-      <div role="tablist" className="tabs tabs-bordered w-full">
-        <input type="radio" name="my_tabs_1" role="tab" className="tab w-1/2" aria-label={cookie} />
-        <div role="tab" className="tab w-1/2 flex items-center justify-center">
-          
-        </div>
-
-        <input
-          type="radio"
-          name="my_tabs_1"
-          role="tab"
-          className="tab w-1/2"
-          aria-label={bookOpen}
-          defaultChecked
-        />
-        <div role="tab" className="tab w-1/2 flex items-center justify-center">
-          
-        </div>
-      </div>
-
-      <div className="tab-content mt-4">
-        <div role="tabpanel" className={`${props['aria-label'] === 'bakes' ? '' : 'hidden'}`}>
-          <HomeCard />
-        </div>
-
-        <div role="tabpanel" className={`${props['aria-label'] === 'recipes' ? '' : 'hidden'}`}>
-          {recipes && recipes.length > 0 ? (
-            recipes.map(recipe => (
-              <RecipeCard
-                key={recipe.id}
-                recipeTitle={recipe.recipetitle}
-                totalTime={recipe.totaltime}
-                recipeId={recipe.id}
-                photo={recipe.photo}
-              />
-            ))
-          ) : (
-            <div>No recipes available</div>
-          )}
-        </div>
-      </div>
-    </div>
+    <ul className="menu menu-horizontal bg-primary rounded-box mt-6 w-350 justify-around">
+    <li>
+      <a className="tooltip" data-tip="Home">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-5 w-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor">
+          <Cookie />
+        </svg>
+      </a>
+    </li>
+    <li>
+      <a className="tooltip" data-tip="Details">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-5 w-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor">
+          <BookOpen />
+        </svg>
+      </a>
+    </li>
+  </ul>
   );
 }
 
