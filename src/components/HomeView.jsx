@@ -57,6 +57,8 @@ function HomeView() {
   const bakeId = bakeDetails[0].bake_id.toString();
   const currentUserId = bakeDetails[1].user_id.toString();
 
+  console.log(recipeId)
+
 
   return (
     <div>

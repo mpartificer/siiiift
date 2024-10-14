@@ -54,6 +54,11 @@ function PostReactionBox({ currentUserId, username, recipeId, userId, bakeId }) 
     }
   };
 
+  const bakeData = { "userId": userId, "recipeId": recipeId, "username": username }
+
+  const toBakeProfile = () => {
+    navigate(`/${username}/${recipeId}`, { state: bakeData })}
+
   return (
     <div className='postReactionBox mt-1'>
       <Heart
@@ -67,7 +72,7 @@ function PostReactionBox({ currentUserId, username, recipeId, userId, bakeId }) 
       <History 
         size={40} 
         color='#496354' 
-        onClick={() => navigate(`/${username}/${recipeId}`)}
+        onClick={toBakeProfile}
         style={{ cursor: 'pointer' }}
       />
     </div>
@@ -79,7 +84,7 @@ function HomeCard(props) {
     <div className='homeCard'>
       <PageTitle 
         pageTitle={props.pageTitle} 
-        path={[`/profile/${props.username}`, `/recipe/${props.recipeId}`]} 
+        path={[`/profile/${props.pageTitle[0]}`, `/recipe/${props.recipeId}`]} 
         userId={props.userId} 
         recipeId={props.recipeId}
       />
@@ -91,10 +96,11 @@ function HomeCard(props) {
         />
       }
       <PostReactionBox 
-        username={props.username} 
+        username={props.pageTitle[0]} 
         recipeId={props.recipeId} 
         currentUserId={props.currentUserId} 
         bakeId={props.bakeId}
+        userId={props.userId}
       />
     </div>
   );

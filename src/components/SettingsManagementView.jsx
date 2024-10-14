@@ -60,7 +60,7 @@ function SettingWithToggle(props) {
 
 
 function SettingsManagementView(props) {
-
+  
     return (
       <div className='settingsManagementView max-w-350'>
         <Header />

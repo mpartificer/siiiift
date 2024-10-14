@@ -59,7 +59,10 @@ const RecipeDropDown = (props) => {
     const [instructionModifications, setInstructionModifications] = useState([''])
     const [isRecipeDropdownOpen, setIsRecipeDropdownOpen] = useState(false)
 
-    const fetchModItems = async (recipeId) => {
+    const fetchModItems = async (recipeId, recipeTitle) => {
+        props.setRecipeId(recipeId);
+        props.setRecipeTitle(recipeTitle);
+
         try {
             const { data: ingredientData, error: ingError } = await supabase
                 .from('recipe_profile')
@@ -148,7 +151,7 @@ const RecipeDropDown = (props) => {
                 {isRecipeDropdownOpen && (
                     <ul tabIndex={0} className="dropdown-content menu bg-secondary rounded-box z-[1] w-52 p-2 shadow">
                         {recipeData && recipeData.map((item) => (
-                            <li key={item.id} onClick={() => fetchModItems(item.id)}>
+                            <li key={item.id} onClick={() => fetchModItems(item.id, item.title)}>
                                 <a>{item.recipetitle}</a>
                             </li>
                         ))}
