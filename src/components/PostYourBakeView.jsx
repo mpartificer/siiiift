@@ -49,7 +49,15 @@ function PostYourBakeView() {
   const [bakeDate, setBakeDate] = useState('');
   const [recipeId, setRecipeId] = useState('');
   const [recipeTitle, setRecipeTitle] = useState('');
-  const [modifications, setModifications] = useState({ ingredients: [], instructions: [] });
+  const [ingredientModifications, setIngredientModifications] = useState([{
+    originalIngredient: '',
+    modifiedIngredient: ''
+}]);
+
+const [instructionModifications, setInstructionModifications] = useState([{
+    originalInstruction: '',
+    modifiedInstruction: ''
+}]);
   const [error, setError] = useState(null);
 
   const handleFile = (e) => {
@@ -162,30 +170,38 @@ function PostYourBakeView() {
       const modificationInserts = [];
       
       // Handle ingredient modifications
-      modifications.ingredients.forEach(mod => {
-        modificationInserts.push({
-          bake_id: bake_id,
-          type: 'ingredient',
-          original_step_text: mod.originalIngredient,
-          updated_step: mod.modifiedIngredient
-        });
+      ingredientModifications.forEach(mod => {
+        if (mod.originalIngredient && mod.modifiedIngredient) {
+            modificationInserts.push({
+                user_id: user.id,
+                bake_id: bake_id,
+                type: 'ingredient',
+                original_step_text: mod.originalIngredient,
+                updated_step: mod.modifiedIngredient
+            });
+        }
       });
-  
+
       // Handle instruction modifications
-      modifications.instructions.forEach(mod => {
-        modificationInserts.push({
-          bake_id: bake_id,
-          type: 'instruction',
-          original_step_text: mod.originalInstruction,
-          updated_step: mod.modifiedInstruction
-        });
+      instructionModifications.forEach(mod => {
+        if (mod.originalInstruction && mod.modifiedInstruction) {
+            modificationInserts.push({
+                user_id: user.id,
+                bake_id: bake_id,
+                type: 'instruction',
+                original_step_text: mod.originalInstruction,
+                updated_step: mod.modifiedInstruction
+            });
+        }
       });
   
-      const { error: modInsertError } = await supabase
-        .from('modifications')
-        .insert(modificationInserts);
-  
-      if (modInsertError) throw modInsertError;
+      if (modificationInserts.length > 0) {
+        const { error: modInsertError } = await supabase
+            .from('modifications')
+            .insert(modificationInserts);
+    
+        if (modInsertError) throw modInsertError;
+    }
   
       // Clear form and show success message
       setFiles([]);
@@ -193,7 +209,8 @@ function PostYourBakeView() {
       setBakeDate('');
       setRecipeId(null);
       setRecipeTitle(''); // Add this line
-      setModifications({ ingredients: [], instructions: [] });
+      setIngredientModifications([]);
+      setInstructionModifications([]);
       setMessage('Bake posted successfully!');
       navigate('/');
   
@@ -210,7 +227,10 @@ function PostYourBakeView() {
       <RecipeDropDown
         setRecipeId={setRecipeId}
         setRecipeTitle={setRecipeTitle}
-        setModifications={setModifications}
+        setIngredientModifications={setIngredientModifications}
+        setInstructionModifications={setInstructionModifications}
+        instructionModifications={instructionModifications}
+        ingredientModifications={ingredientModifications}
       />
       <ModificationRating rating={rating} setRating={setRating} />
       <BakePostDate bakeDate={bakeDate} setBakeDate={setBakeDate} />

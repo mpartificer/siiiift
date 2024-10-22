@@ -26,7 +26,7 @@ function ForgotPasswordView() {
       <LogInGreeting openingTitle='siiiift' />
       <LogInSubGreeting />
       <input className='loginBar' type='text' placeholder='email' name='email' value={email} onChange={(e) => setEmail(e.target.value)}/>
-      <button type="submit" className='bigSubmitButton' disabled={loading}>{loading ? 'loading...' : 'login'}</button>
+      <button type="submit" className='bigSubmitButton' disabled={loading}>{loading ? 'loading...' : 'send reset'}</button>
       </form>
   )
 }

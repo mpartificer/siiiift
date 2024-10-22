@@ -5,10 +5,24 @@ import '../../App.css'
 const ModificationItem = ({ items, placeholder, onChange, value }) => {
     const [selectedItem, setSelectedItem] = useState(null)
     const [isOpen, setIsOpen] = useState(false)
+    const [inputValue, setInputValue] = useState('')
 
     const handleSelect = (item) => {
         setSelectedItem(item)
         setIsOpen(false)
+        onChange({
+            originalItem: item,
+            modifiedText: inputValue
+        });
+    }
+
+    const handleInputChange = (e) => {
+        const newValue = e.target.value;
+        setInputValue(newValue);
+        onChange({
+            originalItem: selectedItem,
+            modifiedText: newValue
+        });
     }
 
     return (
@@ -39,14 +53,15 @@ const ModificationItem = ({ items, placeholder, onChange, value }) => {
             </div>
             <input 
                 type="text" 
-                value={value}
-                onChange={onChange}
+                value={inputValue}
+                onChange={handleInputChange}
                 placeholder={placeholder} 
                 className="input w-80 max-w-xs customModification" 
             />
         </div>
     )
 }
+
 
 const RecipeDropDown = (props) => {
     const [recipeData, setRecipeData] = useState(null)
@@ -55,8 +70,6 @@ const RecipeDropDown = (props) => {
     const [instructionData, setInstructionData] = useState(null)
     const [error, setError] = useState(null)
     const [loading, setLoading] = useState(true)
-    const [ingredientModifications, setIngredientModifications] = useState([''])
-    const [instructionModifications, setInstructionModifications] = useState([''])
     const [isRecipeDropdownOpen, setIsRecipeDropdownOpen] = useState(false)
 
     const fetchModItems = async (recipeId, recipeTitle) => {
@@ -114,28 +127,44 @@ const RecipeDropDown = (props) => {
         fetchRecipes()
     }, [])
 
-    const addIngredientModification = () => {
-        setIngredientModifications([...ingredientModifications, ''])
-    }
-
-    const addInstructionModification = () => {
-        setInstructionModifications([...instructionModifications, ''])
-    }
-
     const handleIngredientModificationChange = (index, value) => {
-        const newModifications = [...ingredientModifications]
-        newModifications[index] = value
-        setIngredientModifications(newModifications)
+        const newModifications = [...props.ingredientModifications];
+        newModifications[index] = {
+            originalIngredient: value.originalItem ? `${value.originalItem.amount} ${value.originalItem.substance}` : '',
+            modifiedIngredient: value.modifiedText
+        };
+        props.setIngredientModifications(newModifications);
     }
 
     const handleInstructionModificationChange = (index, value) => {
-        const newModifications = [...instructionModifications]
-        newModifications[index] = value
-        setInstructionModifications(newModifications)
+        const newModifications = [...props.instructionModifications];
+        newModifications[index] = {
+            originalInstruction: value.originalItem?.instruction || '',
+            modifiedInstruction: value.modifiedText
+        };
+        props.setInstructionModifications(newModifications);
+    }
+
+    // Update the add modification functions
+    const addIngredientModification = () => {
+        props.setIngredientModifications([...props.ingredientModifications, {
+            originalIngredient: '',
+            modifiedIngredient: ''
+        }]);
+    }
+
+    const addInstructionModification = () => {
+        props.setInstructionModifications([...props.instructionModifications, {
+            originalInstruction: '',
+            modifiedInstruction: ''
+        }]);
     }
 
     if (loading) return <div>Loading...</div>
     if (error) return <div>Error: {error}</div>
+
+    console.log(props.instructionModifications)
+    console.log(props.ingredientModifications)
 
     return (
         <div className="profilePlate">
@@ -160,35 +189,35 @@ const RecipeDropDown = (props) => {
                 </div>
                                     
             
-            {selectedRecipe && (
+                {selectedRecipe && (
                 <>
                     <h3 className="mt-4 mb-2">ingredient modifications:</h3>
-                    {ingredientModifications.map((mod, index) => (
+                    {props.ingredientModifications.map((mod, index) => (
                         <ModificationItem
                             key={index}
                             items={ingredientData || []}
                             placeholder="enter your ingredient modification"
                             value={mod}
-                            onChange={(e) => handleIngredientModificationChange(index, e.target.value)}
+                            onChange={(value) => handleIngredientModificationChange(index, value)}
                         />
                     ))}
                     <a href="#" onClick={addIngredientModification} className="mb-4">add another ingredient modification</a>
 
                     <h3 className="mt-4 mb-2">instruction modifications:</h3>
-                    {instructionModifications.map((mod, index) => (
+                    {props.instructionModifications.map((mod, index) => (
                         <ModificationItem
                             key={index}
                             items={instructionData || []}
                             placeholder="enter your instruction modification"
                             value={mod}
-                            onChange={(e) => handleInstructionModificationChange(index, e.target.value)}
+                            onChange={(value) => handleInstructionModificationChange(index, value)}
                         />
                     ))}
-                    <a href="#" onClick={addInstructionModification} >add another instruction modification</a>
+                    <a href="#" onClick={addInstructionModification}>add another instruction modification</a>
                 </>
             )}
         </div>
-    )
+    );
 }
 
 export default RecipeDropDown

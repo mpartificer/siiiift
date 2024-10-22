@@ -3,7 +3,7 @@ import '../../App.css'
 
 function Header() {
     return (
-      <div className='header'>
+      <div className='header md:w-full'>
         siiiift
       </div>
     )

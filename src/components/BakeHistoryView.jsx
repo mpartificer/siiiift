@@ -9,7 +9,7 @@ import { supabase } from '../supabaseClient'; // Make sure to import your Supaba
 
 function DateMarker({ date }) {
     return (
-        <div className="bg-accent text-secondary-content overflow-hidden standardBorder w-fit pt-1 pb-1 pr-4 pl-4">
+        <div className="bg-accent font-bold text-secondary-content overflow-hidden standardBorder w-fit pt-1 pb-1 pr-4 pl-4">
             {new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'long' }).toLowerCase()}
         </div>
     )

@@ -4,9 +4,10 @@ import { Image } from 'lucide-react'
 import PageTitle from './multipurpose/PageTitle.jsx'
 import Header from './multipurpose/Header.jsx'
 import Footer from './multipurpose/Footer.jsx'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import SettingLogOut from './multipurpose/SettingLogOut.jsx'
 import { useNavigate } from 'react-router-dom'
+import { supabase } from '../supabaseClient.js'
 
 
 
@@ -60,7 +61,61 @@ function SettingWithToggle(props) {
 
 
 function SettingsManagementView(props) {
-  
+
+  const [authDetails, setAuthDetails] = useState('');
+  const [userDetails, setUserDetails] = useState('');
+  const [isLoading, setIsLoading] = useState('true')
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function getUserData() {
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+
+        if (isMounted) {
+        setAuthDetails(user)
+        setIsLoading(false)
+        setUserData();
+        }
+        if (user.error) throw user.error
+
+      }catch (error) {
+        console.error('Error fetching user_profile:', error);
+        setIsLoading(false)
+      }
+
+}
+
+    async function setUserData() {
+      try {
+        setIsLoading(true)
+        const {userResponse, error} = await
+          supabase
+            .from('user_profile')
+            .select('*')
+            .eq('user_auth_id', authDetails.id)
+
+
+          if (isMounted) {
+            setUserDetails(userResponse)
+            setIsLoading(false)
+          }
+      }
+      catch (error) {
+        console.error(error)
+    }
+  }
+
+  getUserData();
+
+  return () => {
+    isMounted = false;
+  };}
+
+)
+
+    console.log(userDetails)
     return (
       <div className='settingsManagementView max-w-350'>
         <Header />

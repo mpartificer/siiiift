@@ -48,7 +48,7 @@ function ProfileSummary(props) {
   
 function ProfilePlateTop(props) {
     return (
-      <div className='profilePlateTop'>
+      <div className='profilePlateTop text-xl'>
         {props.children}
       </div>
     )
@@ -56,7 +56,7 @@ function ProfilePlateTop(props) {
   
 function ProfilePlateBottom(props) {
     return (
-      <div className='profilePlateBottom'>
+      <div className='profilePlateBottom gap-2'>
         {props.children}
       </div>
     )
@@ -66,131 +66,161 @@ function ProfilePlate(props) {
     return (
       <div className='profilePlate'>
         <ProfilePlateTop>
-        <div className='pageTitle'>{props.userName}</div>
+        <div className='pageTitle text-xl'>{props.userName}</div>
         <SettingsButton />
         </ProfilePlateTop>
         <ProfilePlateBottom>
-          <User size={140} color='#192F01'/>
+        <img 
+          src={props.photos}
+          alt="recipe" 
+          className='max-w-36 max-h-36 profileImg standardBorder'
+        />
           <ProfileSummary bakes={props.bakes} followingCount={props.followingCount} followerCount={props.followerCount} username={props.userName} userId={props.userId} userBio={props.userBio}/>
         </ProfilePlateBottom>
       </div>
     )
 }
 
-function ContentCap(props) {
-  const { recipes, bakes } = props;
-  const [activeTab, setActiveTab] = useState('recipes');
+function ContentCap({ userId }) {
+  const [activeTab, setActiveTab] = useState('bakes');
+  const [bakes, setBakes] = useState([]);
+  const [savedRecipes, setSavedRecipes] = useState([]);
+
+  useEffect(() => {
+    fetchBakes();
+    fetchSavedRecipes();
+  }, [userId]);
+
+  const fetchBakes = async () => {
+    const { data, error } = await supabase
+      .from('Bake_Details')
+      .select('*')
+      .eq('user_id', userId);
+
+    if (error) {
+      console.error('Error fetching bakes:', error);
+    } else {
+      setBakes(data);
+    }
+  };
+
+  const fetchSavedRecipes = async () => {
+    const { data, error } = await supabase
+      .from('saves_view')
+      .select('user_id, recipe_id, recipe_title, recipe_images, total_time')
+      .eq('user_id', userId);
+
+    if (error) {
+      console.error('Error fetching saved recipes:', error);
+    } else {
+      setSavedRecipes(data);
+    }
+  };
 
   return (
-    <ul className="menu menu-horizontal bg-primary rounded-box mt-6 w-350 justify-around">
-    <li>
-      <a className="tooltip" data-tip="Home">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-5 w-5"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor">
-          <Cookie />
-        </svg>
-      </a>
-    </li>
-    <li>
-      <a className="tooltip" data-tip="Details">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-5 w-5"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor">
-          <BookOpen />
-        </svg>
-      </a>
-    </li>
-  </ul>
+    <div>
+      <ul className="menu menu-horizontal bg-primary rounded-box mt-6 w-350 justify-around">
+        <li>
+          <a
+            className={`tooltip ${activeTab === 'bakes' ? 'active' : ''}`}
+            data-tip="Bakes"
+            onClick={() => setActiveTab('bakes')}
+          >
+            <Cookie />
+          </a>
+        </li>
+        <li>
+          <a
+            className={`tooltip ${activeTab === 'recipes' ? 'active' : ''}`}
+            data-tip="Saved Recipes"
+            onClick={() => setActiveTab('recipes')}
+          >
+            <BookOpen />
+          </a>
+        </li>
+      </ul>
+      <div className="mt-4">
+        {activeTab === 'bakes' && (
+          <div className="grid grid-cols-1 gap-4">
+            {bakes.map((bake) => (
+              <HomeCard
+                key={bake.id}
+                pageTitle={[bake.username, bake.recipe_title]}
+                photos={bake.photos}
+                recipeId={bake.recipe_id}
+                currentUserId={userId}
+                bakeId={bake.id}
+                userId={bake.user_id}
+              />
+            ))}
+          </div>
+        )}
+        {activeTab === 'recipes' && (
+          <div className="grid grid-cols-1 gap-4">
+            {savedRecipes.map((recipe) => (
+              <RecipeCard
+                key={recipe.recipe_id}
+                recipeTitle={recipe.recipe_title}
+                recipeId={recipe.recipe_id}
+                photo={recipe.recipe_images}
+                totalTime={recipe.total_time}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
 
 function ProfileView() {
   const location = useLocation();
-
   const userId = location.state.userId;
-
-  const [userDetails, setUserDetails] = useState([]);
+  const [userDetails, setUserDetails] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [followerDetails, setFollowerDetails] = useState([]);
-  const [followingDetails, setFollowingDetails] = useState([]);
 
-  
   useEffect(() => {
-    let isMounted = true;
-  
-    async function fetchUserDetails() {
-      try {
+    fetchUserDetails();
+  }, [userId]);
 
-        const [userResponse, followingResponse, followerResponse, error] = await Promise.all([
-          supabase
-            .from('user_profile')
-            .select('*')
-            .eq('user_auth_id', userId),
-          supabase
-            .from('user_following_view')
-            .select('*')
-            .eq('user_id', userId),
-          supabase
-            .from('user_followers_view')
-            .select('*')
-            .eq('user_id', userId)
-      ]);
+  const fetchUserDetails = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('user_profile')
+        .select('*')
+        .eq('user_auth_id', userId)
+        .single();
 
+      if (error) throw error;
 
-        if (error) throw error;
-
-        if (isMounted) {
-          setUserDetails(userResponse);
-          setFollowerDetails(followerResponse);
-          setFollowingDetails(followingResponse);
-          setIsLoading(false);
-        }
-      } catch (error) {
-        console.error('Error fetching user_profile:', error);
-        if (isMounted) setIsLoading(false);
-      }
+      setUserDetails(data);
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Error fetching user_profile:', error);
+      setIsLoading(false);
     }
-
-  fetchUserDetails();
-
-    return () => {
-      isMounted = false;
-    };
-
-  }, []);
+  };
 
   if (isLoading) return <div>Loading...</div>;
-
-  if (!userDetails || userDetails.length === 0) return <div>No user details available</div>;
-
-
-  const followerCount = followerDetails.data.length;
-  const followingCount = followingDetails.data.length;
-  const userBio = userDetails?.data[0].bio ;
-  const bakesCount = userDetails.data[0].bakes ? userDetails?.data[0].bakes.length : 0;
-  const recipesCount = userDetails.data[0].recipes ? userDetails?.data[0].recipes.length : 0;
-  const userName = userDetails.data[0].username;
-  const bakes = userDetails.data[0].bakes
-  const recipes = userDetails.data[0].recipes
-
-  const photos = userDetails.images;
+  if (!userDetails) return <div>No user details available</div>;
 
   return (
     <div>
       <Header />
-      <ProfilePlate userName={userName} followerCount={followerCount} followingCount={followingCount} 
-          userBio={userBio} bakes={bakesCount} recipes={recipesCount} userId={userId} />
-      <ContentCap recipes={recipes} bakes={bakes} />
+      <ProfilePlate
+        userName={userDetails.username}
+        followerCount={userDetails.follower_count}
+        followingCount={userDetails.following_count}
+        userBio={userDetails.bio}
+        bakes={userDetails.bakes_count}
+        recipes={userDetails.recipes_count}
+        userId={userId}
+        photos={userDetails.photo}
+      />
+      <ContentCap userId={userId} />
       <Footer />
     </div>
-  )
+  );
 }
 
-export default ProfileView
+export default ProfileView;
