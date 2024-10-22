@@ -20,7 +20,7 @@ function SearchFilter({ filterValue, isActive, onClick }) {
 
 function SearchFilterBar({ activeFilter, setActiveFilter }) {
   return (
-    <div className='searchFilterBar'>
+    <div className='searchFilterBar md:w-5/6'>
       <SearchFilter 
         filterValue='all' 
         isActive={activeFilter === 'all'} 
@@ -117,6 +117,7 @@ function SearchView() {
       <SearchFilterBar activeFilter={activeFilter} setActiveFilter={handleFilterChange} />
       {isLoading && <p>Loading...</p>}
       {error && <p className="error-message">{error}</p>}
+      <div className="md:flex md:flex-row md:flex-wrap md:gap-4 md:justify-center">
       {filteredResults.map((result) => (
         <SearchResult 
           key={result.type === 'user' ? result.user_auth_id : result.id}
@@ -126,6 +127,7 @@ function SearchView() {
           type={result.type}
         />
       ))}
+      </div>
       <Footer />
     </div>
   );

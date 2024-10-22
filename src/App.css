@@ -12,7 +12,6 @@ body {
 }
 
 button {
-  /* background-color: #496354 !important; */
   transition: none !important;
 }
 
@@ -51,7 +50,6 @@ ul {
 .header {
   font-size: 38px;
   color:#496354;
-  align-self: flex-start;
   /* padding-left: 20px; */
 }
 
@@ -167,7 +165,6 @@ ul {
   flex-direction:row;
   justify-content: space-between;
   align-items: center;
-  width:350px;
   /* margin-right: 20px;
   margin-left:20px; */
 }
@@ -204,9 +201,7 @@ ul {
 }
 
 .searchBar {
-  width: 350px;
   text-align: center;
-  background-color: #F2F2F2;
   color: #496354;
   border-radius: 20px;
   padding: 0px;
@@ -271,7 +266,6 @@ ul {
   display: flex;
   flex-direction: column;
   gap:10px;
-  width: 350px;
   align-items: center;
 }
 
