@@ -12,7 +12,7 @@ function RecipeBoxHeader({ username }) {
   const navigate = useNavigate();
   const pageTitle = `${username}'s recipe box`;
   return (
-    <div className='profilePlateTop w-350 md:w-5/6'>
+    <div className='profilePlateTop sm:w-350 md:w-5/6 md:grow'>
       <div className='pageTitle'>{pageTitle}</div>
       <Plus size={30} color='#192F01' onClick={() => navigate('/reciperetriever')}/>
     </div>
@@ -21,7 +21,7 @@ function RecipeBoxHeader({ username }) {
 
 function RecipeBoxSubHeader() {
   return (
-    <div className='flex flex-row justify-between items-center w-350 md:w-5/6'>
+    <div className='flex flex-row justify-between items-center sm:w-350 md:w-5/6 md:grow'>
       <ToggleBox />
       <SortByBox />
     </div>
@@ -90,11 +90,12 @@ function RecipeBoxView() {
   const { username, recipes } = userDetails;
 
   return (
-    <div className='followersView'>
+    <div className='sm:w-350 md:w-5/6'>
       <Header />
       <RecipeBoxHeader username={username} />
       <RecipeBoxSubHeader />
-      <div className="md:flex md:flex-row md:flex-wrap md:gap-4 md:justify-center">
+      {/* <div className="md:flex md:flex-row md:flex-wrap md:gap-4 md:justify-center"> */}
+      <div className="md:grid-cols-2" >
       {recipes && recipes.length > 0 ? (
         recipes.map(recipe => (
           <RecipeCard

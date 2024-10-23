@@ -173,14 +173,12 @@ ul {
   display:flex;
   flex-direction: row;
   justify-content:space-evenly;
-  width:350px;
 }
 
 .profilePlate {
   display: flex;
   flex-direction: column;
   gap:10px;
-  max-width: 350px;
 }
 
 .followTab {
@@ -272,6 +270,7 @@ ul {
 .homeCard {
   margin-top: 20px;
 }
+
 .logInView {
   display:flex;
   flex-direction:column;
@@ -388,4 +387,6 @@ ul {
 
 .recipeImg {
   max-width: 330px;
+  border-radius: 20px;
+  overflow:hidden;
 }

@@ -258,6 +258,8 @@ function RecipeView() {
 
     let rating = ratingSum / ratingDetails[0].all_ratings.length;
 
+    rating = rating.toFixed(2)
+
     return (
         <div className='followersView'>
             <Header />

@@ -56,7 +56,7 @@ function ProfilePlateTop(props) {
   
 function ProfilePlateBottom(props) {
     return (
-      <div className='profilePlateBottom gap-2'>
+      <div className='profilePlateBottom gap-2 sm:w-350'>
         {props.children}
       </div>
     )
@@ -64,7 +64,7 @@ function ProfilePlateBottom(props) {
   
 function ProfilePlate(props) {
     return (
-      <div className='profilePlate'>
+      <div className='profilePlate sm:w-350 md:w-5/6'>
         <ProfilePlateTop>
         <div className='pageTitle text-xl'>{props.userName}</div>
         <SettingsButton />
@@ -119,7 +119,7 @@ function ContentCap({ userId }) {
 
   return (
     <div>
-      <ul className="menu menu-horizontal bg-primary rounded-box mt-6 w-350 justify-around">
+      <ul className="menu menu-horizontal bg-primary rounded-box mt-6 sm:w-350 md:w-5/6 justify-around">
         <li>
           <a
             className={`tooltip ${activeTab === 'bakes' ? 'active' : ''}`}
