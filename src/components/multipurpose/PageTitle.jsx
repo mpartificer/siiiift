@@ -23,7 +23,7 @@ function PageTitle(props) {
 
   if (props.path) {
     return (
-      <div className='pageTitle'>
+      <div className='pageTitle ml-2.5'>
         <a onClick={()=>{toUserProfile()}}>{props.pageTitle[0]}</a> made <a onClick={()=>{toRecipeProfile()}}>{props.pageTitle[1]}</a>
       </div>
     )

@@ -54,7 +54,7 @@ function ProfilePlateTop(props) {
   
 function ProfilePlateBottom(props) {
     return (
-      <div className='profilePlateBottom flex flex-row md:flex-column gap-2 sm:w-350'>
+      <div className='profilePlateBottom flex sm:flex-row md:flex-column flex-wrap gap-2 sm:w-350'>
         {props.children}
       </div>
     )
@@ -71,7 +71,7 @@ function ProfilePlate(props) {
         <img 
           src={props.photos}
           alt="recipe" 
-          className='max-w-36 max-h-36 profileImg standardBorder'
+          className='sm:max-w-36 sm:max-h-36 md:max-w-80 md:max-h-80 profileImg standardBorder'
         />
           <ProfileSummary bakes={props.bakes} followingCount={props.followingCount} followerCount={props.followerCount} username={props.userName} userId={props.userId} userBio={props.userBio}/>
         </ProfilePlateBottom>

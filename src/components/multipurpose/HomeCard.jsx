@@ -60,7 +60,7 @@ function PostReactionBox({ currentUserId, username, recipeId, userId, bakeId }) 
     navigate(`/${username}/${recipeId}`, { state: bakeData })}
 
   return (
-    <div className='postReactionBox mt-1 md:self-end'>
+    <div className='postReactionBox mt-1 ml-2.5 md:self-end'>
       <Heart
         size={40}
         color={isLiked ? 'palevioletred' : '#496354'}
@@ -81,7 +81,7 @@ function PostReactionBox({ currentUserId, username, recipeId, userId, bakeId }) 
 
 function HomeCard(props) {
   return (
-    <div className='homeCard standardBorder border-2 m-2 border-primary p-2 md:flex md:flex-row md:flex-wrap'>
+    <div className='homeCard standardBorder border-2 m-2 bg-secondary border-primary p-2 md:flex md:flex-row md:flex-wrap '>
       <PageTitle 
         pageTitle={props.pageTitle} 
         path={[`/profile/${props.pageTitle[0]}`, `/recipe/${props.recipeId}`]} 
@@ -92,7 +92,7 @@ function HomeCard(props) {
         <img 
           src={props.photos}
           alt="recipe" 
-          className='recipeImg md:order-first'
+          className='recipeImg md:order-first ml-2.5'
         />
       }
       <PostReactionBox 
