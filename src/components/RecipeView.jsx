@@ -1,6 +1,5 @@
 import '../App.css';
-import Header from './multipurpose/Header.jsx';
-import Footer from './multipurpose/Footer.jsx';
+import HeaderFooter from './multipurpose/HeaderFooter.jsx';
 import { Cookie } from 'lucide-react';
 import { Plus } from 'lucide-react';
 import { SquareArrowOutUpRight } from 'lucide-react';
@@ -105,7 +104,7 @@ function RecipeCheckPanel(props) {
     }
 
     return (
-        <div className='recipeCheckPanel'>
+        <div className='recipeCheckPanel sm:w-350'>
             <RecipeCheckTitle recipeCheckTitle={confirmRecipeItem} />
             <ul className='recipeCheckPanelList'>
                 {myComponentList}
@@ -178,7 +177,7 @@ function PopularityCounter(props) {
 
 function RecipeSummaryPanel(props) {
     return (
-        <div className='recipeCheckPanel flex flex-row p-5 justify-between'>
+        <div className='recipeCheckPanel sm:w-350 flex flex-row p-5 justify-between'>
             <TimeCheck totalTime={props.totalTime} cookTime={props.cookTime} prepTime={props.prepTime} />
             <div className="divider divider-primary divider-horizontal"></div>
             <PopularityCheck likes={props.likes} saves={props.saves} bakes={props.bakes} rating={props.rating} />
@@ -261,16 +260,18 @@ function RecipeView() {
     rating = rating.toFixed(2)
 
     return (
-        <div className='followersView'>
-            <Header />
-            <div className='pageTitle'>{recipeTitle}</div>
-            <img src={photos} alt="recipe image" className='recipeImg' />
-            <RecipeOptions originalLink={originalLink} />
-            <RecipeSummaryPanel totalTime={totalTime} cookTime={cookTime} prepTime={prepTime} 
-                                likes={likes} bakes={bakes} saves={saves} rating={rating} />
-            <RecipeCheckPanel propInsert={ingredients} confirmRecipeItem='ingredients' />
-            <RecipeCheckPanel propInsert={instructions} confirmRecipeItem='instructions' />
-            <Footer />
+        <div>
+            <HeaderFooter>
+            <div className='followersView mt-16 mb-16'>
+                <div className='pageTitle'>{recipeTitle}</div>
+                <img src={photos} alt="recipe image" className='recipeImg' />
+                <RecipeOptions originalLink={originalLink} />
+                <RecipeSummaryPanel totalTime={totalTime} cookTime={cookTime} prepTime={prepTime} 
+                                    likes={likes} bakes={bakes} saves={saves} rating={rating} />
+                <RecipeCheckPanel propInsert={ingredients} confirmRecipeItem='ingredients' />
+                <RecipeCheckPanel propInsert={instructions} confirmRecipeItem='instructions' />
+            </div>
+            </HeaderFooter>
         </div>
     )
 }   

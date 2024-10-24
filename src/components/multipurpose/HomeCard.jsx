@@ -81,7 +81,7 @@ function PostReactionBox({ currentUserId, username, recipeId, userId, bakeId }) 
 
 function HomeCard(props) {
   return (
-    <div className='homeCard standardBorder border-2 border-primary p-2 md:flex md:flex-row md:flex-wrap'>
+    <div className='homeCard standardBorder border-2 m-2 border-primary p-2 md:flex md:flex-row md:flex-wrap'>
       <PageTitle 
         pageTitle={props.pageTitle} 
         path={[`/profile/${props.pageTitle[0]}`, `/recipe/${props.recipeId}`]} 

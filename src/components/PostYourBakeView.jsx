@@ -2,8 +2,7 @@ import '../App.css'
 import React, { useState } from 'react'
 import { supabase } from '../supabaseClient'
 import { useNavigate } from 'react-router-dom'
-import Header from './multipurpose/Header.jsx'
-import Footer from './multipurpose/Footer.jsx'
+import HeaderFooter from './multipurpose/HeaderFooter.jsx'
 import RecipeDropDown from './multipurpose/RecipeDropDown.jsx'
 
 function ModificationRating({ rating, setRating }) {
@@ -221,8 +220,8 @@ const [instructionModifications, setInstructionModifications] = useState([{
   }
 
   return (
-    <form className='websiteRetrievalView' onSubmit={PostYourBake}>
-      <Header />
+    <HeaderFooter>
+    <form className='websiteRetrievalView mt-16 mb-16' onSubmit={PostYourBake}>
       <PostImageUpload />
       <RecipeDropDown
         setRecipeId={setRecipeId}
@@ -237,8 +236,9 @@ const [instructionModifications, setInstructionModifications] = useState([{
       <button type="submit" className='bigSubmitButton'>post</button>
       {error && <div className="error">{error}</div>}
       {message && <div className="success">{message}</div>}
-      <Footer />
     </form>
+    </HeaderFooter>
+
   )
 }
 

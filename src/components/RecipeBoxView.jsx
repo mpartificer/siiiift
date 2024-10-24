@@ -1,8 +1,7 @@
 import '../App.css'
 import { Plus, ArrowDownUp } from 'lucide-react'
 import Toggle from './multipurpose/Toggle.jsx'
-import Header from './multipurpose/Header.jsx'
-import Footer from './multipurpose/Footer.jsx'
+import HeaderFooter from './multipurpose/HeaderFooter.jsx'
 import { useNavigate, useLocation } from 'react-router-dom'
 import RecipeCard from './multipurpose/RecipeCard.jsx'
 import { useState, useEffect } from 'react'
@@ -90,8 +89,9 @@ function RecipeBoxView() {
   const { username, recipes } = userDetails;
 
   return (
-    <div className='sm:w-350 md:w-5/6'>
-      <Header />
+    <div>
+    <HeaderFooter>
+    <div className='sm:w-350 md:w-full mt-16 mb-16 ml-2 mr-2'>
       <RecipeBoxHeader username={username} />
       <RecipeBoxSubHeader />
       {/* <div className="md:flex md:flex-row md:flex-wrap md:gap-4 md:justify-center"> */}
@@ -110,7 +110,8 @@ function RecipeBoxView() {
         <div>No recipes available</div>
       )}
       </div>
-      <Footer />
+      </div>
+      </HeaderFooter>
     </div>
   )
 }

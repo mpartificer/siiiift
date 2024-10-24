@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react';
 import {useLocation} from 'react-router-dom'
 import { supabase } from '../supabaseClient.js';
 import '../App.css';
-import Header from './multipurpose/Header.jsx';
+import HeaderFooter from './multipurpose/HeaderFooter.jsx';
 import SearchBar from './multipurpose/SearchBar.jsx';
 import SearchResult from './multipurpose/SearchResult.jsx';
-import Footer from './multipurpose/Footer.jsx';
 
 function SearchFilter({ filterValue, isActive, onClick }) {
   return (
@@ -107,7 +106,8 @@ function SearchView() {
 
   return (
     <div className='followersView'>
-      <Header />
+      <HeaderFooter>
+        <div className="mt-16 mb-16">
       <form onSubmit={handleSearch}>
         <SearchBar 
           value={searchTerm} 
@@ -128,7 +128,8 @@ function SearchView() {
         />
       ))}
       </div>
-      <Footer />
+      </div>
+      </HeaderFooter>
     </div>
   );
 }

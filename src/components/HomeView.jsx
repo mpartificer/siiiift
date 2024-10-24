@@ -1,7 +1,6 @@
 import '../App.css';
-import Header from './multipurpose/Header.jsx';
 import HomeCard from './multipurpose/HomeCard.jsx';
-import Footer from './multipurpose/Footer.jsx';
+import HeaderFooter from './multipurpose/HeaderFooter.jsx';
 import { supabase } from '../supabaseClient.js';
 import { useState, useEffect } from 'react';
 
@@ -62,9 +61,11 @@ function HomeView() {
 
   return (
     <div>
-      <Header />
+      <HeaderFooter>
+      <div className='mt-16'>
       <HomeCard bakeId={bakeId} photos={photos} pageTitle={[username, recipeTitle]} path={[`/profile/${username}`, `/recipe/${recipeId}`]} userId={userId} currentUserId={currentUserId} recipeId = {recipeId}/>
-      <Footer />
+      </div>
+      </HeaderFooter>
     </div>
   )
 }

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../App.css';
-import Header from './multipurpose/Header.jsx';
-import Footer from './multipurpose/Footer.jsx';
+import HeaderFooter from './multipurpose/HeaderFooter.jsx';
 import { Heart } from 'lucide-react';
 import PageTitle from './multipurpose/PageTitle.jsx';
 import { useLocation } from 'react-router-dom';
@@ -117,9 +116,12 @@ function BakeHistoryCard({ bakeDetail, likeDetails, modDetails, currentUserDetai
       }
     };
     return (
-        <div className='recipeCheckPanel flex flex-col gap-2 bg-secondary p-2'>
+        <div className='recipeCheckPanel sm:w-350 flex flex-col md:flex-row gap-2 bg-secondary p-2'>
+            <div className="mr-2">
             <DateMarker date={bakeDetail.baked_at} />
-            <img src={bakeDetail.photos[0] || '/src/assets/TempImage.jpg'} alt='recipe image' className='recipeImg self-center' />
+            <img src={bakeDetail.photos[0] || '/src/assets/TempImage.jpg'} alt='recipe image' className='recipeImg self-center mt-2' />
+            </div>
+            <div className="ml-2">
             <div className='flex flex-row gap-1 font-bold items-center text-large'>
             <Heart
         size={30}
@@ -130,6 +132,7 @@ function BakeHistoryCard({ bakeDetail, likeDetails, modDetails, currentUserDetai
       />       {likeCount}</div>
             <ModDetailInsert title='modifications' modDetails={modDetails} />
             <BakeDetailInsert title='ai insight' description={bakeDetail.ai_insight} />
+            </div>
         </div>
     )
 }
@@ -194,14 +197,17 @@ function BakeHistoryView() {
     console.log(currentUserDetails)
 
     return (
-        <div className='followersView'>
-            <Header />
+<div>
+        <HeaderFooter>
+
+        <div className='followersView mt-16 mb-16'>
             <PageTitle pageTitle={`${username}'s ${bakeDetails[0].recipe_title} history`} />
 
             {bakeDetails.map((detail) => (
                 <BakeHistoryCard key={detail.id} bakeDetail={detail} likeDetails={likeDetails} modDetails={modificationDetails} currentUserDetails={currentUserDetails} />
             ))}
-            <Footer />
+            </div>
+            </HeaderFooter>
         </div>
     )
 }

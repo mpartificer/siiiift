@@ -1,11 +1,9 @@
 import FollowBar from '../components/multipurpose/FollowBar.jsx'
 import FollowTab from '../components/multipurpose/FollowTab.jsx'
-import { User } from 'lucide-react'
 import { Settings } from 'lucide-react'
 import { Cookie } from 'lucide-react'
 import { BookOpen } from 'lucide-react'
-import Header from './multipurpose/Header.jsx'
-import Footer from './multipurpose/Footer.jsx'
+import HeaderFooter from '../components/multipurpose/HeaderFooter.jsx'
 import { useNavigate } from 'react-router-dom';
 import '../App.css'
 import HomeCard from './multipurpose/HomeCard.jsx'
@@ -56,7 +54,7 @@ function ProfilePlateTop(props) {
   
 function ProfilePlateBottom(props) {
     return (
-      <div className='profilePlateBottom gap-2 sm:w-350'>
+      <div className='profilePlateBottom flex flex-row md:flex-column gap-2 sm:w-350'>
         {props.children}
       </div>
     )
@@ -205,8 +203,9 @@ function ProfileView() {
   if (!userDetails) return <div>No user details available</div>;
 
   return (
-    <div>
-      <Header />
+    <div className='flex flex-column justify-center'>
+      <HeaderFooter>
+        <div className='flex flex-row mt-16'>
       <ProfilePlate
         userName={userDetails.username}
         followerCount={userDetails.follower_count}
@@ -218,7 +217,8 @@ function ProfileView() {
         photos={userDetails.photo}
       />
       <ContentCap userId={userId} />
-      <Footer />
+      </div>
+      </HeaderFooter>
     </div>
   );
 }
