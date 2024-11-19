@@ -201,7 +201,7 @@ const RecipeDropDown = (props) => {
                             onChange={(value) => handleIngredientModificationChange(index, value)}
                         />
                     ))}
-                    <a href="#" onClick={addIngredientModification} className="mb-4">add another ingredient modification</a>
+                    <a href="#" onClick={addIngredientModification} className="mb-4 justify-self-end">add another ingredient modification</a>
 
                     <h3 className="mt-4 mb-2">instruction modifications:</h3>
                     {props.instructionModifications.map((mod, index) => (
@@ -213,7 +213,7 @@ const RecipeDropDown = (props) => {
                             onChange={(value) => handleInstructionModificationChange(index, value)}
                         />
                     ))}
-                    <a href="#" onClick={addInstructionModification}>add another instruction modification</a>
+                    <a href="#" onClick={addInstructionModification} className="mb-4 justify-self-end">add another instruction modification</a>
                 </>
             )}
         </div>

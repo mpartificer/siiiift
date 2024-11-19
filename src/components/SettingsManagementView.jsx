@@ -1,12 +1,10 @@
 import '../App.css'
 import Toggle from './multipurpose/Toggle.jsx'
 import { Image } from 'lucide-react'
-import PageTitle from './multipurpose/PageTitle.jsx'
-import Header from './multipurpose/Header.jsx'
-import Footer from './multipurpose/Footer.jsx'
+import HeaderFooter from './multipurpose/HeaderFooter.jsx'
 import { useState, useEffect } from 'react'
 import SettingLogOut from './multipurpose/SettingLogOut.jsx'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { supabase } from '../supabaseClient.js'
 
 
@@ -40,15 +38,6 @@ function EditBio(props) {
       </form>
     )
   }
-
-  function SettingReviewFollowers(props) {
-    const navigate = useNavigate()
-      return (
-        <div className='settingNoToggle'>
-          <button type="submit" onClick={() => navigate(props.path)}>{props.settingName}</button>
-        </div>
-      )
-    }
   
 function SettingWithToggle(props) {
     return (
@@ -62,43 +51,28 @@ function SettingWithToggle(props) {
 
 function SettingsManagementView(props) {
 
-  const [authDetails, setAuthDetails] = useState('');
+  const location = useLocation();
+  const userId = location.state.userId;
+
   const [userDetails, setUserDetails] = useState('');
   const [isLoading, setIsLoading] = useState('true')
 
   useEffect(() => {
     let isMounted = true;
 
-    async function getUserData() {
-      try {
-        const { data: { user } } = await supabase.auth.getUser()
-
-        if (isMounted) {
-        setAuthDetails(user)
-        setIsLoading(false)
-        setUserData();
-        }
-        if (user.error) throw user.error
-
-      }catch (error) {
-        console.error('Error fetching user_profile:', error);
-        setIsLoading(false)
-      }
-
-}
-
     async function setUserData() {
       try {
+        console.log(userId)
         setIsLoading(true)
         const {userResponse, error} = await
           supabase
             .from('user_profile')
             .select('*')
-            .eq('user_auth_id', authDetails.id)
-
+            .eq('user_auth_id', userId)
 
           if (isMounted) {
             setUserDetails(userResponse)
+            console.log(userDetails)
             setIsLoading(false)
           }
       }
@@ -107,23 +81,24 @@ function SettingsManagementView(props) {
     }
   }
 
-  getUserData();
+  setUserData();
 
   return () => {
     isMounted = false;
   };}
 
-)
+,[])
 
     console.log(userDetails)
     return (
-      <div className='settingsManagementView max-w-350'>
-        <Header />
-        <PageTitle pageTitle='username' />
-        <EditBio userBio="this is my bio" />
-        <SettingWithToggle settingName='toggle AI insights' />
-        <SettingLogOut settingName='log out' path='/login'/>
-        <Footer />
+      <div className='w-350 md:w-5/6 '>
+        <HeaderFooter />
+          <div className="mt-14 mb-14 settingsManagementView align-center">
+            <div className='pageTitle'>username</div>
+            <EditBio userBio="" />
+            <SettingWithToggle settingName='toggle AI insights' />
+            <SettingLogOut settingName='log out' path='/login'/>
+          </div>
       </div>
     )
   }

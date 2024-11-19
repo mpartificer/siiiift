@@ -13,11 +13,17 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient.js'
 
 
-function SettingsButton() {
+function SettingsButton(props) {
   const navigate = useNavigate();
+
+  const userData = { "userId": props.userId }
+
+  const toUserSettings = () => {
+    navigate(`/profile/settings`, { state: userData })}
+
     return(
       <div className='settingsButton'>
-        <Settings size={24} color='#192F01' onClick={() => navigate('/profile/settings')} />
+        <Settings size={24} color='#192F01' onClick={toUserSettings} />
       </div>
     )
 }
@@ -33,7 +39,7 @@ function ProfileBlurb(props) {
 function ProfileSummary(props) {
 
     return (
-      <div className='profileSummary'>
+      <div className='profileSummary md:w-80'>
         <FollowBar>
           <FollowTab number={props.followerCount} measure="followers" username={props.username} userId={props.userId} />
           <FollowTab number={props.followingCount} measure="following"  username={props.username} userId={props.userId} />
@@ -46,7 +52,7 @@ function ProfileSummary(props) {
   
 function ProfilePlateTop(props) {
     return (
-      <div className='profilePlateTop text-xl'>
+      <div className='profilePlateTop text-xl md:max-w-80 md:justify-end'>
         {props.children}
       </div>
     )
@@ -54,7 +60,7 @@ function ProfilePlateTop(props) {
   
 function ProfilePlateBottom(props) {
     return (
-      <div className='profilePlateBottom flex sm:flex-row md:flex-column flex-wrap gap-2 sm:w-350'>
+      <div className='flex sm:flex-row md:flex-column flex-wrap gap-2 sm:w-350 md:justify-end'>
         {props.children}
       </div>
     )
@@ -62,10 +68,10 @@ function ProfilePlateBottom(props) {
   
 function ProfilePlate(props) {
     return (
-      <div className='profilePlate sm:w-350 md:w-5/6'>
+      <div className='profilePlate flex-1 sm:w-350 md:w-5/6'>
         <ProfilePlateTop>
         <div className='pageTitle text-xl'>{props.userName}</div>
-        <SettingsButton />
+        <SettingsButton userId={props.userId}/>
         </ProfilePlateTop>
         <ProfilePlateBottom>
         <img 
@@ -116,7 +122,7 @@ function ContentCap({ userId }) {
   };
 
   return (
-    <div>
+    <div className='flex-1'>
       <ul className="menu menu-horizontal bg-primary rounded-box mt-6 sm:w-350 md:w-5/6 justify-around">
         <li>
           <a
@@ -203,9 +209,9 @@ function ProfileView() {
   if (!userDetails) return <div>No user details available</div>;
 
   return (
-    <div className='flex flex-column justify-center'>
+    <div className='flex flex-column flex-nowrap justify-center'>
       <HeaderFooter>
-        <div className='flex flex-row mt-16'>
+        <div className='flex flex-column flex-nowrap mt-16 mb-16 justify-center'>
       <ProfilePlate
         userName={userDetails.username}
         followerCount={userDetails.follower_count}
