@@ -72,9 +72,6 @@ function RecipeCheckPanel(props) {
     const propInsert = props.propInsert;
     const confirmRecipeItem = props.confirmRecipeItem;
 
-    console.log('PropInsert:', propInsert);
-    console.log('ConfirmRecipeItem:', confirmRecipeItem);
-
     if (!Array.isArray(propInsert)) {
         console.error(`PropInsert is not an array for ${confirmRecipeItem}`);
         return <div>Error: Invalid data format</div>;
@@ -104,7 +101,7 @@ function RecipeCheckPanel(props) {
     }
 
     return (
-        <div className='recipeCheckPanel sm:w-350'>
+        <div className='recipeCheckPanel w-350'>
             <RecipeCheckTitle recipeCheckTitle={confirmRecipeItem} />
             <ul className='recipeCheckPanelList'>
                 {myComponentList}
@@ -177,7 +174,7 @@ function PopularityCounter(props) {
 
 function RecipeSummaryPanel(props) {
     return (
-        <div className='recipeCheckPanel sm:w-350 flex flex-row p-5 justify-between'>
+        <div className='recipeCheckPanel w-350 flex flex-row p-5 justify-between'>
             <TimeCheck totalTime={props.totalTime} cookTime={props.cookTime} prepTime={props.prepTime} />
             <div className="divider divider-primary divider-horizontal"></div>
             <PopularityCheck likes={props.likes} saves={props.saves} bakes={props.bakes} rating={props.rating} />
@@ -201,6 +198,16 @@ function RecipeView() {
         const [recipeDetails, setRecipeDetails] = useState(null);
         const [ratingDetails, setRatingDetails] = useState(null);
         const [isLoading, setIsLoading] = useState(true);
+
+        const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+        useEffect(() => {
+          const handleResize = () => setWindowWidth(window.innerWidth);
+          window.addEventListener('resize', handleResize);
+          
+          // Cleanup
+          return () => window.removeEventListener('resize', handleResize);
+        }, []);
     
         useEffect(() => {
             async function fetchData() {
@@ -235,8 +242,6 @@ function RecipeView() {
         if (isLoading) return <div>Loading...</div>;
         if (!recipeDetails) return <div>No recipe details available</div>;
 
-        console.log(ratingDetails)
-
     const recipeTitle = recipeDetails.title.toString();
     const totalTime = recipeDetails.total_time.toString();
     const cookTime = recipeDetails.cook_time.toString();
@@ -262,15 +267,32 @@ function RecipeView() {
     return (
         <div>
             <HeaderFooter>
-            <div className='followersView mt-16 mb-16'>
-                <div className='pageTitle'>{recipeTitle}</div>
-                <img src={photos} alt="recipe image" className='recipeImg' />
-                <RecipeOptions originalLink={originalLink} />
-                <RecipeSummaryPanel totalTime={totalTime} cookTime={cookTime} prepTime={prepTime} 
-                                    likes={likes} bakes={bakes} saves={saves} rating={rating} />
-                <RecipeCheckPanel propInsert={ingredients} confirmRecipeItem='ingredients' />
-                <RecipeCheckPanel propInsert={instructions} confirmRecipeItem='instructions' />
-            </div>
+            {windowWidth > 768 ? (
+                   <div className='flex flex-row mt-16 mb-16 gap-2 w-full justify-center'>
+                    <div className='flex flex-col gap-2 items-end'>
+                   <div className='pageTitle text-xl'>{recipeTitle}</div>
+                   <img src={photos} alt="recipe image" className='recipeImg' />
+                   <RecipeSummaryPanel totalTime={totalTime} cookTime={cookTime} prepTime={prepTime} 
+                                       likes={likes} bakes={bakes} saves={saves} rating={rating} />
+                   </div>
+                   <div className='flex flex-col gap-2'>
+                   <RecipeOptions originalLink={originalLink} />
+                   <RecipeCheckPanel propInsert={ingredients} confirmRecipeItem='ingredients' />
+                   <RecipeCheckPanel propInsert={instructions} confirmRecipeItem='instructions' />
+                   </div>
+               </div>
+      ) : (
+        <div className='followersView mt-16 mb-16 text-xl wrap'>
+        <div className='pageTitle'>{recipeTitle}</div>
+        <img src={photos} alt="recipe image" className='recipeImg' />
+        <RecipeOptions originalLink={originalLink} />
+        <RecipeSummaryPanel totalTime={totalTime} cookTime={cookTime} prepTime={prepTime} 
+                            likes={likes} bakes={bakes} saves={saves} rating={rating} />
+        <RecipeCheckPanel propInsert={ingredients} confirmRecipeItem='ingredients' />
+        <RecipeCheckPanel propInsert={instructions} confirmRecipeItem='instructions' />
+    </div>
+      )}
+
             </HeaderFooter>
         </div>
     )

@@ -10,7 +10,7 @@ function RecipeCard(props) {
     }
 
     return (
-      <div className="card card-side bg-base-100 shadow-xl sm:w-350 md:w-5/6 standardBorder overflow-hidden mt-1.5" onClick={()=>{toRecipeProfile()}}>
+      <div className="card card-side bg-base-100 shadow-xl sm:w-350 md:w-full standardBorder overflow-hidden mt-1.5" onClick={()=>{toRecipeProfile()}}>
         <figure>
           <img
             src={props.photo}

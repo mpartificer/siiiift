@@ -363,8 +363,8 @@ ul {
 }
 
 .recipeImg {
-  width: 330px;
-  height: 330px;
+  width: 350px;
+  height: 350px;
   object-fit: cover;
   border-radius: 20px;
   overflow:hidden;

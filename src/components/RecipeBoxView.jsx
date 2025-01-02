@@ -11,8 +11,8 @@ function RecipeBoxHeader({ username }) {
   const navigate = useNavigate();
   const pageTitle = `${username}'s recipe box`;
   return (
-    <div className='flex flex-row justify-between align-center sm:w-350 md:w-5/6 md:grow'>
-      <div className='pageTitle'>{pageTitle}</div>
+    <div className='flex flex-row justify-between align-center sm:w-350 md:w-5/6 grow'>
+      <div className='pageTitle text-xl'>{pageTitle}</div>
       <Plus size={30} color='#192F01' onClick={() => navigate('/reciperetriever')}/>
     </div>
   )
@@ -20,7 +20,7 @@ function RecipeBoxHeader({ username }) {
 
 function RecipeBoxSubHeader() {
   return (
-    <div className='flex flex-row justify-between items-center sm:w-350 md:w-5/6 md:grow'>
+    <div className='flex flex-row justify-between items-center sm:w-350 md:w-5/6 grow'>
       <ToggleBox />
       <SortByBox />
     </div>
@@ -54,6 +54,15 @@ function RecipeBoxView() {
 
   const [userDetails, setUserDetails] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    
+    // Cleanup
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     async function fetchUserDetails() {
@@ -91,26 +100,50 @@ function RecipeBoxView() {
   return (
     <div>
     <HeaderFooter>
-    <div className='sm:w-350 md:w-screen mt-16 mb-16 sm:ml-2 sm:mr-2 flex flex-column align-center flex-wrap'>
-      <RecipeBoxHeader username={username} />
-      <RecipeBoxSubHeader />
-      {/* <div className="md:flex md:flex-row md:flex-wrap md:gap-4 md:justify-center"> */}
-      <div className="md:grid-cols-2" >
-      {recipes && recipes.length > 0 ? (
-        recipes.map(recipe => (
-          <RecipeCard
-            key={recipe.id}
-            recipeTitle={recipe.recipetitle}
-            totalTime={recipe.totaltime}
-            recipeId={recipe.id}
-            photo={recipe.photo}
-          />
-        ))
+      {windowWidth > 768 ? (
+            <div className='mt-16 mb-16 ml-10 mr-10 flex flex-column align-center flex-wrap gap-2'>
+            <RecipeBoxHeader username={username} />
+            <RecipeBoxSubHeader />
+            {/* <div className="md:flex md:flex-row md:flex-wrap md:gap-4 md:justify-center"> */}
+            <div className="grid-cols-2" >
+            {recipes && recipes.length > 0 ? (
+              recipes.map(recipe => (
+                <RecipeCard
+                  key={recipe.id}
+                  recipeTitle={recipe.recipetitle}
+                  totalTime={recipe.totaltime}
+                  recipeId={recipe.id}
+                  photo={recipe.photo}
+                />
+              ))
+            ) : (
+              <div>No recipes available</div>
+            )}
+            </div>
+            </div>
       ) : (
-        <div>No recipes available</div>
+        <div className='mt-16 mb-16 ml-2 mr-2 flex flex-column align-center flex-wrap gap-1'>
+        <RecipeBoxHeader username={username} />
+        <RecipeBoxSubHeader />
+        {/* <div className="md:flex md:flex-row md:flex-wrap md:gap-4 md:justify-center"> */}
+        <div className="" >
+        {recipes && recipes.length > 0 ? (
+          recipes.map(recipe => (
+            <RecipeCard
+              key={recipe.id}
+              recipeTitle={recipe.recipetitle}
+              totalTime={recipe.totaltime}
+              recipeId={recipe.id}
+              photo={recipe.photo}
+            />
+          ))
+        ) : (
+          <div>No recipes available</div>
+        )}
+        </div>
+        </div>
       )}
-      </div>
-      </div>
+
       </HeaderFooter>
     </div>
   )
