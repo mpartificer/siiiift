@@ -1,6 +1,5 @@
 import '../App.css'
 import Toggle from './multipurpose/Toggle.jsx'
-import { Image } from 'lucide-react'
 import HeaderFooter from './multipurpose/HeaderFooter.jsx'
 import { useState, useEffect } from 'react'
 import SettingLogOut from './multipurpose/SettingLogOut.jsx'
@@ -11,7 +10,7 @@ import { supabase } from '../supabaseClient.js'
 
 function EditBio(props) {
     return (
-      <div className='flex flex-row md:flex-col justify-between w-350 md:gap-4'>
+      <div className='flex flex-row md:flex-col md:items-end w-350 gap-1 md:gap-4'>
         <img 
           src={props.photo}
           alt="recipe" 
@@ -26,7 +25,7 @@ function EditBio(props) {
     let [userBio, setUserBio] = useState('')
     userBio = props.userBio
 
-    let textArea = <textarea className="textarea grow h-full overflow-x-hidden bg-secondary" value={userBio} onChange={(e) => setUserBio(e.target.value)}></textarea>
+    let textArea = <textarea className="textarea grow h-full w-full overflow-x-hidden bg-secondary" value={userBio} onChange={(e) => setUserBio(e.target.value)}></textarea>
 
     const handleSubmit = (e) => {
       e.preventDefault()
@@ -85,12 +84,12 @@ function SettingsManagementView(props) {
   };
 
     return (
-      <div className='w-350 md:w-5/6 align-center'>
+      <div className='w-350 md:w-full'>
         <HeaderFooter />
-          <div className="flex flex-col md:flex-row gap-5 mt-14 mb-14 self-center ">
-            <div className="flex flex-col flex-wrap justify-items-end">
-            <div className='pageTitle text-xl md:text-3xl justify-self-start md:justify-self-end'>{userDetails.username}</div>
-            <EditBio userBio={userDetails.bio} photo={userDetails.photo}/>
+          <div className="flex flex-col md:flex-row gap-5 mt-14 mb-14 md:mt-20 items-center md:items-start justify-self-center">
+            <div className="flex flex-col flex-wrap justify-end">
+              <div className='pageTitle text-xl md:text-3xl mb-1 justify-self-start md:self-end'>{userDetails.username}</div>
+              <EditBio userBio={userDetails.bio} photo={userDetails.photo}/>
             </div>
             <div className="flex flex-col w-350 gap-5 md:mt-8">
               <SettingWithToggle settingName='toggle AI insights' />
