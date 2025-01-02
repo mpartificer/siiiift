@@ -77,7 +77,7 @@ function ProfilePlate(props) {
         <img 
           src={props.photos}
           alt="recipe" 
-          className='sm:max-w-36 sm:max-h-36 md:max-w-80 md:max-h-80 profileImg standardBorder'
+          className='sm:min-w-36 sm:min-h-36 md:min-w-80 md:min-h-80 object-cover standardBorder'
         />
           <ProfileSummary bakes={props.bakes} followingCount={props.followingCount} followerCount={props.followerCount} username={props.userName} userId={props.userId} userBio={props.userBio}/>
         </ProfilePlateBottom>

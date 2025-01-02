@@ -11,8 +11,12 @@ import { supabase } from '../supabaseClient.js'
 
 function EditBio(props) {
     return (
-      <div className='upperBioFlexParent'>
-        <Image size={100} color="#192F01"/>
+      <div className='flex flex-row md:flex-col justify-between w-350 md:gap-4'>
+        <img 
+          src={props.photo}
+          alt="recipe" 
+          className='w-36 h-36 md:w-80 md:h-80 gap-4 standardBorder object-cover'
+        />
         <TextAreaWithButton userBio={props.userBio} />
       </div>
     )
@@ -31,7 +35,7 @@ function EditBio(props) {
     
     return (
       <form onSubmit={handleSubmit}>
-        <label className="input input-bordered flex items-center gap-2 bg-secondary profileBlurb h-full">
+        <label className="input input-bordered flex items-center gap-2 bg-secondary profileBlurb h-full md:w-80">
           {textArea}          
           <button type="submit"className='btn btn-primary self-end justify-self-end'>save</button>
         </label>
@@ -58,46 +62,40 @@ function SettingsManagementView(props) {
   const [isLoading, setIsLoading] = useState('true')
 
   useEffect(() => {
-    let isMounted = true;
-
-    async function setUserData() {
-      try {
-        console.log(userId)
-        setIsLoading(true)
-        const {userResponse, error} = await
-          supabase
-            .from('user_profile')
-            .select('*')
-            .eq('user_auth_id', userId)
-
-          if (isMounted) {
-            setUserDetails(userResponse)
-            console.log(userDetails)
-            setIsLoading(false)
-          }
-      }
-      catch (error) {
-        console.error(error)
-    }
-  }
-
-  setUserData();
-
-  return () => {
-    isMounted = false;
-  };}
-
-,[])
-
+    fetchUserDetails();
     console.log(userDetails)
+  }, [userId]);
+
+  const fetchUserDetails = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('user_profile')
+        .select('*')
+        .eq('user_auth_id', userId)
+        .single();
+
+      if (error) throw error;
+
+      setUserDetails(data);
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Error fetching user_profile:', error);
+      setIsLoading(false);
+    }
+  };
+
     return (
-      <div className='w-350 md:w-5/6 '>
+      <div className='w-350 md:w-5/6 align-center'>
         <HeaderFooter />
-          <div className="mt-14 mb-14 settingsManagementView align-center">
-            <div className='pageTitle'>username</div>
-            <EditBio userBio="" />
-            <SettingWithToggle settingName='toggle AI insights' />
-            <SettingLogOut settingName='log out' path='/login'/>
+          <div className="flex flex-col md:flex-row gap-5 mt-14 mb-14 self-center ">
+            <div className="flex flex-col flex-wrap justify-items-end">
+            <div className='pageTitle text-xl md:text-3xl justify-self-start md:justify-self-end'>{userDetails.username}</div>
+            <EditBio userBio={userDetails.bio} photo={userDetails.photo}/>
+            </div>
+            <div className="flex flex-col w-350 gap-5 md:mt-8">
+              <SettingWithToggle settingName='toggle AI insights' />
+              <SettingLogOut settingName='log out' path='/login'/>
+            </div>
           </div>
       </div>
     )
