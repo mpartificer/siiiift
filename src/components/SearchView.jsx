@@ -105,7 +105,7 @@ function SearchView() {
   };
 
   return (
-    <div className='followersView'>
+    <div className='flex flex-col w-full items-center gap-4'>
       <HeaderFooter>
         <div className="mt-16 mb-16">
       <form onSubmit={handleSearch}>
@@ -117,7 +117,7 @@ function SearchView() {
       <SearchFilterBar activeFilter={activeFilter} setActiveFilter={handleFilterChange} />
       {isLoading && <p>Loading...</p>}
       {error && <p className="error-message">{error}</p>}
-      <div className="md:flex md:flex-row md:flex-wrap md:gap-4 md:justify-center">
+      <div className="">
       {filteredResults.map((result) => (
         <SearchResult 
           key={result.type === 'user' ? result.user_auth_id : result.id}

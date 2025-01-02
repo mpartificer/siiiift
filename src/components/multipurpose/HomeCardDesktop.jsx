@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Heart, MessageCircle, History } from 'lucide-react';
 import { useNavigate } from 'react-router-dom'; 
 import PageTitle from './PageTitle.jsx';
-import { supabase } from '../../supabaseClient';
+import { supabase } from '../../supabaseClient.js';
 import '../../App.css';
 
 function PostReactionBox({ currentUserId, username, recipeId, userId, bakeId }) {
@@ -60,7 +60,7 @@ function PostReactionBox({ currentUserId, username, recipeId, userId, bakeId }) 
     navigate(`/${username}/${recipeId}`, { state: bakeData })}
 
   return (
-    <div className='postReactionBox mt-1 ml-2.5 md:self-end'>
+    <div className='postReactionBox mt-1 ml-2.5'>
       <Heart
         size={40}
         color={isLiked ? 'palevioletred' : '#496354'}
@@ -79,31 +79,35 @@ function PostReactionBox({ currentUserId, username, recipeId, userId, bakeId }) 
   );
 }
 
-function HomeCard(props) {
+function HomeCardDesktop(props) {
   return (
-    <div className='homeCard standardBorder border-2 m-2 bg-secondary border-primary p-2 md:flex md:flex-row md:flex-wrap '>
-      <PageTitle 
-        pageTitle={props.pageTitle} 
-        path={[`/profile/${props.pageTitle[0]}`, `/recipe/${props.recipeId}`]} 
-        userId={props.userId} 
-        recipeId={props.recipeId}
-      />
+    <div className="flex flex-col items-center">
+    <div className='homeCard standardBorder border-2 m-2 bg-secondary border-primary p-2 flex flex-row w-fit justify-center'>
       {props.photos && 
         <img 
           src={props.photos}
           alt="recipe" 
-          className='recipeImg md:order-first ml-2.5'
+          className='recipeImg ml-2.5'
         />
       }
-      <PostReactionBox 
-        username={props.pageTitle[0]} 
-        recipeId={props.recipeId} 
-        currentUserId={props.currentUserId} 
-        bakeId={props.bakeId}
-        userId={props.userId}
-      />
+      <div className='flex flex-col mr-2.5 w-80'>
+        <PageTitle 
+            pageTitle={props.pageTitle} 
+            path={[`/profile/${props.pageTitle[0]}`, `/recipe/${props.recipeId}`]} 
+            userId={props.userId} 
+            recipeId={props.recipeId}
+        />
+        <PostReactionBox 
+            username={props.pageTitle[0]} 
+            recipeId={props.recipeId} 
+            currentUserId={props.currentUserId} 
+            bakeId={props.bakeId}
+            userId={props.userId}
+        />
+      </div>
+    </div>
     </div>
   );
 }
 
-export default HomeCard;
+export default HomeCardDesktop;

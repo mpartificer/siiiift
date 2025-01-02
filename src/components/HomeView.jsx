@@ -1,73 +1,93 @@
 import '../App.css';
-import HomeCard from './multipurpose/HomeCard.jsx';
+import HomeCardMobile from './multipurpose/HomeCardMobile.jsx';
+import HomeCardDesktop from './multipurpose/HomeCardDesktop.jsx'
 import HeaderFooter from './multipurpose/HeaderFooter.jsx';
 import { supabase } from '../supabaseClient.js';
 import { useState, useEffect } from 'react';
 
 function HomeView() {
   const [bakeDetails, setBakeDetails] = useState([]);
+  const [currentUserId, setCurrentUserId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
 
-    async function fetchBakeDetails() {
+    async function fetchData() {
       try {
+        // Get current user
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user && isMounted) {
+          setCurrentUserId(user.id);
+        }
+
+        // Fetch bake details
         const { data, error } = await supabase
           .from('bake_details_view')
           .select('*');
-          supabase.auth.getUser()
-
-          console.log(data)
 
         if (error) throw error;
 
         if (isMounted) {
           setBakeDetails(data);
           setIsLoading(false);
-          console.log(data)
         }
       } catch (error) {
-        console.error('Error fetching Bake_Details:', error);
+        console.error('Error fetching data:', error);
         if (isMounted) setIsLoading(false);
       }
     }
 
-  fetchBakeDetails();
+    fetchData();
 
     return () => {
       isMounted = false;
     };
-
   }, []);
 
   if (isLoading) return <div>Loading...</div>;
-
-  if (!bakeDetails || bakeDetails.length === 0) return <div>No user details available</div>;
-
-  console.log(bakeDetails)
-
-  const username = bakeDetails[0].username.toString();
-  const recipeTitle = bakeDetails[0].recipe_title;
-  const photos = bakeDetails[0].photos.toString();
-  const recipeId = bakeDetails[0].recipe_id.toString();
-  const userId = bakeDetails[0].user_id.toString();
-  const bakeId = bakeDetails[0].bake_id.toString();
-  const currentUserId = bakeDetails[1].user_id.toString();
-
-  console.log(recipeId)
-
+  if (!bakeDetails || bakeDetails.length === 0) return <div>No bakes available</div>;
 
   return (
     <div>
       <HeaderFooter>
-      <div className='mt-16'>
-      <HomeCard bakeId={bakeId} photos={photos} pageTitle={[username, recipeTitle]} path={[`/profile/${username}`, `/recipe/${recipeId}`]} userId={userId} currentUserId={currentUserId} recipeId = {recipeId}/>
-      </div>
+        <div className='mt-16'>
+          {bakeDetails.map((bake) => (
+            <div key={bake.bake_id}>
+              {windowWidth > 768 ? (
+                <HomeCardDesktop 
+                  bakeId={bake.bake_id}
+                  photos={bake.photos}
+                  pageTitle={[bake.username, bake.recipe_title]}
+                  path={[`/profile/${bake.username}`, `/recipe/${bake.recipe_id}`]}
+                  userId={bake.user_id}
+                  currentUserId={currentUserId}
+                  recipeId={bake.recipe_id}
+                />
+              ) : (
+                <HomeCardMobile 
+                  bakeId={bake.bake_id}
+                  photos={bake.photos}
+                  pageTitle={[bake.username, bake.recipe_title]}
+                  path={[`/profile/${bake.username}`, `/recipe/${bake.recipe_id}`]}
+                  userId={bake.user_id}
+                  currentUserId={currentUserId}
+                  recipeId={bake.recipe_id}
+                />
+              )}
+            </div>
+          ))}
+        </div>
       </HeaderFooter>
     </div>
-  )
+  );
 }
 
 export default HomeView;

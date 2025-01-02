@@ -6,7 +6,7 @@ import { BookOpen } from 'lucide-react'
 import HeaderFooter from '../components/multipurpose/HeaderFooter.jsx'
 import { useNavigate } from 'react-router-dom';
 import '../App.css'
-import HomeCard from './multipurpose/HomeCard.jsx'
+import HomeCardMobile from './multipurpose/HomeCardMobile.jsx'
 import RecipeCard from './multipurpose/RecipeCard.jsx'
 import { useLocation } from 'react-router-dom'
 import { useState, useEffect } from 'react';
@@ -147,7 +147,7 @@ function ContentCap({ userId }) {
         {activeTab === 'bakes' && (
           <div className="grid grid-cols-1 gap-4">
             {bakes.map((bake) => (
-              <HomeCard
+              <HomeCardMobile
                 key={bake.id}
                 pageTitle={[bake.username, bake.recipe_title]}
                 photos={bake.photos}
