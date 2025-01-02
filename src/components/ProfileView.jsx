@@ -237,18 +237,52 @@ function ProfileView() {
 
   const fetchUserDetails = async () => {
     try {
-      const { data, error } = await supabase
+      // Fetch basic user profile data
+      const { data: profileData, error: profileError } = await supabase
         .from('user_profile')
         .select('*')
         .eq('user_auth_id', userId)
         .single();
-
-      if (error) throw error;
-
-      setUserDetails(data);
+  
+      if (profileError) throw profileError;
+  
+      // Fetch bakes count
+      const { data: bakesData, error: bakesError } = await supabase
+        .from('bake_details_view')
+        .select('bake_id')
+        .eq('user_id', userId);
+  
+      if (bakesError) throw bakesError;
+  
+      // Fetch followers count
+      const { data: followersData, error: followersError } = await supabase
+        .from('user_followers_view')
+        .select('follower_id')
+        .eq('user_id', userId);
+  
+      if (followersError) throw followersError;
+  
+      // Fetch following count
+      const { data: followingData, error: followingError } = await supabase
+        .from('user_following_view')
+        .select('following_id')
+        .eq('user_id', userId);
+  
+      if (followingError) throw followingError;
+  
+      // Combine all data
+      const userDetailsWithCounts = {
+        ...profileData,
+        bakes_count: bakesData?.length || 0,
+        follower_count: followersData?.length || 0,
+        following_count: followingData?.length || 0
+      };
+  
+      setUserDetails(userDetailsWithCounts);
       setIsLoading(false);
+  
     } catch (error) {
-      console.error('Error fetching user_profile:', error);
+      console.error('Error fetching user data:', error);
       setIsLoading(false);
     }
   };
