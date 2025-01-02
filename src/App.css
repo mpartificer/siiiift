@@ -369,3 +369,11 @@ ul {
   border-radius: 20px;
   overflow:hidden;
 }
+
+.recipeImgMobile {
+  width:100px;
+  height:100px;
+  object-fit:cover;
+  border-radius: 20px;
+  overflow: hidden;
+}

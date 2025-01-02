@@ -7,6 +7,7 @@ import HeaderFooter from '../components/multipurpose/HeaderFooter.jsx'
 import { useNavigate } from 'react-router-dom';
 import '../App.css'
 import HomeCardMobile from './multipurpose/HomeCardMobile.jsx'
+import HomeCardDesktop from './multipurpose/HomeCardDesktop.jsx'
 import RecipeCard from './multipurpose/RecipeCard.jsx'
 import { useLocation } from 'react-router-dom'
 import { useState, useEffect } from 'react';
@@ -60,13 +61,32 @@ function ProfilePlateTop(props) {
   
 function ProfilePlateBottom(props) {
     return (
-      <div className='flex sm:flex-row md:flex-column flex-wrap gap-2 sm:w-350 md:justify-end'>
+      <div className='flex flex-row md:flex-column flex-wrap gap-2 md:items-end w-350 md:justify-end'>
         {props.children}
       </div>
     )
 }
+
+function ProfilePlateMobile(props) {
+  return (
+    <div className='profilePlate flex-1 ml-2.5 mr-2.5 sm:w-350 md:w-5/6'>
+      <ProfilePlateTop>
+      <div className='pageTitle text-xl'>{props.userName}</div>
+      <SettingsButton userId={props.userId}/>
+      </ProfilePlateTop>
+      <ProfilePlateBottom>
+      <img 
+        src={props.photos}
+        alt="recipe" 
+        className='sm:min-w-36 sm:min-h-36 md:min-w-80 md:min-h-80 object-cover standardBorder w-24 md:w-96 h-24 md:h-96 '
+      />
+        <ProfileSummary bakes={props.bakes} followingCount={props.followingCount} followerCount={props.followerCount} username={props.userName} userId={props.userId} userBio={props.userBio}/>
+      </ProfilePlateBottom>
+    </div>
+  )
+}
   
-function ProfilePlate(props) {
+function ProfilePlateDesktop(props) {
     return (
       <div className='profilePlate flex-1 sm:w-350 md:w-5/6'>
         <ProfilePlateTop>
@@ -77,7 +97,7 @@ function ProfilePlate(props) {
         <img 
           src={props.photos}
           alt="recipe" 
-          className='sm:min-w-36 sm:min-h-36 md:min-w-80 md:min-h-80 object-cover standardBorder'
+          className='sm:min-w-36 sm:min-h-36 md:min-w-80 md:min-h-80 object-cover standardBorder recipeImg'
         />
           <ProfileSummary bakes={props.bakes} followingCount={props.followingCount} followerCount={props.followerCount} username={props.userName} userId={props.userId} userBio={props.userBio}/>
         </ProfilePlateBottom>
@@ -89,6 +109,13 @@ function ContentCap({ userId }) {
   const [activeTab, setActiveTab] = useState('bakes');
   const [bakes, setBakes] = useState([]);
   const [savedRecipes, setSavedRecipes] = useState([]);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     fetchBakes();
@@ -121,21 +148,20 @@ function ContentCap({ userId }) {
     }
   };
 
+  
   return (
     <div className='flex-1'>
-      <ul className="menu menu-horizontal bg-primary rounded-box mt-6 sm:w-350 md:w-5/6 justify-around">
-        <li>
-          <a
-            className={`tooltip ${activeTab === 'bakes' ? 'active' : ''}`}
+      <ul className="menu menu-horizontal bg-primary rounded-box mt-6 ml-2.5 w-350 md:w-5/6 justify-around">
+        <li>      
+            <a className={`tooltip ${activeTab === 'bakes' ? 'active' : ''}`}
             data-tip="Bakes"
-            onClick={() => setActiveTab('bakes')}
-          >
+            onClick={() => setActiveTab('bakes')}>
             <Cookie />
           </a>
         </li>
         <li>
-          <a
-            className={`tooltip ${activeTab === 'recipes' ? 'active' : ''}`}
+          
+            <a className={`tooltip ${activeTab === 'recipes' ? 'active' : ''}`}
             data-tip="Saved Recipes"
             onClick={() => setActiveTab('recipes')}
           >
@@ -147,15 +173,27 @@ function ContentCap({ userId }) {
         {activeTab === 'bakes' && (
           <div className="grid grid-cols-1 gap-4">
             {bakes.map((bake) => (
-              <HomeCardMobile
-                key={bake.id}
-                pageTitle={[bake.username, bake.recipe_title]}
-                photos={bake.photos}
-                recipeId={bake.recipe_id}
-                currentUserId={userId}
-                bakeId={bake.id}
-                userId={bake.user_id}
-              />
+              windowWidth > 768 ? (
+                <HomeCardDesktop
+                  key={bake.id}
+                  pageTitle={[bake.username, bake.recipe_title]}
+                  photos={bake.photos}
+                  recipeId={bake.recipe_id}
+                  currentUserId={userId}
+                  bakeId={bake.id}
+                  userId={bake.user_id}
+                />
+              ) : (
+                <HomeCardMobile
+                  key={bake.id}
+                  pageTitle={[bake.username, bake.recipe_title]}
+                  photos={bake.photos}
+                  recipeId={bake.recipe_id}
+                  currentUserId={userId}
+                  bakeId={bake.id}
+                  userId={bake.user_id}
+                />
+              )
             ))}
           </div>
         )}
@@ -182,6 +220,16 @@ function ProfileView() {
   const userId = location.state.userId;
   const [userDetails, setUserDetails] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    
+    // Cleanup
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     fetchUserDetails();
@@ -211,19 +259,35 @@ function ProfileView() {
   return (
     <div className='flex flex-column flex-nowrap justify-center'>
       <HeaderFooter>
-        <div className='flex flex-column flex-nowrap mt-16 mb-16 justify-center'>
-      <ProfilePlate
-        userName={userDetails.username}
-        followerCount={userDetails.follower_count}
-        followingCount={userDetails.following_count}
-        userBio={userDetails.bio}
-        bakes={userDetails.bakes_count}
-        recipes={userDetails.recipes_count}
-        userId={userId}
-        photos={userDetails.photo}
-      />
-      <ContentCap userId={userId} />
-      </div>
+        {windowWidth > 768 ? (
+          <div className='flex flex-column flex-nowrap mt-16 mb-16 justify-items-end'> {/* Added justify-end and items-end */}
+            <ProfilePlateDesktop
+              userName={userDetails.username}
+              followerCount={userDetails.follower_count}
+              followingCount={userDetails.following_count}
+              userBio={userDetails.bio}
+              bakes={userDetails.bakes_count}
+              recipes={userDetails.recipes_count}
+              userId={userId}
+              photos={userDetails.photo}
+            />
+            <ContentCap userId={userId} />
+          </div>
+        ) : (
+          <div className='flex flex-column flex-wrap mt-16 mb-16 justify-center'>
+            <ProfilePlateMobile
+              userName={userDetails.username}
+              followerCount={userDetails.follower_count}
+              followingCount={userDetails.following_count}
+              userBio={userDetails.bio}
+              bakes={userDetails.bakes_count}
+              recipes={userDetails.recipes_count}
+              userId={userId}
+              photos={userDetails.photo}
+            />
+            <ContentCap userId={userId} />
+          </div>
+        )}
       </HeaderFooter>
     </div>
   );
