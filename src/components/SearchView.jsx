@@ -19,7 +19,7 @@ function SearchFilter({ filterValue, isActive, onClick }) {
 
 function SearchFilterBar({ activeFilter, setActiveFilter }) {
   return (
-    <div className='searchFilterBar md:w-5/6'>
+    <div className='searchFilterBar w-350 md:w-96'>
       <SearchFilter 
         filterValue='all' 
         isActive={activeFilter === 'all'} 
@@ -105,9 +105,11 @@ function SearchView() {
   };
 
   return (
-    <div className='flex flex-col w-full items-center gap-4'>
+    <div>
       <HeaderFooter>
         <div className="mt-16 mb-16">
+        <div className='flex flex-col w-full items-center gap-4'>
+
       <form onSubmit={handleSearch}>
         <SearchBar 
           value={searchTerm} 
@@ -117,7 +119,7 @@ function SearchView() {
       <SearchFilterBar activeFilter={activeFilter} setActiveFilter={handleFilterChange} />
       {isLoading && <p>Loading...</p>}
       {error && <p className="error-message">{error}</p>}
-      <div className="">
+      <div className="flex flex-col gap-2 md:gap-4">
       {filteredResults.map((result) => (
         <SearchResult 
           key={result.type === 'user' ? result.user_auth_id : result.id}
@@ -127,6 +129,7 @@ function SearchView() {
           type={result.type}
         />
       ))}
+      </div>
       </div>
       </div>
       </HeaderFooter>

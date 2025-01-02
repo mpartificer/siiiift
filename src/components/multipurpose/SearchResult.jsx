@@ -101,7 +101,7 @@ function SearchResult({ id, currentUserId, searchReturnValue, type }) {
   }
 
   return (
-    <div className='searchResult'>
+    <div className='searchResult w-350 md:w-96'>
       <div className='searchDetail'>
         {type === 'user' ? <User size={50} color='#EADDFF' /> : <Book size={50} color='#EADDFF' />}
         {searchReturnValue}

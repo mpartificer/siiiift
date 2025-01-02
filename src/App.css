@@ -223,8 +223,7 @@ ul {
 .searchFilterBar {
   display: flex;
   flex-direction: row;
-  align-content: flex-start;
-  width:90vw;
+  justify-content: center;
   gap: 10px;
 }
 
@@ -235,7 +234,6 @@ ul {
   justify-content: space-between;
   align-items: center;
   border-radius: 20px;
-  width:350px;
   height:87px;
 }
 
