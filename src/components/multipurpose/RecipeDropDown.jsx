@@ -27,7 +27,7 @@ const ModificationItem = ({ items, placeholder, onChange, value }) => {
 
     return (
         <div className="flex flex-col mb-2">
-            <div className="dropdown mb-1">
+            <div className="dropdown mb-1 md:m-0">
                 <div 
                     tabIndex={0} 
                     role="button" 
@@ -163,16 +163,13 @@ const RecipeDropDown = (props) => {
     if (loading) return <div>Loading...</div>
     if (error) return <div>Error: {error}</div>
 
-    console.log(props.instructionModifications)
-    console.log(props.ingredientModifications)
-
     return (
         <div className="profilePlate">
             <div className="dropdown">
                 <div 
                     tabIndex={0} 
                     role="button" 
-                    className="btn m-1 w-80 bg-secondary modificationDropDown"
+                    className="btn m-1 md:m-0 w-80 bg-secondary modificationDropDown"
                     onClick={() => setIsRecipeDropdownOpen(!isRecipeDropdownOpen)}
                 >
                     {selectedRecipe ? recipeData.find(item => item.id === selectedRecipe)?.recipetitle : 'select a recipe:'}

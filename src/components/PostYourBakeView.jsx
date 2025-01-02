@@ -1,5 +1,5 @@
 import '../App.css'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { supabase } from '../supabaseClient'
 import { useNavigate } from 'react-router-dom'
 import HeaderFooter from './multipurpose/HeaderFooter.jsx'
@@ -59,6 +59,16 @@ const [instructionModifications, setInstructionModifications] = useState([{
 }]);
   const [error, setError] = useState(null);
 
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    
+    // Cleanup
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const handleFile = (e) => {
     setMessage("");
     let file = e.target.files;
@@ -81,9 +91,9 @@ const [instructionModifications, setInstructionModifications] = useState([{
 
   const PostImageUpload = () => {
     return (
-      <div className="w-5/6 md:w-1/2 flex-shrink-0">
+      <div className="w-5/6 md:w-full flex-shrink-0">
         <div className="rounded-lg shadow-xl bg-primary">
-          <div className="m-4">
+          <div className="m-4 md:mt-0">
             <span className="flex justify-center items-center text-[12px] mb-1 text-red-500">{message}</span>
             <div className="flex w-full">
               <label className="flex cursor-pointer flex-col w-full h-64 md:h-96 border-2 rounded-md border-dashed hover:bg-secondary">
@@ -222,25 +232,50 @@ const [instructionModifications, setInstructionModifications] = useState([{
 
   return (
 <HeaderFooter>
-      <form className='websiteRetrievalView mt-16 mb-16 md:flex md:flex-row md:gap-8 md:justify-center md:items-start overflow-hidden' onSubmit={PostYourBake}>
-        <PostImageUpload />
-        
-        <div className="w-full items-center md:w-1/3 flex flex-col gap-4 mt-4 md:mt-0">
-          <RecipeDropDown
-            setRecipeId={setRecipeId}
-            setRecipeTitle={setRecipeTitle}
-            setIngredientModifications={setIngredientModifications}
-            setInstructionModifications={setInstructionModifications}
-            instructionModifications={instructionModifications}
-            ingredientModifications={ingredientModifications}
-          />
-          <ModificationRating rating={rating} setRating={setRating} />
-          <BakePostDate bakeDate={bakeDate} setBakeDate={setBakeDate} />
-          <button type="submit" className='bigSubmitButton'>post</button>
-          {error && <div className="error">{error}</div>}
-          {message && <div className="success">{message}</div>}
-        </div>
-      </form>
+      {windowWidth > 768 ? (
+              <form className='websiteRetrievalView mt-16 mb-16 md:flex md:flex-row md:gap-8 md:justify-center md:items-start overflow-hidden' onSubmit={PostYourBake}>
+
+<RecipeDropDown
+    setRecipeId={setRecipeId}
+    setRecipeTitle={setRecipeTitle}
+    setIngredientModifications={setIngredientModifications}
+    setInstructionModifications={setInstructionModifications}
+    instructionModifications={instructionModifications}
+    ingredientModifications={ingredientModifications}
+  />
+<div className="flex flex-col">
+<PostImageUpload />
+
+  <ModificationRating rating={rating} setRating={setRating} />
+  <BakePostDate bakeDate={bakeDate} setBakeDate={setBakeDate} />
+  <button type="submit" className='bigSubmitButton'>post</button>
+  {error && <div className="error">{error}</div>}
+  {message && <div className="success">{message}</div>}
+  </div>
+        </form>
+      ) : (
+        <form className='websiteRetrievalView mt-16 mb-16 md:flex md:flex-row md:gap-8 md:justify-center md:items-start overflow-hidden' onSubmit={PostYourBake}>
+
+<PostImageUpload />
+
+<div className="w-full items-center md:w-1/3 flex flex-col gap-4 mt-4 md:mt-0">
+  <RecipeDropDown
+    setRecipeId={setRecipeId}
+    setRecipeTitle={setRecipeTitle}
+    setIngredientModifications={setIngredientModifications}
+    setInstructionModifications={setInstructionModifications}
+    instructionModifications={instructionModifications}
+    ingredientModifications={ingredientModifications}
+  />
+  <ModificationRating rating={rating} setRating={setRating} />
+  <BakePostDate bakeDate={bakeDate} setBakeDate={setBakeDate} />
+  <button type="submit" className='bigSubmitButton'>post</button>
+  {error && <div className="error">{error}</div>}
+  {message && <div className="success">{message}</div>}
+</div>
+</form>
+      )}
+
     </HeaderFooter>
 
   )
