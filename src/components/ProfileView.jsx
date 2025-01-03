@@ -68,41 +68,85 @@ function ProfilePlateBottom(props) {
 }
 
 function ProfilePlateMobile(props) {
+  const [currentUserId, setCurrentUserId] = useState(null);
+
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      const { data: { user }, error } = await supabase.auth.getUser();
+      if (error) {
+        console.error('Error fetching current user:', error);
+        return;
+      }
+      setCurrentUserId(user?.id || null);
+    };
+
+    fetchCurrentUser();
+  }, []);
+
   return (
     <div className='profilePlate flex-1 ml-2.5 mr-2.5 sm:w-350 md:w-5/6'>
       <ProfilePlateTop>
-      <div className='pageTitle text-xl'>{props.userName}</div>
-      <SettingsButton userId={props.userId}/>
+        <div className='pageTitle text-xl'>{props.userName}</div>
+        {currentUserId === props.userId && <SettingsButton userId={props.userId} />}
       </ProfilePlateTop>
       <ProfilePlateBottom>
-      <img 
-        src={props.photos}
-        alt="recipe" 
-        className='sm:min-w-36 sm:min-h-36 md:min-w-80 md:min-h-80 object-cover standardBorder w-24 md:w-96 h-24 md:h-96 '
-      />
-        <ProfileSummary bakes={props.bakes} followingCount={props.followingCount} followerCount={props.followerCount} username={props.userName} userId={props.userId} userBio={props.userBio}/>
+        <img 
+          src={props.photos}
+          alt="recipe" 
+          className='sm:min-w-36 sm:min-h-36 md:min-w-80 md:min-h-80 object-cover standardBorder w-24 md:w-96 h-24 md:h-96 '
+        />
+        <ProfileSummary
+          bakes={props.bakes}
+          followingCount={props.followingCount}
+          followerCount={props.followerCount}
+          username={props.userName}
+          userId={props.userId}
+          userBio={props.userBio}
+        />
       </ProfilePlateBottom>
     </div>
-  )
+  );
 }
-  
+
 function ProfilePlateDesktop(props) {
-    return (
-      <div className='profilePlate flex-1 sm:w-350 md:w-5/6'>
-        <ProfilePlateTop>
+  const [currentUserId, setCurrentUserId] = useState(null);
+
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      const { data: { user }, error } = await supabase.auth.getUser();
+      if (error) {
+        console.error('Error fetching current user:', error);
+        return;
+      }
+      setCurrentUserId(user?.id || null);
+    };
+
+    fetchCurrentUser();
+  }, []);
+
+  return (
+    <div className='profilePlate flex-1 sm:w-350 md:w-5/6'>
+      <ProfilePlateTop>
         <div className='pageTitle text-xl'>{props.userName}</div>
-        <SettingsButton userId={props.userId}/>
-        </ProfilePlateTop>
-        <ProfilePlateBottom>
+        {currentUserId === props.userId && <SettingsButton userId={props.userId} />}
+      </ProfilePlateTop>
+      <ProfilePlateBottom>
         <img 
           src={props.photos}
           alt="recipe" 
           className='sm:min-w-36 sm:min-h-36 md:min-w-80 md:min-h-80 object-cover standardBorder recipeImg'
         />
-          <ProfileSummary bakes={props.bakes} followingCount={props.followingCount} followerCount={props.followerCount} username={props.userName} userId={props.userId} userBio={props.userBio}/>
-        </ProfilePlateBottom>
-      </div>
-    )
+        <ProfileSummary
+          bakes={props.bakes}
+          followingCount={props.followingCount}
+          followerCount={props.followerCount}
+          username={props.userName}
+          userId={props.userId}
+          userBio={props.userBio}
+        />
+      </ProfilePlateBottom>
+    </div>
+  );
 }
 
 function ContentCap({ userId }) {
@@ -110,6 +154,7 @@ function ContentCap({ userId }) {
   const [bakes, setBakes] = useState([]);
   const [savedRecipes, setSavedRecipes] = useState([]);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [currentUserId, setCurrentUserId] = useState(null);
 
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
@@ -118,19 +163,25 @@ function ContentCap({ userId }) {
   }, []);
 
   useEffect(() => {
+    const getCurrentUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) setCurrentUserId(user.id);
+    };
+    getCurrentUser();
     fetchBakes();
     fetchSavedRecipes();
   }, [userId]);
 
   const fetchBakes = async () => {
     const { data, error } = await supabase
-      .from('Bake_Details')
+      .from('bake_details_view')  // Make sure this view exists and has all required fields
       .select('*')
       .eq('user_id', userId);
 
     if (error) {
       console.error('Error fetching bakes:', error);
     } else {
+      console.log('Fetched bakes:', data); // Debug log
       setBakes(data);
     }
   };
@@ -148,23 +199,20 @@ function ContentCap({ userId }) {
     }
   };
 
-  
   return (
     <div className='flex-1'>
       <ul className="menu menu-horizontal bg-primary rounded-box mt-6 ml-2.5 w-350 md:w-5/6 justify-around">
         <li>      
-            <a className={`tooltip ${activeTab === 'bakes' ? 'active' : ''}`}
+          <a className={`tooltip ${activeTab === 'bakes' ? 'active' : ''}`}
             data-tip="Bakes"
             onClick={() => setActiveTab('bakes')}>
             <Cookie />
           </a>
         </li>
         <li>
-          
-            <a className={`tooltip ${activeTab === 'recipes' ? 'active' : ''}`}
+          <a className={`tooltip ${activeTab === 'recipes' ? 'active' : ''}`}
             data-tip="Saved Recipes"
-            onClick={() => setActiveTab('recipes')}
-          >
+            onClick={() => setActiveTab('recipes')}>
             <BookOpen />
           </a>
         </li>
@@ -176,20 +224,22 @@ function ContentCap({ userId }) {
               windowWidth > 768 ? (
                 <HomeCardDesktop
                   key={bake.id}
-                  pageTitle={[bake.username, bake.recipe_title]}
+                  username={bake.username}
+                  recipeTitle={bake.recipe_title}
                   photos={bake.photos}
                   recipeId={bake.recipe_id}
-                  currentUserId={userId}
+                  currentUserId={currentUserId}
                   bakeId={bake.id}
                   userId={bake.user_id}
                 />
               ) : (
                 <HomeCardMobile
                   key={bake.id}
-                  pageTitle={[bake.username, bake.recipe_title]}
+                  username={bake.username}
+                  recipeTitle={bake.recipe_title}
                   photos={bake.photos}
                   recipeId={bake.recipe_id}
-                  currentUserId={userId}
+                  currentUserId={currentUserId}
                   bakeId={bake.id}
                   userId={bake.user_id}
                 />

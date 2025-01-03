@@ -92,13 +92,13 @@ function HomeCardDesktop(props) {
       }
       <div className='flex flex-col mr-2.5 w-80'>
         <PageTitle 
-            pageTitle={props.pageTitle} 
-            path={[`/profile/${props.pageTitle[0]}`, `/recipe/${props.recipeId}`]} 
+            pageTitle={[props.username, props.recipeTitle]} 
+            path={[`/profile/${props.username}`, `/recipe/${props.recipeId}`]} 
             userId={props.userId} 
             recipeId={props.recipeId}
         />
         <PostReactionBox 
-            username={props.pageTitle[0]} 
+            username={props.username} 
             recipeId={props.recipeId} 
             currentUserId={props.currentUserId} 
             bakeId={props.bakeId}

@@ -22,6 +22,7 @@ function PostReactionBox({ currentUserId, username, recipeId, userId, bakeId }) 
       .single();
 
     if (error) {
+      if (error.code != 'PGRST116')
       console.error('Error checking like status:', error);
     } else {
       setIsLiked(!!data);
@@ -83,8 +84,8 @@ function HomeCardMobile(props) {
   return (
     <div className='homeCard standardBorder border-2 m-2 bg-secondary border-primary p-2'>
       <PageTitle 
-        pageTitle={props.pageTitle} 
-        path={[`/profile/${props.pageTitle[0]}`, `/recipe/${props.recipeId}`]} 
+        pageTitle={[props.username, props.recipeTitle]} 
+        path={[`/profile/${props.username}`, `/recipe/${props.recipeId}`]} 
         userId={props.userId} 
         recipeId={props.recipeId}
       />
@@ -92,11 +93,11 @@ function HomeCardMobile(props) {
         <img 
           src={props.photos}
           alt="recipe" 
-          className='recipeImg ml-2.5'
+          className='recipeImg'
         />
       }
       <PostReactionBox 
-        username={props.pageTitle[0]} 
+        username={props.username} 
         recipeId={props.recipeId} 
         currentUserId={props.currentUserId} 
         bakeId={props.bakeId}

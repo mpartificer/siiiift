@@ -37,6 +37,7 @@ function HomeView() {
 
         if (isMounted) {
           setBakeDetails(data);
+          console.log(bakeDetails)
           setIsLoading(false);
         }
       } catch (error) {
@@ -65,7 +66,8 @@ function HomeView() {
                 <HomeCardDesktop 
                   bakeId={bake.bake_id}
                   photos={bake.photos}
-                  pageTitle={[bake.username, bake.recipe_title]}
+                  username={bake.username}
+                  recipeTitle={bake.recipe_title}
                   path={[`/profile/${bake.username}`, `/recipe/${bake.recipe_id}`]}
                   userId={bake.user_id}
                   currentUserId={currentUserId}
@@ -75,7 +77,8 @@ function HomeView() {
                 <HomeCardMobile 
                   bakeId={bake.bake_id}
                   photos={bake.photos}
-                  pageTitle={[bake.username, bake.recipe_title]}
+                  username={bake.username}
+                  recipeTitle={bake.recipe_title}
                   path={[`/profile/${bake.username}`, `/recipe/${bake.recipe_id}`]}
                   userId={bake.user_id}
                   currentUserId={currentUserId}

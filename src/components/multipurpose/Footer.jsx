@@ -69,7 +69,7 @@ function Footer() {
   }
 
   return (
-    <div className="btm-nav footerBackground">
+    <div className="btm-nav footerBackground z-50">
       <button className='navIcons' onClick={() => navigate('/')}>
         <House size={36} color="#FAE2D5" />
       </button>

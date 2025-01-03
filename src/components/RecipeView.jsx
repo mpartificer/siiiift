@@ -1,17 +1,12 @@
 import '../App.css';
 import HeaderFooter from './multipurpose/HeaderFooter.jsx';
-import { Cookie } from 'lucide-react';
-import { Plus } from 'lucide-react';
-import { SquareArrowOutUpRight } from 'lucide-react';
-import { ChefHat } from 'lucide-react';
-import { Bookmark } from 'lucide-react';
-import { Heart } from 'lucide-react';
-import { Star } from 'lucide-react';
+import { Cookie, Plus, SquareArrowOutUpRight, ChefHat, Bookmark, Heart, Star } from 'lucide-react';
 import React from 'react'
 import { useLocation } from 'react-router-dom'
-import { useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { supabase } from '../supabaseClient.js'
+import HomeCardMobile from './multipurpose/HomeCardMobile';
+import HomeCardDesktop from './multipurpose/HomeCardDesktop';
 
 function RecipeOptions(props) {
     return (
@@ -24,7 +19,7 @@ function RecipeOptions(props) {
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor">
-                    <Plus color='#EADDFF'/>
+                    <Plus color='#EBD2AD'/>
                 </svg>
                 </a>
             </li>
@@ -36,7 +31,7 @@ function RecipeOptions(props) {
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor">
-                    <Cookie color='#EADDFF'/>
+                    <Cookie color='#EBD2AD'/>
                 </svg>
                 </a>
             </li>
@@ -48,7 +43,7 @@ function RecipeOptions(props) {
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor">
-                    <SquareArrowOutUpRight color='#EADDFF'/>
+                    <SquareArrowOutUpRight color="#EBD2AD" />
                 </svg>
                 </a>
             </li>
@@ -60,7 +55,7 @@ function RecipeOptions(props) {
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor">
-                    <ChefHat color='#EADDFF'/>
+                    <ChefHat color="#EBD2AD"/>
                 </svg>
                 </a>
             </li>
@@ -191,57 +186,111 @@ function RecipeCheckTitle(props) {
     )
 }
 
-function RecipeView() {
-        const location = useLocation();
-        const recipeId = location.state.recipeId;
-    
-        const [recipeDetails, setRecipeDetails] = useState(null);
-        const [ratingDetails, setRatingDetails] = useState(null);
-        const [isLoading, setIsLoading] = useState(true);
+// ... (keep all previous imports and component definitions until BakesList)
 
-        const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+function BakesList({ recipeId, currentUserId, isMobile }) {
+    const [bakes, setBakes] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
-        useEffect(() => {
-          const handleResize = () => setWindowWidth(window.innerWidth);
-          window.addEventListener('resize', handleResize);
-          
-          // Cleanup
-          return () => window.removeEventListener('resize', handleResize);
-        }, []);
-    
-        useEffect(() => {
-            async function fetchData() {
-                try {
-                    const [recipeResponse, ratingResponse] = await Promise.all([
-                        supabase
-                            .from('recipe_profile')
-                            .select('*')
-                            .eq('id', recipeId)
-                            .single(),
-                        supabase
-                            .from('bake_recipe_ratings')
-                            .select('*')
-                            .eq('recipe_id', recipeId)
-                    ]);
-    
-                    if (recipeResponse.error) throw recipeResponse.error;
-                    if (ratingResponse.error) throw ratingResponse.error;
-    
-                    setRecipeDetails(recipeResponse.data);
-                    setRatingDetails(ratingResponse.data);
-                } catch (error) {
-                    console.error('Error fetching data:', error);
-                } finally {
-                    setIsLoading(false);
-                }
+    useEffect(() => {
+        async function fetchBakes() {
+            try {
+                const { data, error } = await supabase
+                    .from('bake_details_view')
+                    .select('*')
+                    .eq('recipe_id', recipeId);
+
+                if (error) throw error;
+                setBakes(data || []);
+            } catch (error) {
+                console.error('Error fetching bakes:', error);
+            } finally {
+                setIsLoading(false);
             }
-    
-            fetchData();
-        }, [recipeId]);
-    
-        if (isLoading) return <div>Loading...</div>;
-        if (!recipeDetails) return <div>No recipe details available</div>;
+        }
 
+        fetchBakes();
+    }, [recipeId]);
+
+    if (isLoading) return <div>Loading bakes...</div>;
+    if (bakes.length === 0) return <div>No bakes yet</div>;
+
+    return (
+        <div className={isMobile ? 'flex flex-col gap-4' : 'flex flex-row flex-wrap justify-center gap-4'}>
+            {bakes.map((bake) => (
+                <HomeCardMobile
+                    key={bake.id}
+                    username={bake.username}
+                    recipeTitle={bake.recipe_title}
+                    photos={bake.photos}
+                    recipeId={bake.recipe_id}
+                    currentUserId={currentUserId}
+                    bakeId={bake.id}
+                    userId={bake.user_id}
+                />
+            ))}
+        </div>
+    );
+}
+
+
+function RecipeView() {
+    const location = useLocation();
+    const recipeId = location.state.recipeId;
+    const [currentUserId, setCurrentUserId] = useState(null);
+
+    const [recipeDetails, setRecipeDetails] = useState(null);
+    const [ratingDetails, setRatingDetails] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+    useEffect(() => {
+        const handleResize = () => setWindowWidth(window.innerWidth);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    useEffect(() => {
+        // Get current user's ID
+        const getCurrentUser = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) setCurrentUserId(user.id);
+        };
+        getCurrentUser();
+
+        async function fetchData() {
+            try {
+                const [recipeResponse, ratingResponse] = await Promise.all([
+                    supabase
+                        .from('recipe_profile')
+                        .select('*')
+                        .eq('id', recipeId)
+                        .single(),
+                    supabase
+                        .from('bake_recipe_ratings')
+                        .select('*')
+                        .eq('recipe_id', recipeId)
+                ]);
+
+                if (recipeResponse.error) throw recipeResponse.error;
+                if (ratingResponse.error) throw ratingResponse.error;
+
+                setRecipeDetails(recipeResponse.data);
+                setRatingDetails(ratingResponse.data);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        }
+
+        fetchData();
+    }, [recipeId]);
+
+    if (isLoading) return <div>Loading...</div>;
+    if (!recipeDetails) return <div>No recipe details available</div>;
+
+    // Define all variables from recipeDetails
     const recipeTitle = recipeDetails.title.toString();
     const totalTime = recipeDetails.total_time.toString();
     const cookTime = recipeDetails.cook_time.toString();
@@ -256,46 +305,53 @@ function RecipeView() {
 
     let ratingSum = 0;
     
-    for (let i=0; i<ratingDetails[0].all_ratings.length; i++) {
+    for (let i = 0; i < ratingDetails[0].all_ratings.length; i++) {
         ratingSum += ratingDetails[0].all_ratings[i];
     }
 
     let rating = ratingSum / ratingDetails[0].all_ratings.length;
-
-    rating = rating.toFixed(2)
+    rating = rating.toFixed(2);
 
     return (
         <div>
             <HeaderFooter>
-            {windowWidth > 768 ? (
-                   <div className='flex flex-row mt-16 mb-16 gap-2 w-full justify-center'>
-                    <div className='flex flex-col gap-2 items-end'>
-                   <div className='pageTitle text-xl'>{recipeTitle}</div>
-                   <img src={photos} alt="recipe image" className='recipeImg' />
-                   <RecipeSummaryPanel totalTime={totalTime} cookTime={cookTime} prepTime={prepTime} 
-                                       likes={likes} bakes={bakes} saves={saves} rating={rating} />
-                   </div>
-                   <div className='flex flex-col gap-2'>
-                   <RecipeOptions originalLink={originalLink} />
-                   <RecipeCheckPanel propInsert={ingredients} confirmRecipeItem='ingredients' />
-                   <RecipeCheckPanel propInsert={instructions} confirmRecipeItem='instructions' />
-                   </div>
-               </div>
-      ) : (
-        <div className='followersView mt-16 mb-16 text-xl wrap'>
-        <div className='pageTitle'>{recipeTitle}</div>
-        <img src={photos} alt="recipe image" className='recipeImg' />
-        <RecipeOptions originalLink={originalLink} />
-        <RecipeSummaryPanel totalTime={totalTime} cookTime={cookTime} prepTime={prepTime} 
+                {windowWidth > 768 ? (
+                    <div className='flex flex-col mt-20 mb-16 gap-8 w-full items-center'>
+                        <div className='flex flex-row gap-8 w-full justify-center'>
+                            <div className='flex flex-col gap-4 items-end'>
+                                <div className='pageTitle text-xl'>{recipeTitle}</div>
+                                <img src={photos} alt="recipe image" className='recipeImg' />
+                                <RecipeSummaryPanel totalTime={totalTime} cookTime={cookTime} prepTime={prepTime} 
+                                    likes={likes} bakes={bakes} saves={saves} rating={rating} />
+                            </div>
+                            <div className='flex flex-col gap-2'>
+                                <RecipeOptions originalLink={originalLink} />
+                                <RecipeCheckPanel propInsert={ingredients} confirmRecipeItem='ingredients' />
+                                <RecipeCheckPanel propInsert={instructions} confirmRecipeItem='instructions' />
+                            </div>
+                        </div>
+                        <div className="divider divider-accent w-1/2 self-center">bakes</div>
+                        <div className='w-full max-w-7xl px-4'>
+                            <BakesList recipeId={recipeId} currentUserId={currentUserId} isMobile={false} />
+                        </div>
+                    </div>
+                ) : (
+                    <div className='followersView mt-16 mb-16 text-xl wrap'>
+                        <div className='pageTitle'>{recipeTitle}</div>
+                        <img src={photos} alt="recipe image" className='recipeImg' />
+                        <RecipeOptions originalLink={originalLink} />
+                        <RecipeSummaryPanel totalTime={totalTime} cookTime={cookTime} prepTime={prepTime} 
                             likes={likes} bakes={bakes} saves={saves} rating={rating} />
-        <RecipeCheckPanel propInsert={ingredients} confirmRecipeItem='ingredients' />
-        <RecipeCheckPanel propInsert={instructions} confirmRecipeItem='instructions' />
-    </div>
-      )}
-
+                        <RecipeCheckPanel propInsert={ingredients} confirmRecipeItem='ingredients' />
+                        <RecipeCheckPanel propInsert={instructions} confirmRecipeItem='instructions' />
+                        <div className='mt-8'>
+                            <BakesList recipeId={recipeId} currentUserId={currentUserId} isMobile={true} />
+                        </div>
+                    </div>
+                )}
             </HeaderFooter>
         </div>
-    )
-}   
+    );
+}
 
 export default RecipeView

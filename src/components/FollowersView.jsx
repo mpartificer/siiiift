@@ -18,6 +18,7 @@ function FollowersView(){
   const [error, setError] = useState(null);
   const [followingDetails, setFollowingDetails] = useState([]);
   const [followerDetails, setFollowerDetails] = useState([]);
+  const [bakeDetails, setBakeDetails] = useState([]);
 
   useEffect(() => {
     async function fetchData() {
@@ -36,26 +37,45 @@ function FollowersView(){
 
       try {
         console.log('Attempting to fetch user profile data');
-        const { data: profileData, followingData, followerData, error: profileError } = await supabase
+        const { data: profileData, error: profileError } = await supabase
             .from('user_profile')
             .select('*')
             .eq('user_auth_id', userId)
             .single();
-          supabase
-            .from('user_following_view')
-            .select('*')
-            .eq('user_id', userId),
-          supabase
-            .from('user_followers_view')
-            .select('*')
-            .eq('user_id', userId)
+            
+          await supabase
+
 
         if (profileError) throw profileError;
 
+        const {data: followingData, error: followingError } = await supabase
+        .from('user_following_view')
+            .select('*')
+            .eq('user_id', userId);
+
+        if (followingError) throw error;
+
+        const { data: followersData, error: followersError } = await supabase
+        .from('user_followers_view')
+        .select('*')
+        .eq('user_id', userId)
+
+        if (followersError) throw error;
+
+        const { data: bakeData, error: bakeError } = await supabase
+        .from('bake_details_view')
+        .select('*')
+        .eq('user_id', userId)
+
+        if (bakeError) throw error;
+
         console.log('User profile data:', profileData);
+        console.log("follower data:", followersData)
+        console.log("following details: ", followingData)
         setUserDetails(profileData);
-        setFollowerDetails(followerData);
-        setFollowingDetails(followingData);
+        setBakeDetails(bakeData)
+        setFollowerDetails(followersData || []);
+        setFollowingDetails(followingData || []);        
         console.log("follower data:", followerDetails)
         console.log("following details: ", followingDetails)
 
@@ -86,12 +106,13 @@ function FollowersView(){
   if (error) return <div>{error}</div>;
   if (!userDetails) return <div>No user details available</div>;
 
-  const followerCount = userDetails.followers?.length || 0;
-  const followingCount = userDetails.following?.length || 0;
-  const bakesCount = userDetails.bakes?.length || 0;
+  const followerCount = followerDetails.length || 0;
+  const followingCount = followingDetails.length || 0;
+  const bakesCount = bakeDetails.length || 0; 
+  
 
   return (
-    <div className='followersView'>
+    <div className='followersView mt-16 mb-16'>
       <Header />
       <FollowBar>
         <FollowTab number={followerCount} measure="followers" username={userName} userId={userId} />
@@ -107,6 +128,7 @@ function FollowersView(){
             username={result.follower_username || result.following_username}
             searchReturnValue={result.follower_username || result.following_username}
             currentUserId={userId}
+            type="user"
           />
         ))
       ) : (

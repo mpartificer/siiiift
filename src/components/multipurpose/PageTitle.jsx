@@ -14,7 +14,6 @@ function PageTitle(props) {
   navigate(props.path[1], {state: recipeData})
 }
 
-
   if (props.path) {
     return (
       <div className='pageTitle ml-2.5 md:text-xl'>
