@@ -19,7 +19,6 @@ function PostReactionBox({ currentUserId, username, recipeId, userId, bakeId }) 
       .select('*')
       .eq('user_id', currentUserId)
       .eq('bake_id', bakeId)
-      .single();
 
     if (error) {
       if (error.code != 'PGRST116')
@@ -69,7 +68,6 @@ function PostReactionBox({ currentUserId, username, recipeId, userId, bakeId }) 
         onClick={toggleLike}
         style={{ cursor: 'pointer' }}
       />
-      <MessageCircle size={40} color='#496354'/>
       <History 
         size={40} 
         color='#496354' 

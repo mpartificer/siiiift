@@ -6,7 +6,6 @@ import { useLocation } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { supabase } from '../supabaseClient.js'
 import HomeCardMobile from './multipurpose/HomeCardMobile';
-import HomeCardDesktop from './multipurpose/HomeCardDesktop';
 
 function RecipeOptions(props) {
     return (
@@ -219,13 +218,13 @@ function BakesList({ recipeId, currentUserId, isMobile }) {
         <div className={isMobile ? 'flex flex-col gap-4' : 'flex flex-row flex-wrap justify-center gap-4'}>
             {bakes.map((bake) => (
                 <HomeCardMobile
-                    key={bake.id}
+                    key={bake.bake_id}
                     username={bake.username}
                     recipeTitle={bake.recipe_title}
                     photos={bake.photos}
                     recipeId={bake.recipe_id}
                     currentUserId={currentUserId}
-                    bakeId={bake.id}
+                    bakeId={bake.bake_id}
                     userId={bake.user_id}
                 />
             ))}

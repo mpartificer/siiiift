@@ -18,13 +18,13 @@ function PostReactionBox({ currentUserId, username, recipeId, userId, bakeId }) 
       .from('likes')
       .select('*')
       .eq('user_id', currentUserId)
-      .eq('bake_id', bakeId)
-      .single();
-
+      .eq('bake_id', bakeId);
+  
     if (error) {
       console.error('Error checking like status:', error);
     } else {
-      setIsLiked(!!data);
+      // Check if data array has any entries
+      setIsLiked(data && data.length > 0);
     }
   };
 
@@ -68,7 +68,6 @@ function PostReactionBox({ currentUserId, username, recipeId, userId, bakeId }) 
         onClick={toggleLike}
         style={{ cursor: 'pointer' }}
       />
-      <MessageCircle size={40} color='#496354'/>
       <History 
         size={40} 
         color='#496354' 

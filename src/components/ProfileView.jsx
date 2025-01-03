@@ -181,7 +181,6 @@ function ContentCap({ userId }) {
     if (error) {
       console.error('Error fetching bakes:', error);
     } else {
-      console.log('Fetched bakes:', data); // Debug log
       setBakes(data);
     }
   };
@@ -223,24 +222,24 @@ function ContentCap({ userId }) {
             {bakes.map((bake) => (
               windowWidth > 768 ? (
                 <HomeCardDesktop
-                  key={bake.id}
+                  key={bake.bake_id}
                   username={bake.username}
                   recipeTitle={bake.recipe_title}
                   photos={bake.photos}
                   recipeId={bake.recipe_id}
                   currentUserId={currentUserId}
-                  bakeId={bake.id}
+                  bakeId={bake.bake_id}
                   userId={bake.user_id}
                 />
               ) : (
                 <HomeCardMobile
-                  key={bake.id}
+                  key={bake.bake_id}
                   username={bake.username}
                   recipeTitle={bake.recipe_title}
                   photos={bake.photos}
                   recipeId={bake.recipe_id}
                   currentUserId={currentUserId}
-                  bakeId={bake.id}
+                  bakeId={bake.bake_id}
                   userId={bake.user_id}
                 />
               )

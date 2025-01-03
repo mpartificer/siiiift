@@ -37,7 +37,6 @@ function HomeView() {
 
         if (isMounted) {
           setBakeDetails(data);
-          console.log(bakeDetails)
           setIsLoading(false);
         }
       } catch (error) {
