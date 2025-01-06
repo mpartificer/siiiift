@@ -109,13 +109,13 @@ const RecipeDropDown = (props) => {
                 const { data: { user } } = await supabase.auth.getUser()
 
                 const { data: recipeData, error: recipeError } = await supabase
-                    .from('user_profile')
-                    .select('recipes')
-                    .eq('user_auth_id', user.id)
-                    .single()
+                    .from('saves_view')
+                    .select('')
+                    .eq('user_id', user.id)
 
                 if (recipeError) throw recipeError
-                setRecipeData(recipeData.recipes)
+                setRecipeData(recipeData)
+                console.log(recipeData)
             } catch (err) {
                 console.error('Error:', err)
                 setError(err.message)
@@ -169,16 +169,16 @@ const RecipeDropDown = (props) => {
                 <div 
                     tabIndex={0} 
                     role="button" 
-                    className="btn m-1 md:m-0 w-80 bg-secondary modificationDropDown"
+                    className="btn m-1 md:m-0 w-80 bg-secondary overflow-y-auto modificationDropDown"
                     onClick={() => setIsRecipeDropdownOpen(!isRecipeDropdownOpen)}
                 >
-                    {selectedRecipe ? recipeData.find(item => item.id === selectedRecipe)?.recipetitle : 'select a recipe:'}
+                    {selectedRecipe ? recipeData.find(item => item.recipe_id === selectedRecipe)?.recipe_title : 'select a recipe:'}
                 </div>
                 {isRecipeDropdownOpen && (
-                    <ul tabIndex={0} className="dropdown-content menu bg-secondary rounded-box z-[1] w-52 p-2 shadow">
+                    <ul tabIndex={0} className="dropdown-content menu bg-secondary overflow-hidden rounded-box z-[1] w-52 p-2 shadow">
                         {recipeData && recipeData.map((item) => (
-                            <li key={item.id} onClick={() => fetchModItems(item.id, item.title)}>
-                                <a>{item.recipetitle}</a>
+                            <li key={item.recipe_id} onClick={() => fetchModItems(item.recipe_id, item.recipe_title)}>
+                                <a>{item.recipe_title}</a>
                             </li>
                         ))}
                     </ul>
@@ -188,7 +188,7 @@ const RecipeDropDown = (props) => {
             
                 {selectedRecipe && (
                 <>
-                    <h3 className="mt-4 mb-2">ingredient modifications:</h3>
+                    <h3 className="mt-4 mb-2 overflow-hidden">ingredient modifications:</h3>
                     {props.ingredientModifications.map((mod, index) => (
                         <ModificationItem
                             key={index}
@@ -200,7 +200,7 @@ const RecipeDropDown = (props) => {
                     ))}
                     <a href="#" onClick={addIngredientModification} className="mb-4 justify-self-end">add another ingredient modification</a>
 
-                    <h3 className="mt-4 mb-2">instruction modifications:</h3>
+                    <h3 className="mt-4 mb-2 overflow-hidden">instruction modifications:</h3>
                     {props.instructionModifications.map((mod, index) => (
                         <ModificationItem
                             key={index}

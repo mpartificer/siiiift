@@ -75,7 +75,7 @@ const [instructionModifications, setInstructionModifications] = useState([{
 
     for (let i = 0; i < file.length; i++) {
       const fileType = file[i]['type'];
-      const validImageTypes = ['image/gif', 'image/jpeg', 'image/png'];
+      const validImageTypes = ['image/gif', 'image/jpeg', 'image/png', 'image/heic'];
       if (validImageTypes.includes(fileType)) {
         setFiles(prevFiles => [...prevFiles, file[i]]);
       } else {
@@ -152,6 +152,26 @@ const [instructionModifications, setInstructionModifications] = useState([{
   
         imageUrls.push(publicUrl);
       }
+
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/analyze-bake`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
+        },
+        body: JSON.stringify({
+          imageUrls,
+          recipeTitle,
+          originalInstructions: instructionModifications.map(m => m.originalInstruction),
+          modifiedInstructions: instructionModifications.map(m => m.modifiedInstruction),
+          originalIngredients: ingredientModifications.map(m => m.originalIngredient),
+          modifiedIngredients: ingredientModifications.map(m => m.modifiedIngredient)
+        })
+      });
+  
+      const { insights } = await response.json();
+
+      console.log(insights)
   
       // 2. Get the user's ID
       const { data: { user }, error: userError } = await supabase.auth.getUser();
@@ -168,7 +188,8 @@ const [instructionModifications, setInstructionModifications] = useState([{
           recipe_title: recipeTitle, // Add this line
           photos: imageUrls,
           rating: rating,
-          baked_at: bakeDate
+          baked_at: bakeDate,
+          ai_insights: insights 
         })
         .select();
   
