@@ -20,18 +20,8 @@ function RecipeBoxHeader({ username }) {
 
 function RecipeBoxSubHeader() {
   return (
-    <div className='flex flex-row justify-between items-center sm:w-350 md:w-5/6 grow'>
-      <ToggleBox />
+    <div className='flex flex-row justify-end items-center sm:w-350 md:w-5/6 grow'>
       <SortByBox />
-    </div>
-  )
-}
-
-function ToggleBox() {
-  return (
-    <div className='flex flex-row gap-2'>
-      <Toggle justify='justify-start' />
-      filter by attempted
     </div>
   )
 }
