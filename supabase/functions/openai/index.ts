@@ -2,14 +2,19 @@ import { OpenAI } from "openai";
 import { createClient } from "@supabase/supabase-js";
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': 'http://localhost:3000',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  'Access-Control-Allow-Origin': '*', // Changed to allow all origins in development
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Access-Control-Allow-Headers': '*', // Allow all headers
+  'Access-Control-Max-Age': '86400', // Cache preflight request for 24 hours
 };
 
 Deno.serve(async (req) => {
+  // Handle preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
+    return new Response(null, {
+      status: 204, // Using 204 No Content for OPTIONS
+      headers: corsHeaders
+    });
   }
 
   try {
@@ -80,7 +85,11 @@ Deno.serve(async (req) => {
     return new Response(
       JSON.stringify({ insights: finalAnalysis.choices[0].message.content }),
       { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        status: 200,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json'
+        }
       }
     );
 
@@ -89,7 +98,10 @@ Deno.serve(async (req) => {
       JSON.stringify({ error: error.message }), 
       { 
         status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json'
+        }
       }
     );
   }

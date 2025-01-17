@@ -4,6 +4,8 @@ import { supabase } from '../supabaseClient'
 import { useNavigate } from 'react-router-dom'
 import HeaderFooter from './multipurpose/HeaderFooter.jsx'
 import RecipeDropDown from './multipurpose/RecipeDropDown.jsx'
+import heic2any from 'heic2any';
+
 
 function ModificationRating({ rating, setRating }) {
     return (
@@ -41,6 +43,7 @@ function BakePostDate({ bakeDate, setBakeDate }) {
 
 function PostYourBakeView() {
 
+
   const navigate = useNavigate();
   const [files, setFiles] = useState([]);
   const [message, setMessage] = useState('');
@@ -69,20 +72,56 @@ const [instructionModifications, setInstructionModifications] = useState([{
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const handleFile = (e) => {
-    setMessage("");
-    let file = e.target.files;
+// Function to convert HEIC file to JPEG
+async function convertHeicToJpeg(file) {
+  try {
+    // Convert HEIC to JPEG blob
+    const jpegBlob = await heic2any({
+      blob: file,
+      toType: 'image/jpeg',
+      quality: 0.8
+    });
 
-    for (let i = 0; i < file.length; i++) {
-      const fileType = file[i]['type'];
-      const validImageTypes = ['image/gif', 'image/jpeg', 'image/png', 'image/heic'];
-      if (validImageTypes.includes(fileType)) {
-        setFiles(prevFiles => [...prevFiles, file[i]]);
-      } else {
-        setMessage("only images accepted");
-      }
-    }
-  };
+    // Create a new File object from the blob
+    return new File([jpegBlob], 
+      file.name.replace(/\.heic$/i, '.jpg'), 
+      { type: 'image/jpeg' }
+    );
+  } catch (error) {
+    console.error('Error converting HEIC file:', error);
+    throw new Error('Failed to convert HEIC file');
+  }
+}
+
+// Modified handleFile function
+const handleFile = async (e) => {
+  setMessage("");
+  let files = Array.from(e.target.files);
+  const validImageTypes = ['image/gif', 'image/jpeg', 'image/png', 'image/heic'];
+  
+  try {
+    const processedFiles = await Promise.all(
+      files.map(async (file) => {
+        const fileType = file.type.toLowerCase();
+        
+        if (!validImageTypes.includes(fileType)) {
+          throw new Error("Only images accepted");
+        }
+        
+        // Convert HEIC files to JPEG
+        if (fileType === 'image/heic') {
+          return await convertHeicToJpeg(file);
+        }
+        
+        return file;
+      })
+    );
+    
+    setFiles(prevFiles => [...prevFiles, ...processedFiles]);
+  } catch (error) {
+    setMessage(error.message);
+  }
+};
 
   const removeImage = (i) => {
     setFiles(files.filter(x => x.name !== i));
@@ -157,7 +196,8 @@ const [instructionModifications, setInstructionModifications] = useState([{
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          // ^ this should be an access token
         },
         body: JSON.stringify({
           imageUrls,
