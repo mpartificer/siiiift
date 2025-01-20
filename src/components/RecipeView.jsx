@@ -131,7 +131,11 @@ function PopularityCounter(props) {
         descriptor = 'likes'
         return(
             <div className='followTab'>
-                <Heart color='#192F01' size={40}/>
+                <Heart 
+                    color='palevioletred' 
+                    size={40}
+                    fill={props.Count > 0 ? 'palevioletred' : 'none'}
+                />
                 {props.Count} {descriptor}
             </div>
         )
@@ -237,11 +241,13 @@ function RecipeView() {
     const location = useLocation();
     const recipeId = location.state.recipeId;
     const [currentUserId, setCurrentUserId] = useState(null);
-
+    const [likesCount, setLikesCount] = useState(0);
     const [recipeDetails, setRecipeDetails] = useState(null);
     const [ratingDetails, setRatingDetails] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+    const [savesCount, setSavesCount] = useState(0);
+    const [bakesCount, setBakesCount] = useState(0);
 
     useEffect(() => {
         const handleResize = () => setWindowWidth(window.innerWidth);
@@ -255,11 +261,10 @@ function RecipeView() {
             const { data: { user } } = await supabase.auth.getUser();
             if (user) setCurrentUserId(user.id);
         };
-        getCurrentUser();
 
         async function fetchData() {
             try {
-                const [recipeResponse, ratingResponse] = await Promise.all([
+                const [recipeResponse, ratingResponse, likesResponse, savesResponse, bakesResponse] = await Promise.all([
                     supabase
                         .from('recipe_profile')
                         .select('*')
@@ -268,14 +273,32 @@ function RecipeView() {
                     supabase
                         .from('bake_recipe_ratings')
                         .select('*')
+                        .eq('recipe_id', recipeId),
+                    supabase
+                        .from('likes')
+                        .select('*', { count: 'exact' })
+                        .eq('recipe_id', recipeId),
+                        supabase
+                        .from('saves')
+                        .select('*', { count: 'exact' })
+                        .eq('recipe_id', recipeId),
+                    supabase
+                        .from('Bake_Details')
+                        .select('*', { count: 'exact' })
                         .eq('recipe_id', recipeId)
                 ]);
 
                 if (recipeResponse.error) throw recipeResponse.error;
                 if (ratingResponse.error) throw ratingResponse.error;
+                if (likesResponse.error) throw likesResponse.error;
+                if (bakesResponse.error) throw bakesResponse.error;
+                if (savesResponse.error) throw savesResponse.error;
 
                 setRecipeDetails(recipeResponse.data);
                 setRatingDetails(ratingResponse.data);
+                setLikesCount(likesResponse.count || 0);
+                setSavesCount(savesResponse.count || 0);
+                setBakesCount(bakesResponse.count || 0);
             } catch (error) {
                 console.error('Error fetching data:', error);
             } finally {
@@ -283,6 +306,7 @@ function RecipeView() {
             }
         }
 
+        getCurrentUser();
         fetchData();
     }, [recipeId]);
 
@@ -294,9 +318,6 @@ function RecipeView() {
     const totalTime = recipeDetails.total_time.toString();
     const cookTime = recipeDetails.cook_time.toString();
     const prepTime = recipeDetails.prep_time.toString();
-    const likes = recipeDetails.likes ? recipeDetails.likes.length : 0;
-    const bakes = recipeDetails.bakes ? recipeDetails.bakes.length : 0;
-    const saves = recipeDetails.saves ? recipeDetails.saves.length : 0;
     const ingredients = recipeDetails?.ingredients || [];
     const instructions = recipeDetails?.instructions || [];
     const originalLink = recipeDetails.original_link;
@@ -320,8 +341,14 @@ function RecipeView() {
                             <div className='flex flex-col gap-4 items-end'>
                                 <div className='pageTitle text-xl'>{recipeTitle}</div>
                                 <img src={photos} alt="recipe image" className='recipeImg' />
-                                <RecipeSummaryPanel totalTime={totalTime} cookTime={cookTime} prepTime={prepTime} 
-                                    likes={likes} bakes={bakes} saves={saves} rating={rating} />
+                                <RecipeSummaryPanel 
+                                    totalTime={totalTime} 
+                                    cookTime={cookTime} 
+                                    prepTime={prepTime} 
+                                    likes={likesCount} 
+                                    bakes={bakesCount} 
+                                    saves={savesCount} 
+                                    rating={rating} />
                             </div>
                             <div className='flex flex-col gap-2'>
                                 <RecipeOptions originalLink={originalLink} />
@@ -339,8 +366,14 @@ function RecipeView() {
                         <div className='pageTitle'>{recipeTitle}</div>
                         <img src={photos} alt="recipe image" className='recipeImg' />
                         <RecipeOptions originalLink={originalLink} />
-                        <RecipeSummaryPanel totalTime={totalTime} cookTime={cookTime} prepTime={prepTime} 
-                            likes={likes} bakes={bakes} saves={saves} rating={rating} />
+                        <RecipeSummaryPanel 
+                            totalTime={totalTime} 
+                            cookTime={cookTime} 
+                            prepTime={prepTime} 
+                            likes={likesCount} 
+                            bakes={bakesCount} 
+                            saves={savesCount} 
+                            rating={rating} />
                         <RecipeCheckPanel propInsert={ingredients} confirmRecipeItem='ingredients' />
                         <RecipeCheckPanel propInsert={instructions} confirmRecipeItem='instructions' />
                         <div className='mt-8'>
