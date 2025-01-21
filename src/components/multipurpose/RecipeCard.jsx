@@ -10,18 +10,19 @@ function RecipeCard(props) {
     }
 
     return (
-      <div className="card card-side bg-base-100 shadow-xl w-350 md:w-5/6 standardBorder overflow-hidden mt-1.5" onClick={()=>{toRecipeProfile()}}>
-        <figure>
+      <div className="card card-side bg-base-100 shadow-xl w-full standardBorder overflow-hidden mt-1.5 hover:cursor-pointer" onClick={()=>{toRecipeProfile()}}>
+        <figure className="w-1/3">
           <img
             src={props.photo}
-            alt="recipe image" className='recipeBoxCardImg' />
+            alt="recipe image" 
+            className='recipeBoxCardImg w-full h-full object-cover' />
         </figure>
-        <div className="card-body card-compact bg-primary overflow-hidden text-secondary p-4.5">
-          <h2 className="card-title">{props.recipeTitle}</h2>
+        <div className="card-body card-compact bg-primary overflow-hidden text-secondary p-4 w-2/3">
+          <h2 className="card-title ">{props.recipeTitle}</h2>
           <p>ready in {props.totalTime} </p>
         </div>
       </div>
     )
 }
 
-export default RecipeCard
+export default RecipeCard;
