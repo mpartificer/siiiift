@@ -1,5 +1,4 @@
 import '../App.css'
-import Toggle from './multipurpose/Toggle.jsx'
 import HeaderFooter from './multipurpose/HeaderFooter.jsx'
 import { useState, useEffect } from 'react'
 import SettingLogOut from './multipurpose/SettingLogOut.jsx'
@@ -29,7 +28,6 @@ function EditBio(props) {
 
     const handleSubmit = (e) => {
       e.preventDefault()
-      console.log(userBio)
     }
     
     return (
@@ -39,15 +37,6 @@ function EditBio(props) {
           <button type="submit"className='btn btn-primary self-end justify-self-end'>save</button>
         </label>
       </form>
-    )
-  }
-  
-function SettingWithToggle(props) {
-    return (
-      <div className='settingWithToggle'>
-        {props.settingName}
-        <Toggle justify='justify-end' />
-      </div>
     )
   }
 
@@ -62,7 +51,6 @@ function SettingsManagementView(props) {
 
   useEffect(() => {
     fetchUserDetails();
-    console.log(userDetails)
   }, [userId]);
 
   const fetchUserDetails = async () => {
@@ -92,7 +80,6 @@ function SettingsManagementView(props) {
               <EditBio userBio={userDetails.bio} photo={userDetails.photo}/>
             </div>
             <div className="flex flex-col w-350 gap-5 md:mt-8">
-              <SettingWithToggle settingName='toggle AI insights' />
               <SettingLogOut settingName='log out' path='/login'/>
             </div>
           </div>

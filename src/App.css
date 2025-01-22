@@ -123,6 +123,7 @@ ul {
   color:#496354; 
   height:100%;
   padding:10px;
+  width: 100%;
 }
 
 .customModification {
@@ -158,6 +159,7 @@ ul {
   display: flex;
   flex-direction: column;
   gap:10px;
+  width:350px;
 }
 
 .followTab {
@@ -172,7 +174,7 @@ ul {
 .followBar {
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: space-between;
   width:100%;
   gap:25px;
 }

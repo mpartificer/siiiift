@@ -80,7 +80,7 @@ function PostReactionBox({ currentUserId, username, recipeId, userId, bakeId }) 
 
 function HomeCardMobile(props) {
   return (
-    <div className='homeCard standardBorder border-2 m-2 bg-secondary border-primary p-2'>
+    <div className='homeCard standardBorder border-2 m-2 bg-secondary border-primary p-2 w-350'>
       <PageTitle 
         pageTitle={[props.username, props.recipeTitle]} 
         path={[`/profile/${props.username}`, `/recipe/${props.recipeId}`]} 

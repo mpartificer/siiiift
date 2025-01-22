@@ -40,7 +40,7 @@ function ProfileBlurb(props) {
 function ProfileSummary(props) {
 
     return (
-      <div className='profileSummary md:w-80'>
+      <div className='profileSummary md:w-full md:flex-1'>
         <FollowBar>
           <FollowTab number={props.followerCount} measure="followers" username={props.username} userId={props.userId} />
           <FollowTab number={props.followingCount} measure="following"  username={props.username} userId={props.userId} />
@@ -53,7 +53,7 @@ function ProfileSummary(props) {
   
 function ProfilePlateTop(props) {
     return (
-      <div className='profilePlateTop text-xl md:max-w-80 md:justify-end'>
+      <div className='profilePlateTop text-xl w-350 pr-0.5 pl-0.5 justify-between'>
         {props.children}
       </div>
     )
@@ -61,7 +61,7 @@ function ProfilePlateTop(props) {
   
 function ProfilePlateBottom(props) {
     return (
-      <div className='flex flex-row md:flex-column flex-wrap gap-2 md:items-end w-350 md:justify-end'>
+      <div className='flex flex-row md:flex-col flex-wrap gap-2 md:items-end w-350 justify-center md:justify-end mb-2'>
         {props.children}
       </div>
     )
@@ -84,16 +84,16 @@ function ProfilePlateMobile(props) {
   }, []);
 
   return (
-    <div className='profilePlate flex-1 ml-2.5 mr-2.5 sm:w-350 md:w-5/6'>
-      <ProfilePlateTop>
+    <div className='flex flex-col items-center gap-2 mb-1 w-full max-w-sm mx-auto'>
+      <ProfilePlateTop className='w-full flex content-between items-center px-4'>
         <div className='pageTitle text-xl'>{props.userName}</div>
         {currentUserId === props.userId && <SettingsButton userId={props.userId} />}
       </ProfilePlateTop>
-      <ProfilePlateBottom>
+      <ProfilePlateBottom className='flex flex-col items-center w-full px-4 gap-4 flex-1'>
         <img 
           src={props.photos}
           alt="recipe" 
-          className='sm:min-w-36 sm:min-h-36 md:min-w-80 md:min-h-80 object-cover standardBorder w-24 md:w-96 h-24 md:h-96 '
+          className='w-24 h-24 md:w-80 md:h-80 object-cover standardBorder'
         />
         <ProfileSummary
           bakes={props.bakes}
@@ -125,7 +125,7 @@ function ProfilePlateDesktop(props) {
   }, []);
 
   return (
-    <div className='profilePlate flex-1 sm:w-350 md:w-5/6'>
+    <div className='profilePlate sm:w-350 items-end'>
       <ProfilePlateTop>
         <div className='pageTitle text-xl'>{props.userName}</div>
         {currentUserId === props.userId && <SettingsButton userId={props.userId} />}
@@ -153,8 +153,8 @@ function ContentCap({ userId }) {
   const [activeTab, setActiveTab] = useState('bakes');
   const [bakes, setBakes] = useState([]);
   const [savedRecipes, setSavedRecipes] = useState([]);
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [currentUserId, setCurrentUserId] = useState(null);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
@@ -174,7 +174,7 @@ function ContentCap({ userId }) {
 
   const fetchBakes = async () => {
     const { data, error } = await supabase
-      .from('bake_details_view')  // Make sure this view exists and has all required fields
+      .from('bake_details_view')
       .select('*')
       .eq('user_id', userId);
 
@@ -198,56 +198,49 @@ function ContentCap({ userId }) {
     }
   };
 
+  const contentClass = windowWidth > 768 
+    ? "flex-1 overflow-y-auto mt-2 pr-2" 
+    : "mt-2";
+
   return (
-    <div className='flex-1'>
-      <ul className="menu menu-horizontal bg-primary rounded-box mt-6 ml-2.5 w-350 md:w-5/6 justify-around">
-        <li>      
-          <a className={`tooltip ${activeTab === 'bakes' ? 'active' : ''}`}
-            data-tip="Bakes"
-            onClick={() => setActiveTab('bakes')}>
-            <Cookie />
-          </a>
-        </li>
-        <li>
-          <a className={`tooltip ${activeTab === 'recipes' ? 'active' : ''}`}
-            data-tip="Saved Recipes"
-            onClick={() => setActiveTab('recipes')}>
-            <BookOpen />
-          </a>
-        </li>
-      </ul>
-      <div className="mt-4">
+    <div className={windowWidth > 768 ? "h-full flex flex-col" : "flex flex-col items-center"}>
+      <div className="flex justify-center w-full">
+        <ul className="menu menu-horizontal bg-primary rounded-box w-350 justify-around">
+          <li>      
+            <a className={`tooltip ${activeTab === 'bakes' ? 'active' : ''}`}
+              data-tip="Bakes"
+              onClick={() => setActiveTab('bakes')}>
+              <Cookie />
+            </a>
+          </li>
+          <li>
+            <a className={`tooltip ${activeTab === 'recipes' ? 'active' : ''}`}
+              data-tip="Saved Recipes"
+              onClick={() => setActiveTab('recipes')}>
+              <BookOpen />
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div className={contentClass}>
         {activeTab === 'bakes' && (
-          <div className="grid grid-cols-1 gap-4">
+          <div className="grid grid-cols-1">
             {bakes.map((bake) => (
-              windowWidth > 768 ? (
-                <HomeCardDesktop
-                  key={bake.bake_id}
-                  username={bake.username}
-                  recipeTitle={bake.recipe_title}
-                  photos={bake.photos}
-                  recipeId={bake.recipe_id}
-                  currentUserId={currentUserId}
-                  bakeId={bake.bake_id}
-                  userId={bake.user_id}
-                />
-              ) : (
-                <HomeCardMobile
-                  key={bake.bake_id}
-                  username={bake.username}
-                  recipeTitle={bake.recipe_title}
-                  photos={bake.photos}
-                  recipeId={bake.recipe_id}
-                  currentUserId={currentUserId}
-                  bakeId={bake.bake_id}
-                  userId={bake.user_id}
-                />
-              )
+              <HomeCardMobile
+                key={bake.bake_id}
+                username={bake.username}
+                recipeTitle={bake.recipe_title}
+                photos={bake.photos}
+                recipeId={bake.recipe_id}
+                currentUserId={currentUserId}
+                bakeId={bake.bake_id}
+                userId={bake.user_id}
+              />
             ))}
           </div>
         )}
         {activeTab === 'recipes' && (
-          <div className="grid grid-cols-1 gap-4">
+          <div className="grid grid-cols-1 gap-4 w-350">
             {savedRecipes.map((recipe) => (
               <RecipeCard
                 key={recipe.recipe_id}
@@ -269,14 +262,11 @@ function ProfileView() {
   const userId = location.state.userId;
   const [userDetails, setUserDetails] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener('resize', handleResize);
-    
-    // Cleanup
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
@@ -286,7 +276,6 @@ function ProfileView() {
 
   const fetchUserDetails = async () => {
     try {
-      // Fetch basic user profile data
       const { data: profileData, error: profileError } = await supabase
         .from('user_profile')
         .select('*')
@@ -295,7 +284,6 @@ function ProfileView() {
   
       if (profileError) throw profileError;
   
-      // Fetch bakes count
       const { data: bakesData, error: bakesError } = await supabase
         .from('bake_details_view')
         .select('bake_id')
@@ -303,7 +291,6 @@ function ProfileView() {
   
       if (bakesError) throw bakesError;
   
-      // Fetch followers count
       const { data: followersData, error: followersError } = await supabase
         .from('user_followers_view')
         .select('follower_id')
@@ -311,7 +298,6 @@ function ProfileView() {
   
       if (followersError) throw followersError;
   
-      // Fetch following count
       const { data: followingData, error: followingError } = await supabase
         .from('user_following_view')
         .select('following_id')
@@ -319,7 +305,6 @@ function ProfileView() {
   
       if (followingError) throw followingError;
   
-      // Combine all data
       const userDetailsWithCounts = {
         ...profileData,
         bakes_count: bakesData?.length || 0,
@@ -340,24 +325,30 @@ function ProfileView() {
   if (!userDetails) return <div>No user details available</div>;
 
   return (
-    <div className='flex flex-column flex-nowrap justify-center'>
+    <div className="flex flex-col overflow-hidden content-center justify-center">
       <HeaderFooter>
         {windowWidth > 768 ? (
-          <div className='flex flex-column flex-nowrap mt-16 mb-16 justify-items-end'> {/* Added justify-end and items-end */}
-            <ProfilePlateDesktop
-              userName={userDetails.username}
-              followerCount={userDetails.follower_count}
-              followingCount={userDetails.following_count}
-              userBio={userDetails.bio}
-              bakes={userDetails.bakes_count}
-              recipes={userDetails.recipes_count}
-              userId={userId}
-              photos={userDetails.photo}
-            />
-            <ContentCap userId={userId} />
+          <div className="flex flex-col items-center overflow-hidden">
+            <div className="flex flex-row mt-16 mb-16 w-full max-w-7xl justify-center content-center">
+              <div className="flex flex-row justify-center gap-2">
+                <ProfilePlateDesktop
+                  userName={userDetails.username}
+                  followerCount={userDetails.follower_count}
+                  followingCount={userDetails.following_count}
+                  userBio={userDetails.bio}
+                  bakes={userDetails.bakes_count}
+                  recipes={userDetails.recipes_count}
+                  userId={userId}
+                  photos={userDetails.photo}
+                />
+                <div className="h-[calc(100vh-8rem)] overflow-hidden">
+                  <ContentCap userId={userId} />
+                </div>
+              </div>
+            </div>
           </div>
         ) : (
-          <div className='flex flex-column flex-wrap mt-16 mb-16 justify-center'>
+          <div className="flex flex-col flex-wrap mt-16 mb-16 justify-center items-center">
             <ProfilePlateMobile
               userName={userDetails.username}
               followerCount={userDetails.follower_count}
