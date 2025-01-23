@@ -58,7 +58,7 @@ function HomeView() {
   return (
     <div>
       <HeaderFooter>
-        <div className='mt-16'>
+        <div className='mt-16 mb-20 flex flex-col items-center'>
           {bakeDetails.map((bake) => (
             <div key={bake.bake_id}>
               {windowWidth > 768 ? (

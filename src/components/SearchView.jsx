@@ -40,7 +40,6 @@ function SearchFilterBar({ activeFilter, setActiveFilter }) {
 }
 
 function SearchView() {
-
   const location = useLocation();
   const currentUserId = location.state.userId;
 
@@ -59,7 +58,7 @@ function SearchView() {
       let results = [];
       const { data: userData, error: userError } = await supabase
         .from('user_profile')
-        .select('user_auth_id, username')
+        .select('user_auth_id, username, photo')
         .ilike('username', `%${searchTerm}%`);
 
       if (userError) throw userError;
@@ -67,7 +66,7 @@ function SearchView() {
 
       const { data: recipeData, error: recipeError } = await supabase
         .from('recipe_profile')
-        .select('id, title')
+        .select('id, title, images')
         .ilike('title', `%${searchTerm}%`);
 
       if (recipeError) throw recipeError;
@@ -108,30 +107,30 @@ function SearchView() {
     <div>
       <HeaderFooter>
         <div className="mt-16 mb-16">
-        <div className='flex flex-col w-full items-center gap-4'>
-
-      <form onSubmit={handleSearch}>
-        <SearchBar 
-          value={searchTerm} 
-          onChange={(e) => setSearchTerm(e.target.value)} 
-        />
-      </form>
-      <SearchFilterBar activeFilter={activeFilter} setActiveFilter={handleFilterChange} />
-      {isLoading && <p>Loading...</p>}
-      {error && <p className="error-message">{error}</p>}
-      <div className="flex flex-col gap-2 md:gap-4">
-      {filteredResults.map((result) => (
-        <SearchResult 
-          key={result.type === 'user' ? result.user_auth_id : result.id}
-          id={result.type === 'user' ? result.user_auth_id : result.id}
-          currentUserId={currentUserId}
-          searchReturnValue={result.type === 'user' ? result.username : result.title}
-          type={result.type}
-        />
-      ))}
-      </div>
-      </div>
-      </div>
+          <div className='flex flex-col w-full items-center gap-4'>
+            <form onSubmit={handleSearch}>
+              <SearchBar 
+                value={searchTerm} 
+                onChange={(e) => setSearchTerm(e.target.value)} 
+              />
+            </form>
+            <SearchFilterBar activeFilter={activeFilter} setActiveFilter={handleFilterChange} />
+            {isLoading && <p>Loading...</p>}
+            {error && <p className="error-message">{error}</p>}
+            <div className="flex flex-col gap-2 md:gap-4">
+              {filteredResults.map((result) => (
+                <SearchResult 
+                  key={result.type === 'user' ? result.user_auth_id : result.id}
+                  id={result.type === 'user' ? result.user_auth_id : result.id}
+                  currentUserId={currentUserId}
+                  searchReturnValue={result.type === 'user' ? result.username : result.title}
+                  imageUrl={result.type === 'user' ? result.photo : result.images?.[0]}
+                  type={result.type}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
       </HeaderFooter>
     </div>
   );

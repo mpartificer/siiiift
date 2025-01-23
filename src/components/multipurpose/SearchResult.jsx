@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../../supabaseClient.js';
 import { User, Book } from 'lucide-react';
 
-function SearchResult({ id, currentUserId, searchReturnValue, type }) {
+function SearchResult({ id, currentUserId, searchReturnValue, type, imageUrl }) {
   const [isFollowingOrSaved, setIsFollowingOrSaved] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -48,7 +48,6 @@ function SearchResult({ id, currentUserId, searchReturnValue, type }) {
     try {
       if (type === 'user') {
         if (isFollowingOrSaved) {
-          // Unfollow
           const { error } = await supabase
             .from('followers')
             .delete()
@@ -57,7 +56,6 @@ function SearchResult({ id, currentUserId, searchReturnValue, type }) {
 
           if (error) throw error;
         } else {
-          // Follow
           const { error } = await supabase
             .from('followers')
             .insert({ follower_id: currentUserId, following_id: id });
@@ -66,7 +64,6 @@ function SearchResult({ id, currentUserId, searchReturnValue, type }) {
         }
       } else if (type === 'recipe') {
         if (isFollowingOrSaved) {
-          // Unsave
           const { error } = await supabase
             .from('saves')
             .delete()
@@ -75,7 +72,6 @@ function SearchResult({ id, currentUserId, searchReturnValue, type }) {
 
           if (error) throw error;
         } else {
-          // Save
           const { error } = await supabase
             .from('saves')
             .insert({ user_id: currentUserId, recipe_id: id });
@@ -84,7 +80,7 @@ function SearchResult({ id, currentUserId, searchReturnValue, type }) {
         }
       }
 
-      await checkStatus(); // Re-check the status after toggling
+      await checkStatus();
     } catch (error) {
       console.error('Error toggling status:', error);
       setError('Failed to update status');
@@ -103,8 +99,18 @@ function SearchResult({ id, currentUserId, searchReturnValue, type }) {
   return (
     <div className='searchResult w-350 md:w-96'>
       <div className='searchDetail'>
-        {type === 'user' ? <User size={50} color='#EADDFF' /> : <Book size={50} color='#EADDFF' />}
+        {imageUrl ? (
+          <img 
+            src={imageUrl} 
+            alt={type === 'user' ? 'Profile photo' : 'Recipe image'} 
+            className="w-12 h-12 rounded-full object-cover"
+          />
+        ) : (
+          type === 'user' ? <User size={50} color='#EADDFF' /> : <Book size={50} color='#EADDFF' />
+        )}
+        <div className='ml-2 mr-2'>
         {searchReturnValue}
+        </div>
       </div>
       <button className="searchResultButton" onClick={toggleAction} disabled={isLoading}>
         {getButtonText()}

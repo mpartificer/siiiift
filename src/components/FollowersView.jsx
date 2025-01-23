@@ -8,6 +8,8 @@ import SearchResult from './multipurpose/SearchResult.jsx';
 import Footer from './multipurpose/Footer.jsx';
 import { supabase } from '../supabaseClient.js'
 
+
+
 function FollowersView(){
   const location = useLocation();
   const { userId, userName, measure } = location?.state || {};
@@ -129,6 +131,7 @@ function FollowersView(){
             searchReturnValue={result.follower_username || result.following_username}
             currentUserId={userId}
             type="user"
+            imageUrl={result.follower_photo || result.following_photo}
           />
         ))
       ) : (

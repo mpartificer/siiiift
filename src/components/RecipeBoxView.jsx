@@ -10,7 +10,7 @@ function RecipeBoxHeader({ username }) {
   const navigate = useNavigate();
   const pageTitle = `${username}'s recipe box`;
   return (
-    <div className='w-full max-w-4xl flex flex-row justify-between items-center'>
+    <div className='w-350 md:w-full max-w-4xl flex flex-row justify-between items-center'>
       <div className='pageTitle text-xl'>{pageTitle}</div>
       <Plus size={30} color='#192F01' onClick={() => navigate('/reciperetriever')}/>
     </div>
@@ -104,9 +104,9 @@ function RecipeBoxView() {
             </div>
           </div>
         ) : (
-          <div className='mt-16 mb-16 ml-2 mr-2 flex flex-col w-full'>
+          <div className='mt-16 mb-16  flex flex-col items-center w-full'>
             <RecipeBoxHeader username={username} />
-            <div className="flex flex-col gap-2 mt-4">
+            <div className="flex flex-col gap-2 mt-4 w-350">
               {savedRecipes && savedRecipes.length > 0 ? (
                 savedRecipes.map(recipe => (
                   <RecipeCard

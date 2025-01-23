@@ -44,7 +44,7 @@ function PostReactionBox({ currentUserId, username, recipeId, userId, bakeId }) 
     } else {
       const { error } = await supabase
         .from('likes')
-        .insert({ user_id: currentUserId, bake_id: bakeId });
+        .insert({ user_id: currentUserId, bake_id: bakeId, recipe_id: recipeId });
 
       if (error) {
         console.error('Error adding like:', error);

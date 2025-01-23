@@ -24,8 +24,7 @@ function PostReactionBox({ currentUserId, username, recipeId, userId, bakeId }) 
       if (error.code != 'PGRST116')
       console.error('Error checking like status:', error);
     } else {
-      setIsLiked(!!data);
-    }
+      setIsLiked(data && data.length > 0);    }
   };
 
   const toggleLike = async () => {
@@ -44,7 +43,7 @@ function PostReactionBox({ currentUserId, username, recipeId, userId, bakeId }) 
     } else {
       const { error } = await supabase
         .from('likes')
-        .insert({ user_id: currentUserId, bake_id: bakeId });
+        .insert({ user_id: currentUserId, bake_id: bakeId, recipe_id: recipeId });
 
       if (error) {
         console.error('Error adding like:', error);

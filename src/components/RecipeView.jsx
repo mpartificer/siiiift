@@ -133,11 +133,8 @@ function RecipeCheckPanel(props) {
         });
     } else if (confirmRecipeItem === 'instructions') {
         myComponentList = propInsert.map((item, index) => {
-            if (typeof item === 'string') {
-                return <li key={index}>{item.instruction}</li>;
-            } else {
-                return <li key={index}>{JSON.stringify(item.instruction)}</li>;
-            }
+            const instruction = typeof item === 'string' ? item : item.instruction;
+            return <li key={index} className="mb-2">{index + 1}. {instruction}</li>;
         });
     } else {
         console.error(`Unknown confirmRecipeItem: ${confirmRecipeItem}`);
@@ -182,7 +179,7 @@ function PopularityCounter(props) {
         return(
             <div className='followTab'>
                 <Heart 
-                    color='palevioletred' 
+                    color={props.Count > 0 ? 'palevioletred' : '#496354'} 
                     size={40}
                     fill={props.Count > 0 ? 'palevioletred' : 'none'}
                 />
@@ -194,7 +191,7 @@ function PopularityCounter(props) {
         descriptor = 'stars'
         return(
             <div className='followTab'>
-                <Star color='#192F01' size={40}/>
+                <Star color='#496354' size={40}/>
                 {props.Count} {descriptor}
             </div>
         )
@@ -203,7 +200,7 @@ function PopularityCounter(props) {
         descriptor = 'bakes'
         return(
             <div className='followTab'>
-                <ChefHat color='#192F01' size={40}/>
+                <ChefHat color='#496354' size={40}/>
                 {props.Count} {descriptor}
             </div>
         )
@@ -212,7 +209,7 @@ function PopularityCounter(props) {
         descriptor = 'saves'
         return(
             <div className='followTab'>
-                <Bookmark color='#192F01' size={40}/>
+                <Bookmark color='#496354' size={40}/>
                 {props.Count} {descriptor}
             </div>
         )

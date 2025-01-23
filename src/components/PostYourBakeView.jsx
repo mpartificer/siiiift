@@ -248,7 +248,8 @@ const handleFile = async (e) => {
                 bake_id: bake_id,
                 type: 'ingredient',
                 original_step_text: mod.originalIngredient,
-                updated_step: mod.modifiedIngredient
+                updated_step: mod.modifiedIngredient,
+                recipe_id: recipeId
             });
         }
       });
@@ -261,7 +262,8 @@ const handleFile = async (e) => {
                 bake_id: bake_id,
                 type: 'instruction',
                 original_step_text: mod.originalInstruction,
-                updated_step: mod.modifiedInstruction
+                updated_step: mod.modifiedInstruction,
+                recipe_id: recipeId
             });
         }
       });

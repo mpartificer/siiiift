@@ -9,7 +9,8 @@ function SearchDetail(props) {
 
     return (
       <div className='searchDetail' onClick={() => navigate(path)}>
-        <User size={50} color='#EADDFF' /> {props.searchReturnValue}
+        <User size={50} color='#EADDFF' /> 
+        <div className='ml-2 mr-2'>{props.searchReturnValue}</div>
       </div>
     )
   }
