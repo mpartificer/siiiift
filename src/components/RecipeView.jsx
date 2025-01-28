@@ -12,7 +12,11 @@ function RecipeOptions({ originalLink, recipeId, currentUserId, onBakesClick }) 
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        checkIfSaved();
+        if (currentUserId) {  // Only check if currentUserId exists
+            checkIfSaved();
+        } else {
+            setIsLoading(false);  // Make sure to set loading to false if no user
+        }
     }, [currentUserId, recipeId]);
 
     const checkIfSaved = async () => {
@@ -105,13 +109,14 @@ function RecipeOptions({ originalLink, recipeId, currentUserId, onBakesClick }) 
                 </a>
             </li>
             <li>
-                <a className="tooltip" data-tip="bake">
+                <button className="tooltip" data-tip="bake" disabled={!currentUserId}>
                     <ChefHat color="#EBD2AD"/>
-                </a>
+                </button>
             </li>
         </ul>
     );
 }
+
 function RecipeCheckPanel(props) {
     const propInsert = props.propInsert;
     const confirmRecipeItem = props.confirmRecipeItem;
