@@ -39,7 +39,7 @@ function PostReactionBox({ currentUserId, username, recipeId, userId, bakeId }) 
         code: error.code,
         msg: error.message,
         details: error.details
-      } );
+      });
     } else {
       setIsLiked(data && data.length > 0);
       console.log('Is liked:', data && data.length > 0);
@@ -72,10 +72,11 @@ function PostReactionBox({ currentUserId, username, recipeId, userId, bakeId }) 
     }
   };
 
-  const bakeData = { "userId": userId, "recipeId": recipeId, "username": username }
+  const bakeData = { "userId": userId, "recipeId": recipeId, "username": username };
 
   const toBakeProfile = () => {
-    navigate(`/${username}/${recipeId}`, { state: bakeData })}
+    navigate(`/${username}/${recipeId}`, { state: bakeData });
+  };
 
   return (
     <div className='postReactionBox mt-1 ml-2.5'>
@@ -97,32 +98,45 @@ function PostReactionBox({ currentUserId, username, recipeId, userId, bakeId }) 
 }
 
 function HomeCardDesktop(props) {
+  const [currentUserId, setCurrentUserId] = useState(null);
+
+  useEffect(() => {
+    const getCurrentUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setCurrentUserId(user.id);
+      }
+    };
+    
+    getCurrentUser();
+  }, []);
+
   return (
     <div className="flex flex-col items-center">
-    <div className='homeCard standardBorder border-2 m-2 bg-secondary border-primary p-2 flex flex-row w-fit justify-center'>
-      {props.photos && 
-        <img 
-          src={props.photos}
-          alt="recipe" 
-          className='recipeImg ml-2.5'
-        />
-      }
-      <div className='flex flex-col mr-2.5 w-80'>
-        <PageTitle 
+      <div className='homeCard standardBorder border-2 m-2 bg-secondary border-primary p-2 flex flex-row w-fit justify-center'>
+        {props.photos && 
+          <img 
+            src={props.photos}
+            alt="recipe" 
+            className='recipeImg ml-2.5'
+          />
+        }
+        <div className='flex flex-col mr-2.5 w-80'>
+          <PageTitle 
             pageTitle={[props.username, props.recipeTitle]} 
             path={[`/profile/${props.username}`, `/recipe/${props.recipeId}`]} 
             userId={props.userId} 
             recipeId={props.recipeId}
-        />
-        <PostReactionBox 
+          />
+          <PostReactionBox 
             username={props.username} 
             recipeId={props.recipeId} 
-            currentUserId={props.currentUserId} 
+            currentUserId={currentUserId} 
             bakeId={props.bakeId}
             userId={props.userId}
-        />
+          />
+        </div>
       </div>
-    </div>
     </div>
   );
 }

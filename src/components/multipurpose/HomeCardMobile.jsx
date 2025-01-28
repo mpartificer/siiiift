@@ -78,6 +78,19 @@ function PostReactionBox({ currentUserId, username, recipeId, userId, bakeId }) 
 }
 
 function HomeCardMobile(props) {
+  const [currentUserId, setCurrentUserId] = useState(null);
+
+  useEffect(() => {
+    const getCurrentUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setCurrentUserId(user.id);
+      }
+    };
+    
+    getCurrentUser();
+  }, []);
+
   return (
     <div className='homeCard standardBorder border-2 m-2 bg-secondary border-primary p-2 w-350'>
       <PageTitle 
@@ -96,7 +109,7 @@ function HomeCardMobile(props) {
       <PostReactionBox 
         username={props.username} 
         recipeId={props.recipeId} 
-        currentUserId={props.currentUserId} 
+        currentUserId={currentUserId} 
         bakeId={props.bakeId}
         userId={props.userId}
       />
