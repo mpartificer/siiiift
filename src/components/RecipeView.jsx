@@ -294,7 +294,7 @@ function RecipeView() {
     const bakesRef = useRef(null);
     const leftColumnRef = useRef(null);
     const [leftColumnHeight, setLeftColumnHeight] = useState(0);
-
+    const [authChecked, setAuthChecked] = useState(false); // Add this state
     const [recipeDetails, setRecipeDetails] = useState(null);
     const [ratingDetails, setRatingDetails] = useState(null);
     const [likesCount, setLikesCount] = useState(0);
@@ -304,6 +304,38 @@ function RecipeView() {
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
     // Effect for window resize and initial data fetch
+
+    useEffect(() => {
+        const checkAuth = async () => {
+            try {
+                const { data: { session }, error } = await supabase.auth.getSession();
+                if (error) throw error;
+                
+                if (session?.user?.id) {
+                    setCurrentUserId(session.user.id);
+                } else {
+                    setCurrentUserId(null);
+                }
+            } catch (error) {
+                console.error('Error checking auth status:', error);
+                setCurrentUserId(null);
+            } finally {
+                setAuthChecked(true);
+            }
+        };
+
+        checkAuth();
+
+        // Set up auth state listener
+        const {
+            data: { subscription },
+        } = supabase.auth.onAuthStateChange((_event, session) => {
+            setCurrentUserId(session?.user?.id || null);
+        });
+
+        return () => subscription?.unsubscribe();
+    }, []);
+
     useEffect(() => {
         const handleResize = () => {
             setWindowWidth(window.innerWidth);
@@ -338,6 +370,8 @@ function RecipeView() {
         };
 
         async function fetchData() {
+            if (!authChecked) return; // Wait for auth check to complete
+
             try {
                 const [recipeResponse, ratingResponse, likesResponse, savesResponse, bakesResponse] = await Promise.all([
                     supabase
@@ -383,7 +417,7 @@ function RecipeView() {
 
         getCurrentUser();
         fetchData();
-    }, [recipeId]);
+    }, [recipeId, authChecked]);
 
     if (isLoading) return <div>Loading...</div>;
     if (!recipeDetails) return <div>No recipe details available</div>;
