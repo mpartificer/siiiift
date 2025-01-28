@@ -246,6 +246,8 @@ function RecipeCheckTitle(props) {
 function BakesList({ recipeId, currentUserId, isMobile }) {
     const [bakes, setBakes] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    
+    console.log(currentUserId)
 
     useEffect(() => {
         async function fetchBakes() {
