@@ -10,17 +10,21 @@ function PostReactionBox({ currentUserId, username, recipeId, userId, bakeId }) 
   const [isLiked, setIsLiked] = useState(false);
 
   useEffect(() => {
-    console.log('PostReactionBox props:', {
-      currentUserId,
-      bakeId,
-      username,
-      recipeId,
-      userId
-    });
-    checkLikeStatus();
-  }, [currentUserId, bakeId]);
+    if (currentUserId && bakeId) {  // Only check if we have both values
+      console.log('PostReactionBox props:', {
+        currentUserId,
+        bakeId,
+        username,
+        recipeId,
+        userId
+      });
+      checkLikeStatus();
+    }
+  }, [currentUserId, bakeId]); // Re-run when either of these change
 
   const checkLikeStatus = async () => {
+    if (!currentUserId || !bakeId) return;  // Guard clause
+    
     console.log('Checking like status with:', {
       currentUserId,
       bakeId
@@ -47,6 +51,8 @@ function PostReactionBox({ currentUserId, username, recipeId, userId, bakeId }) 
   };
 
   const toggleLike = async () => {
+    if (!currentUserId || !bakeId) return;  // Guard clause
+
     if (isLiked) {
       const { error } = await supabase
         .from('likes')
@@ -99,17 +105,49 @@ function PostReactionBox({ currentUserId, username, recipeId, userId, bakeId }) 
 
 function HomeCardDesktop(props) {
   const [currentUserId, setCurrentUserId] = useState(null);
+  const [authError, setAuthError] = useState(null);
 
   useEffect(() => {
+    let isMounted = true;  // Flag to prevent setting state after unmount
+
     const getCurrentUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        setCurrentUserId(user.id);
+      try {
+        const { data: { user }, error } = await supabase.auth.getUser();
+        
+        if (error) throw error;
+        
+        if (isMounted && user) {
+          console.log("Got user ID:", user.id);
+          setCurrentUserId(user.id);
+        }
+      } catch (error) {
+        console.error("Error getting user:", error);
+        if (isMounted) {
+          setAuthError(error.message);
+        }
       }
     };
     
+    // Set up auth state listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.user && isMounted) {
+        console.log("Auth state changed, new user ID:", session.user.id);
+        setCurrentUserId(session.user.id);
+      }
+    });
+
     getCurrentUser();
-  }, []);
+
+    // Cleanup function
+    return () => {
+      isMounted = false;
+      subscription?.unsubscribe();
+    };
+  }, []); // Empty dependency array since we want this to run once on mount
+
+  if (authError) {
+    console.error("Authentication error:", authError);
+  }
 
   return (
     <div className="flex flex-col items-center">
