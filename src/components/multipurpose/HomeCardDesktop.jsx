@@ -112,16 +112,23 @@ function HomeCardDesktop(props) {
 
     const getCurrentUser = async () => {
       try {
-        const { data: { user }, error } = await supabase.auth.getUser();
+        // First check if we have a session
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
         
-        if (error) throw error;
+        if (sessionError) throw sessionError;
         
-        if (isMounted && user) {
-          console.log("Got user ID:", user.id);
-          setCurrentUserId(user.id);
+        if (session) {
+          // We have a valid session
+          if (isMounted && session.user) {
+            console.log("Got user ID from session:", session.user.id);
+            setCurrentUserId(session.user.id);
+          }
+        } else {
+          console.log("No active session found");
+          // Optionally redirect to login or handle no-session state
         }
       } catch (error) {
-        console.error("Error getting user:", error);
+        console.error("Error getting session:", error);
         if (isMounted) {
           setAuthError(error.message);
         }
