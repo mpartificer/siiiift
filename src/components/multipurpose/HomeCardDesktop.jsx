@@ -32,10 +32,14 @@ function PostReactionBox({ currentUserId, username, recipeId, userId, bakeId }) 
       .eq('user_id', currentUserId)
       .eq('bake_id', bakeId);
   
-    console.log('Like status response:', { data, error });
+    console.log('Like status response:', { data, error, isDataEmpty: !data || data.length === 0 });
 
     if (error) {
-      console.error('Error checking like status:', error);
+      console.error('Error checking like status:', {
+        code: error.code,
+        msg: error.message,
+        details: error.details
+      } );
     } else {
       setIsLiked(data && data.length > 0);
       console.log('Is liked:', data && data.length > 0);
