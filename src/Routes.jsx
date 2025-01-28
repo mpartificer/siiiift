@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom"
+import { createHashRouter } from "react-router-dom"
 import HomeView from "./components/HomeView.jsx"
 import ProfileView from "./components/ProfileView.jsx"
 import FollowersView from "./components/FollowersView.jsx"
@@ -15,7 +15,7 @@ import SettingsManagementView from "./components/SettingsManagementView.jsx"
 
 
 
-const router = createBrowserRouter([
+const router = createHashRouter([
     { basename: import.meta.env.DEV ? "/" : "/siiiift/" },
     {
         path: "/",
