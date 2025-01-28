@@ -310,6 +310,7 @@ function RecipeView() {
             try {
                 const { data: { session }, error } = await supabase.auth.getSession();
                 if (error) throw error;
+                console.log(session.user.id)
                 
                 if (session?.user?.id) {
                     setCurrentUserId(session.user.id);
@@ -366,6 +367,7 @@ function RecipeView() {
     useEffect(() => {
         const getCurrentUser = async () => {
             const { data: { user } } = await supabase.auth.getUser();
+            console.log(user.id)
             if (user) setCurrentUserId(user.id);
         };
 
