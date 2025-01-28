@@ -284,13 +284,12 @@ function BakesList({ recipeId, currentUserId, isMobile }) {
 }
 function RecipeView() {
     const location = useLocation();
-    const recipeId = location.state?.recipeId;
+    const recipeId = location.state.recipeId;
     const [currentUserId, setCurrentUserId] = useState(null);
-    const [error, setError] = useState(null);
     const bakesRef = useRef(null);
     const leftColumnRef = useRef(null);
     const [leftColumnHeight, setLeftColumnHeight] = useState(0);
-    const [isImageLoaded, setIsImageLoaded] = useState(false);
+
     const [recipeDetails, setRecipeDetails] = useState(null);
     const [ratingDetails, setRatingDetails] = useState(null);
     const [likesCount, setLikesCount] = useState(0);
@@ -299,176 +298,108 @@ function RecipeView() {
     const [isLoading, setIsLoading] = useState(true);
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
-    // Effect for window resize
+    // Effect for window resize and initial data fetch
     useEffect(() => {
         const handleResize = () => {
             setWindowWidth(window.innerWidth);
-            if (leftColumnRef.current && isImageLoaded) {
-                updateLeftColumnHeight();
-            }
+            updateLeftColumnHeight();
         };
         
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
-    }, [isImageLoaded]); // Add isImageLoaded as dependency
+    }, []);
 
     // Separate effect for updating height after data is loaded
     useEffect(() => {
-        if (!isLoading && leftColumnRef.current && isImageLoaded) {
+        if (!isLoading && leftColumnRef.current) {
             updateLeftColumnHeight();
         }
-    }, [isLoading, recipeDetails, isImageLoaded]);
+    }, [isLoading, recipeDetails]);
 
-    // Safe height update function
+    // Function to update left column height
     const updateLeftColumnHeight = () => {
         if (leftColumnRef.current) {
+            // Add a small delay to ensure DOM has updated
             requestAnimationFrame(() => {
-                const height = leftColumnRef.current?.offsetHeight;
-                if (height) {
-                    setLeftColumnHeight(height);
-                }
+                setLeftColumnHeight(leftColumnRef.current.offsetHeight);
             });
         }
     };
 
     useEffect(() => {
-        let isMounted = true;
+        const getCurrentUser = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) setCurrentUserId(user.id);
+        };
 
         async function fetchData() {
-            if (!recipeId) {
-                setError('No recipe ID provided');
-                setIsLoading(false);
-                return;
-            }
-
             try {
-                console.log('Fetching recipe with ID:', recipeId); // Debug log
+                const [recipeResponse, ratingResponse, likesResponse, savesResponse, bakesResponse] = await Promise.all([
+                    supabase
+                        .from('recipe_profile')
+                        .select('*')
+                        .eq('id', recipeId)
+                        .single(),
+                    supabase
+                        .from('bake_recipe_ratings')
+                        .select('*')
+                        .eq('recipe_id', recipeId),
+                    supabase
+                        .from('likes')
+                        .select('*', { count: 'exact' })
+                        .eq('recipe_id', recipeId),
+                    supabase
+                        .from('saves')
+                        .select('*', { count: 'exact' })
+                        .eq('recipe_id', recipeId),
+                    supabase
+                        .from('Bake_Details')
+                        .select('*', { count: 'exact' })
+                        .eq('recipe_id', recipeId)
+                ]);
 
-                const recipeResponse = await supabase
-                    .from('recipe_profile')
-                    .select('*')
-                    .eq('id', recipeId)
-                    .single();
+                if (recipeResponse.error) throw recipeResponse.error;
+                if (ratingResponse.error) throw ratingResponse.error;
+                if (likesResponse.error) throw likesResponse.error;
+                if (savesResponse.error) throw savesResponse.error;
+                if (bakesResponse.error) throw bakesResponse.error;
 
-                console.log('Raw recipe response:', recipeResponse); // Debug log
-
-                if (recipeResponse.error) {
-                    throw recipeResponse.error;
-                }
-
-                if (!recipeResponse.data) {
-                    throw new Error('No recipe data found');
-                }
-
-                // Validate required fields
-                const requiredFields = ['title', 'total_time', 'cook_time', 'prep_time', 'ingredients', 'instructions'];
-                const missingFields = requiredFields.filter(field => !recipeResponse.data[field]);
-                
-                if (missingFields.length > 0) {
-                    console.error('Missing required fields:', missingFields);
-                    throw new Error(`Missing required recipe fields: ${missingFields.join(', ')}`);
-                }
-
-                if (isMounted) {
-                    setRecipeDetails(recipeResponse.data);
-                    
-                    // Fetch additional data only if we have valid recipe details
-                    const [ratingResponse, likesResponse, savesResponse, bakesResponse] = await Promise.all([
-                        supabase
-                            .from('bake_recipe_ratings')
-                            .select('*')
-                            .eq('recipe_id', recipeId),
-                        supabase
-                            .from('likes')
-                            .select('*', { count: 'exact' })
-                            .eq('recipe_id', recipeId),
-                        supabase
-                            .from('saves')
-                            .select('*', { count: 'exact' })
-                            .eq('recipe_id', recipeId),
-                        supabase
-                            .from('Bake_Details')
-                            .select('*', { count: 'exact' })
-                            .eq('recipe_id', recipeId)
-                    ]);
-
-                    if (isMounted) {
-                        setRatingDetails(ratingResponse.data);
-                        setLikesCount(likesResponse.count || 0);
-                        setSavesCount(savesResponse.count || 0);
-                        setBakesCount(bakesResponse.count || 0);
-                    }
-                }
+                setRecipeDetails(recipeResponse.data);
+                setRatingDetails(ratingResponse.data);
+                setLikesCount(likesResponse.count || 0);
+                setSavesCount(savesResponse.count || 0);
+                setBakesCount(bakesResponse.count || 0);
             } catch (error) {
-                console.error('Error fetching recipe data:', error);
-                if (isMounted) {
-                    setError(error.message);
-                }
+                console.error('Error fetching data:', error);
             } finally {
-                if (isMounted) {
-                    setIsLoading(false);
-                }
+                setIsLoading(false);
             }
         }
 
+        getCurrentUser();
         fetchData();
-
-        return () => {
-            isMounted = false;
-        };
     }, [recipeId]);
 
-    // Early return for error states
-    if (!recipeId) {
-        return <div className="text-center p-4">No recipe ID provided</div>;
-    }
+    if (isLoading) return <div>Loading...</div>;
+    if (!recipeDetails) return <div>No recipe details available</div>;
 
-    if (error) {
-        return (
-            <div className="text-center p-4">
-                <h2 className="text-xl font-bold text-red-500">Error loading recipe</h2>
-                <p className="mt-2">{error}</p>
-                <button 
-                    className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-                    onClick={() => window.location.reload()}
-                >
-                    Retry
-                </button>
-            </div>
-        );
-    }
+    // Define all variables from recipeDetails
+    const recipeTitle = recipeDetails.title.toString();
+    const totalTime = recipeDetails.total_time.toString();
+    const cookTime = recipeDetails.cook_time.toString();
+    const prepTime = recipeDetails.prep_time.toString();
+    const ingredients = recipeDetails?.ingredients || [];
+    const instructions = recipeDetails?.instructions || [];
+    const originalLink = recipeDetails.original_link;
+    const photos = recipeDetails.images;
 
-    if (isLoading) {
-        return (
-            <div className="flex items-center justify-center p-4">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-                <span className="ml-2">Loading recipe details...</span>
-            </div>
-        );
-    }
-
-    if (!recipeDetails) {
-        return <div className="text-center p-4">Recipe not found</div>;
-    }
-
-    // Safely access recipe details with default values
-    const recipeTitle = recipeDetails.title?.toString() || 'Untitled Recipe';
-    const totalTime = recipeDetails.total_time?.toString() || '0';
-    const cookTime = recipeDetails.cook_time?.toString() || '0';
-    const prepTime = recipeDetails.prep_time?.toString() || '0';
-    const ingredients = recipeDetails.ingredients || [];
-    const instructions = recipeDetails.instructions || [];
-    const originalLink = recipeDetails.original_link || '#';
-    const photos = recipeDetails.images || '';
-
-    let ratingSum = 0;
-    
-    for (let i = 0; i < ratingDetails[0].all_ratings.length; i++) {
-        ratingSum += ratingDetails[0].all_ratings[i];
-    }
-
-    let rating = ratingSum / ratingDetails[0].all_ratings.length;
-    rating = rating.toFixed(2);
+    let rating = 0;
+        
+        // Check if ratingDetails exists and has data
+        if (ratingDetails && ratingDetails[0] && Array.isArray(ratingDetails[0].all_ratings) && ratingDetails[0].all_ratings.length > 0) {
+            let ratingSum = ratingDetails[0].all_ratings.reduce((sum, rating) => sum + rating, 0);
+            rating = (ratingSum / ratingDetails[0].all_ratings.length).toFixed(2);
+        }
 
     const handleBakesScroll = () => {
         const element = bakesRef.current;
