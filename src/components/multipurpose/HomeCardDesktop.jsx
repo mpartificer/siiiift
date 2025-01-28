@@ -10,21 +10,35 @@ function PostReactionBox({ currentUserId, username, recipeId, userId, bakeId }) 
   const [isLiked, setIsLiked] = useState(false);
 
   useEffect(() => {
+    console.log('PostReactionBox props:', {
+      currentUserId,
+      bakeId,
+      username,
+      recipeId,
+      userId
+    });
     checkLikeStatus();
-  }, []);
+  }, [currentUserId, bakeId]);
 
   const checkLikeStatus = async () => {
+    console.log('Checking like status with:', {
+      currentUserId,
+      bakeId
+    });
+    
     const { data, error } = await supabase
       .from('likes')
       .select('*')
       .eq('user_id', currentUserId)
       .eq('bake_id', bakeId);
   
+    console.log('Like status response:', { data, error });
+
     if (error) {
       console.error('Error checking like status:', error);
     } else {
-      // Check if data array has any entries
       setIsLiked(data && data.length > 0);
+      console.log('Is liked:', data && data.length > 0);
     }
   };
 
