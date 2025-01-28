@@ -4,7 +4,7 @@ import react from '@vitejs/plugin-react'
 export default defineConfig(({ command }) => {
   const config = {
     plugins: [react()],
-    base: '/',
+    base: command === 'serve' ? '/' : '/siiiift/',
     define: {
       // Remove this section as Vite handles .env automatically
       // 'process.env.VITE_SUPABASE_URL': JSON.stringify(process.env.VITE_SUPABASE_URL),

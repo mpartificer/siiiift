@@ -16,7 +16,7 @@ import SettingsManagementView from "./components/SettingsManagementView.jsx"
 
 
 const router = createHashRouter([
-    { basename: import.meta.env.DEV ? "/" : "/siiiift/" },
+    { basename: "/" },
     {
         path: "/",
         element: <HomeView />,
