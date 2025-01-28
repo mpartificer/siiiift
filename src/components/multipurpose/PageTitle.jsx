@@ -16,14 +16,14 @@ function PageTitle(props) {
 
   if (props.path) {
     return (
-      <div className='pageTitle ml-2.5 md:text-xl'>
-        <a onClick={()=>{toUserProfile()}}>{props.pageTitle[0]}</a> made <a onClick={()=>{toRecipeProfile()}}>{props.pageTitle[1]}</a>
+      <div className='pageTitle ml-2.5 md:text-xl hover:text-primary'>
+        <a className='hover:text-primary hover:cursor-pointer'onClick={()=>{toUserProfile()}}>{props.pageTitle[0]}</a> made <a className='hover:text-primary hover:cursor-pointer'onClick={()=>{toRecipeProfile()}}>{props.pageTitle[1]}</a>
       </div>
     )
 }
 else {
   return (
-    <div className='pageTitle md:text-xl'>{props.pageTitle}</div>
+    <div className='pageTitle md:text-xl hover:text-primary hover:cursor-pointer'>{props.pageTitle}</div>
   )
 }
 }

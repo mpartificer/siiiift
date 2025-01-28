@@ -91,7 +91,7 @@ function HomeCardMobile(props) {
           src={props.photos}
           alt="recipe" 
           className='recipeImg'
-        />
+        /> 
       }
       <PostReactionBox 
         username={props.username} 

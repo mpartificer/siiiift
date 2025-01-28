@@ -282,13 +282,13 @@ function BakesList({ recipeId, currentUserId, isMobile }) {
         </div>
     );
 }
-
-
 function RecipeView() {
     const location = useLocation();
     const recipeId = location.state.recipeId;
     const [currentUserId, setCurrentUserId] = useState(null);
-    const bakesRef = useRef(null); // Add ref for scrolling
+    const bakesRef = useRef(null);
+    const leftColumnRef = useRef(null);
+    const [leftColumnHeight, setLeftColumnHeight] = useState(0);
 
     const [recipeDetails, setRecipeDetails] = useState(null);
     const [ratingDetails, setRatingDetails] = useState(null);
@@ -298,14 +298,35 @@ function RecipeView() {
     const [isLoading, setIsLoading] = useState(true);
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
+    // Effect for window resize and initial data fetch
     useEffect(() => {
-        const handleResize = () => setWindowWidth(window.innerWidth);
+        const handleResize = () => {
+            setWindowWidth(window.innerWidth);
+            updateLeftColumnHeight();
+        };
+        
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
+    // Separate effect for updating height after data is loaded
     useEffect(() => {
-        // Get current user's ID
+        if (!isLoading && leftColumnRef.current) {
+            updateLeftColumnHeight();
+        }
+    }, [isLoading, recipeDetails]);
+
+    // Function to update left column height
+    const updateLeftColumnHeight = () => {
+        if (leftColumnRef.current) {
+            // Add a small delay to ensure DOM has updated
+            requestAnimationFrame(() => {
+                setLeftColumnHeight(leftColumnRef.current.offsetHeight);
+            });
+        }
+    };
+
+    useEffect(() => {
         const getCurrentUser = async () => {
             const { data: { user } } = await supabase.auth.getUser();
             if (user) setCurrentUserId(user.id);
@@ -400,20 +421,30 @@ function RecipeView() {
             <HeaderFooter>
                 {windowWidth > 768 ? (
                     <div className='flex flex-col mt-20 mb-16 gap-8 w-full items-center'>
-                        <div className='flex flex-row gap-8 w-full justify-center'>
-                            <div className='flex flex-col gap-4 items-end'>
-                                <div className='pageTitle text-xl'>{recipeTitle}</div>
-                                <img src={photos} alt="recipe image" className='recipeImg' />
-                                <RecipeSummaryPanel totalTime={totalTime} 
-                                    cookTime={cookTime} 
-                                    prepTime={prepTime} 
-                                    likes={likesCount} 
-                                    bakes={bakesCount} 
-                                    saves={savesCount} 
-                                    rating={rating} 
-                                />
-                            </div>
-                            <div className='flex flex-col gap-2'>
+                    <div className='flex flex-row gap-8 w-full justify-center'>
+                        <div ref={leftColumnRef} className='flex flex-col gap-4 items-end'>
+                            <div className='pageTitle text-xl'>{recipeTitle}</div>
+                            <img 
+                                src={photos} 
+                                alt="recipe image" 
+                                className='recipeImg'
+                                onLoad={updateLeftColumnHeight} // Add this to handle image load
+                            />
+                            <RecipeSummaryPanel 
+                                totalTime={totalTime} 
+                                cookTime={cookTime} 
+                                prepTime={prepTime} 
+                                likes={likesCount} 
+                                bakes={bakesCount} 
+                                saves={savesCount} 
+                                rating={rating} 
+                            />
+                        </div>
+                        {!isLoading && leftColumnHeight > 0 && (
+                            <div 
+                                className='flex flex-col gap-2 overflow-y-auto'
+                                style={{ maxHeight: `${leftColumnHeight}px` }}
+                            >
                                 <RecipeOptions 
                                     originalLink={originalLink}
                                     recipeId={recipeId}
@@ -423,12 +454,13 @@ function RecipeView() {
                                 <RecipeCheckPanel propInsert={ingredients} confirmRecipeItem='ingredients' />
                                 <RecipeCheckPanel propInsert={instructions} confirmRecipeItem='instructions' />
                             </div>
-                        </div>
-                        <div className="divider divider-accent w-1/2 self-center" ref={bakesRef}>bakes</div>
-                        <div className='w-full max-w-7xl px-4'>
-                            <BakesList recipeId={recipeId} currentUserId={currentUserId} isMobile={false} />
-                        </div>
+                        )}
                     </div>
+                    <div className="divider divider-accent w-1/2 self-center" ref={bakesRef}>bakes</div>
+                    <div className='w-full max-w-7xl px-4'>
+                        <BakesList recipeId={recipeId} currentUserId={currentUserId} isMobile={false} />
+                    </div>
+                </div>
                 ) : (
                     <div className='followersView mt-16 mb-16 text-xl wrap'>
                         <div className='pageTitle'>{recipeTitle}</div>
