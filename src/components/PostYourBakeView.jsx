@@ -1,132 +1,140 @@
-import '../App.css'
-import React, { useState, useEffect } from 'react'
-import { supabase } from '../supabaseClient'
-import { useNavigate } from 'react-router-dom'
-import HeaderFooter from './multipurpose/HeaderFooter.jsx'
-import RecipeDropDown from './multipurpose/RecipeDropDown.jsx'
+import React, { useState, useEffect } from 'react';
+import { useForm, FormProvider, useFormContext, Controller } from 'react-hook-form';
+import { supabase } from '../supabaseClient';
+import { useNavigate } from 'react-router-dom';
+import HeaderFooter from './multipurpose/HeaderFooter.jsx';
+import RecipeDropDown from './multipurpose/RecipeDropDown.jsx';
 import heic2any from 'heic2any';
 
-
-function ModificationRating({ rating, setRating }) {
-    return (
-      <div className='profilePlateTop'>
-        <div className='recipeCheckTitle'>rate: </div>
-        <div className="rating">
-          {[1, 2, 3, 4, 5].map((value) => (
-            <input
-              key={value}
-              type="radio"
-              name="rating-1"
-              className="mask mask-star"
-              checked={rating === value}
-              onChange={() => setRating(value)}
-            />
-          ))}
-        </div>
-      </div>
-    )
+function ModificationRating() {
+  const { control } = useFormContext();
+  
+  return (
+    <div className='profilePlateTop'>
+      <div className='recipeCheckTitle'>rate: </div>
+      <Controller
+        name="rating"
+        control={control}
+        defaultValue={0}
+        render={({ field }) => (
+          <div className="rating">
+            {[1, 2, 3, 4, 5].map((value) => (
+              <input
+                key={value}
+                type="radio"
+                name="rating-1"
+                className="mask mask-star"
+                checked={field.value === value}
+                onChange={() => field.onChange(value)}
+              />
+            ))}
+          </div>
+        )}
+      />
+    </div>
+  );
 }
 
-function BakePostDate({ bakeDate, setBakeDate }) {
-    return (
-      <div className='profilePlateTop'>
-        <div className='recipeCheckTitle'>date of bake:</div>
-        <input
-          type="date"
-          value={bakeDate}
-          onChange={(e) => setBakeDate(e.target.value)}
-          className='w-full dateEntry bg-secondary'
-        />
-      </div>
-    )
+function BakePostDate() {
+  const { control } = useFormContext();
+  
+  return (
+    <div className='profilePlateTop'>
+      <div className='recipeCheckTitle'>date of bake:</div>
+      <Controller
+        name="bakeDate"
+        control={control}
+        defaultValue=""
+        render={({ field }) => (
+          <input
+            type="date"
+            {...field}
+            className='w-full dateEntry bg-secondary'
+          />
+        )}
+      />
+    </div>
+  );
 }
 
 function PostYourBakeView() {
-
-
   const navigate = useNavigate();
   const [files, setFiles] = useState([]);
   const [message, setMessage] = useState('');
-  const [rating, setRating] = useState(0);
-  const [bakeDate, setBakeDate] = useState('');
-  const [recipeId, setRecipeId] = useState('');
-  const [recipeTitle, setRecipeTitle] = useState('');
-  const [ingredientModifications, setIngredientModifications] = useState([{
-    originalIngredient: '',
-    modifiedIngredient: ''
-}]);
-
-const [instructionModifications, setInstructionModifications] = useState([{
-    originalInstruction: '',
-    modifiedInstruction: ''
-}]);
   const [error, setError] = useState(null);
-
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  
+  const methods = useForm({
+    defaultValues: {
+      rating: 0,
+      bakeDate: '',
+      recipeId: '',
+      recipeTitle: '',
+      ingredientModifications: [{
+        originalIngredient: '',
+        modifiedIngredient: ''
+      }],
+      instructionModifications: [{
+        originalInstruction: '',
+        modifiedInstruction: ''
+      }]
+    }
+  });
 
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener('resize', handleResize);
-    
-    // Cleanup
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-// Function to convert HEIC file to JPEG
-async function convertHeicToJpeg(file) {
-  try {
-    // Convert HEIC to JPEG blob
-    const jpegBlob = await heic2any({
-      blob: file,
-      toType: 'image/jpeg',
-      quality: 0.8
-    });
-
-    // Create a new File object from the blob
-    return new File([jpegBlob], 
-      file.name.replace(/\.heic$/i, '.jpg'), 
-      { type: 'image/jpeg' }
-    );
-  } catch (error) {
-    console.error('Error converting HEIC file:', error);
-    throw new Error('Failed to convert HEIC file');
+  async function convertHeicToJpeg(file) {
+    try {
+      const jpegBlob = await heic2any({
+        blob: file,
+        toType: 'image/jpeg',
+        quality: 0.8
+      });
+      return new File([jpegBlob], 
+        file.name.replace(/\.heic$/i, '.jpg'), 
+        { type: 'image/jpeg' }
+      );
+    } catch (error) {
+      console.error('Error converting HEIC file:', error);
+      throw new Error('Failed to convert HEIC file');
+    }
   }
-}
 
-// Modified handleFile function
-const handleFile = async (e) => {
-  setMessage("");
-  let files = Array.from(e.target.files);
-  const validImageTypes = ['image/gif', 'image/jpeg', 'image/png', 'image/heic'];
-  
-  try {
-    const processedFiles = await Promise.all(
-      files.map(async (file) => {
-        const fileType = file.type.toLowerCase();
-        
-        if (!validImageTypes.includes(fileType)) {
-          throw new Error("Only images accepted");
-        }
-        
-        // Convert HEIC files to JPEG
-        if (fileType === 'image/heic') {
-          return await convertHeicToJpeg(file);
-        }
-        
-        return file;
-      })
-    );
+  const handleFile = async (e) => {
+    setMessage("");
+    let files = Array.from(e.target.files);
+    const validImageTypes = ['image/gif', 'image/jpeg', 'image/png', 'image/heic'];
     
-    setFiles(prevFiles => [...prevFiles, ...processedFiles]);
-  } catch (error) {
-    setMessage(error.message);
-  }
-};
+    try {
+      const processedFiles = await Promise.all(
+        files.map(async (file) => {
+          const fileType = file.type.toLowerCase();
+          
+          if (!validImageTypes.includes(fileType)) {
+            throw new Error("Only images accepted");
+          }
+          
+          if (fileType === 'image/heic') {
+            return await convertHeicToJpeg(file);
+          }
+          
+          return file;
+        })
+      );
+      
+      setFiles(prevFiles => [...prevFiles, ...processedFiles]);
+    } catch (error) {
+      setMessage(error.message);
+    }
+  };
 
   const removeImage = (i) => {
     setFiles(files.filter(x => x.name !== i));
-  }
-
+  };
 
   const PostImageUpload = () => {
     return (
@@ -151,27 +159,23 @@ const handleFile = async (e) => {
               </label>
             </div>
             <div className="flex flex-wrap gap-2 mt-2">
-              {files.map((file, key) => {
-                return (
-                  <div key={key} className="overflow-hidden relative">
-                    <i onClick={() => { removeImage(file.name) }} className="mdi mdi-close absolute right-1 hover:text-white cursor-pointer"></i>
-                    <img className="h-20 w-20 rounded-md" src={URL.createObjectURL(file)} />
-                  </div>
-                )
-              })}
+              {files.map((file, key) => (
+                <div key={key} className="overflow-hidden relative">
+                  <i onClick={() => { removeImage(file.name) }} className="mdi mdi-close absolute right-1 hover:text-white cursor-pointer"></i>
+                  <img className="h-20 w-20 rounded-md" src={URL.createObjectURL(file)} />
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </div>
     );
-  }
+  };
 
-  const PostYourBake = async (e) => {
-    e.preventDefault();
+  const onSubmit = async (formData) => {
     setError(null);
   
     try {
-      // 1. Upload images to 'Bake_Image' bucket
       const imageUrls = [];
       for (const file of files) {
         const fileName = `${Date.now()}_${file.name}`;
@@ -195,43 +199,64 @@ const handleFile = async (e) => {
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       if (sessionError) throw sessionError;
 
-      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/analyze-bake`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`,
-          // ^ this should be an access token
-        },
-        body: JSON.stringify({
-          imageUrls,
-          recipeTitle,
-          originalInstructions: instructionModifications.map(m => m.originalInstruction),
-          modifiedInstructions: instructionModifications.map(m => m.modifiedInstruction),
-          originalIngredients: ingredientModifications.map(m => m.originalIngredient),
-          modifiedIngredients: ingredientModifications.map(m => m.modifiedIngredient)
-        })
-      });
-  
-      const { insights } = await response.json();
+      const validIngredientMods = formData.ingredientModifications.filter(
+        mod => mod.originalIngredient && mod.modifiedIngredient
+      );
+      const validInstructionMods = formData.instructionModifications.filter(
+        mod => mod.originalInstruction && mod.modifiedInstruction
+      );
 
-      console.log(insights)
+// In the onSubmit function, before making the API call:
+console.log('Sending to AI analysis:', {
+  imageUrls,
+  recipeTitle: formData.recipeTitle,
+  originalInstructions: validInstructionMods.map(m => m.originalInstruction),
+  modifiedInstructions: validInstructionMods.map(m => m.modifiedInstruction),
+  originalIngredients: validIngredientMods.map(m => m.originalIngredient),
+  modifiedIngredients: validIngredientMods.map(m => m.modifiedIngredient)
+});
+
+// Also, let's improve the error handling for the API call:
+const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/analyze-bake`, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${session.access_token}`,
+  },
+  body: JSON.stringify({
+    imageUrls,
+    recipeTitle: formData.recipeTitle,
+    originalInstructions: validInstructionMods.map(m => m.originalInstruction),
+    modifiedInstructions: validInstructionMods.map(m => m.modifiedInstruction),
+    originalIngredients: validIngredientMods.map(m => m.originalIngredient),
+    modifiedIngredients: validIngredientMods.map(m => m.modifiedIngredient)
+  })
+});
+
+if (!response.ok) {
+  const errorText = await response.text();
+  console.error('AI Analysis Response:', {
+    status: response.status,
+    statusText: response.statusText,
+    errorText
+  });
+  throw new Error(`AI analysis failed: ${errorText}`);
+}
+
+      const { insights } = await response.json();
   
-      // 2. Get the user's ID
       const { data: { user }, error: userError } = await supabase.auth.getUser();
       if (userError) throw userError;
-
-      console.log(recipeId)
   
-      // 3. Insert data into Bake_Details table
       const { data: bakeData, error: insertError } = await supabase
         .from('Bake_Details')
         .insert({
           user_id: user.id,
-          recipe_id: recipeId,
-          recipe_title: recipeTitle, // Add this line
+          recipe_id: formData.recipeId,
+          recipe_title: formData.recipeTitle,
           photos: imageUrls,
-          rating: rating,
-          baked_at: bakeDate,
+          rating: formData.rating,
+          baked_at: formData.bakeDate,
           ai_insights: insights 
         })
         .select();
@@ -240,53 +265,35 @@ const handleFile = async (e) => {
   
       const bake_id = bakeData[0].id;
   
-      // 4. Insert modifications into modifications table
-      const modificationInserts = [];
-      
-      // Handle ingredient modifications
-      ingredientModifications.forEach(mod => {
-        if (mod.originalIngredient && mod.modifiedIngredient) {
-            modificationInserts.push({
-                user_id: user.id,
-                bake_id: bake_id,
-                type: 'ingredient',
-                original_step_text: mod.originalIngredient,
-                updated_step: mod.modifiedIngredient,
-                recipe_id: recipeId
-            });
-        }
-      });
-
-      // Handle instruction modifications
-      instructionModifications.forEach(mod => {
-        if (mod.originalInstruction && mod.modifiedInstruction) {
-            modificationInserts.push({
-                user_id: user.id,
-                bake_id: bake_id,
-                type: 'instruction',
-                original_step_text: mod.originalInstruction,
-                updated_step: mod.modifiedInstruction,
-                recipe_id: recipeId
-            });
-        }
-      });
+      const modificationInserts = [
+        ...validIngredientMods.map(mod => ({
+          user_id: user.id,
+          bake_id: bake_id,
+          type: 'ingredient',
+          original_step_text: mod.originalIngredient,
+          updated_step: mod.modifiedIngredient,
+          recipe_id: formData.recipeId
+        })),
+        ...validInstructionMods.map(mod => ({
+          user_id: user.id,
+          bake_id: bake_id,
+          type: 'instruction',
+          original_step_text: mod.originalInstruction,
+          updated_step: mod.modifiedInstruction,
+          recipe_id: formData.recipeId
+        }))
+      ];
   
       if (modificationInserts.length > 0) {
         const { error: modInsertError } = await supabase
-            .from('modifications')
-            .insert(modificationInserts);
+          .from('modifications')
+          .insert(modificationInserts);
     
         if (modInsertError) throw modInsertError;
-    }
+      }
   
-      // Clear form and show success message
       setFiles([]);
-      setRating(0);
-      setBakeDate('');
-      setRecipeId(null);
-      setRecipeTitle(''); // Add this line
-      setIngredientModifications([]);
-      setInstructionModifications([]);
+      methods.reset();
       setMessage('Bake posted successfully!');
       navigate('/');
   
@@ -294,57 +301,43 @@ const handleFile = async (e) => {
       console.error('Error:', err);
       setError(err.message);
     }
-  }
+  };
 
   return (
-<HeaderFooter>
+    <HeaderFooter>
       {windowWidth > 768 ? (
-              <form className='websiteRetrievalView mt-16 mb-16 md:flex md:flex-row md:gap-8 md:justify-center md:items-start overflow-hidden' onSubmit={PostYourBake}>
-
-<RecipeDropDown
-    setRecipeId={setRecipeId}
-    setRecipeTitle={setRecipeTitle}
-    setIngredientModifications={setIngredientModifications}
-    setInstructionModifications={setInstructionModifications}
-    instructionModifications={instructionModifications}
-    ingredientModifications={ingredientModifications}
-  />
-<div className="flex flex-col">
-<PostImageUpload />
-
-  <ModificationRating rating={rating} setRating={setRating} />
-  <BakePostDate bakeDate={bakeDate} setBakeDate={setBakeDate} />
-  <button type="submit" className='bigSubmitButton'>post</button>
-  {error && <div className="error">{error}</div>}
-  {message && <div className="success">{message}</div>}
-  </div>
-        </form>
+        <FormProvider {...methods}>
+          <form className='websiteRetrievalView mt-16 mb-16 md:flex md:flex-row md:gap-8 md:justify-center md:items-start overflow-hidden' 
+                onSubmit={methods.handleSubmit(onSubmit)}>
+            <RecipeDropDown />
+            <div className="flex flex-col">
+              <PostImageUpload />
+              <ModificationRating />
+              <BakePostDate />
+              <button type="submit" className='bigSubmitButton'>post</button>
+              {error && <div className="error">{error}</div>}
+              {message && <div className="success">{message}</div>}
+            </div>
+          </form>
+        </FormProvider>
       ) : (
-        <form className='websiteRetrievalView mt-16 mb-16 md:flex md:flex-row md:gap-8 md:justify-center md:items-start overflow-hidden' onSubmit={PostYourBake}>
-
-<PostImageUpload />
-
-<div className="w-full items-center md:w-1/3 flex flex-col gap-4 mt-4 md:mt-0">
-  <RecipeDropDown
-    setRecipeId={setRecipeId}
-    setRecipeTitle={setRecipeTitle}
-    setIngredientModifications={setIngredientModifications}
-    setInstructionModifications={setInstructionModifications}
-    instructionModifications={instructionModifications}
-    ingredientModifications={ingredientModifications}
-  />
-  <ModificationRating rating={rating} setRating={setRating} />
-  <BakePostDate bakeDate={bakeDate} setBakeDate={setBakeDate} />
-  <button type="submit" className='bigSubmitButton'>post</button>
-  {error && <div className="error">{error}</div>}
-  {message && <div className="success">{message}</div>}
-</div>
-</form>
+        <FormProvider {...methods}>
+          <form className='websiteRetrievalView mt-16 mb-16 md:flex md:flex-row md:gap-8 md:justify-center md:items-start overflow-hidden' 
+                onSubmit={methods.handleSubmit(onSubmit)}>
+            <PostImageUpload />
+            <div className="w-full items-center md:w-1/3 flex flex-col gap-4 mt-4 md:mt-0">
+              <RecipeDropDown />
+              <ModificationRating />
+              <BakePostDate />
+              <button type="submit" className='bigSubmitButton'>post</button>
+              {error && <div className="error">{error}</div>}
+              {message && <div className="success">{message}</div>}
+            </div>
+          </form>
+        </FormProvider>
       )}
-
     </HeaderFooter>
-
-  )
+  );
 }
 
-export default PostYourBakeView
+export default PostYourBakeView;

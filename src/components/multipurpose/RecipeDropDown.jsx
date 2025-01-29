@@ -1,28 +1,24 @@
 import { supabase } from '../../supabaseClient.js'
 import { useState, useEffect } from 'react'
+import { useFormContext, useFieldArray } from 'react-hook-form'
 import '../../App.css'
 
-const ModificationItem = ({ items, placeholder, onChange, value }) => {
+const ModificationItem = ({ items, placeholder, index, type }) => {
     const [selectedItem, setSelectedItem] = useState(null)
     const [isOpen, setIsOpen] = useState(false)
-    const [inputValue, setInputValue] = useState('')
+    const { register, setValue, watch } = useFormContext()
+    
+    const fieldName = type === 'ingredient' 
+        ? `ingredientModifications.${index}` 
+        : `instructionModifications.${index}`
 
     const handleSelect = (item) => {
         setSelectedItem(item)
         setIsOpen(false)
-        onChange({
-            originalItem: item,
-            modifiedText: inputValue
-        });
-    }
-
-    const handleInputChange = (e) => {
-        const newValue = e.target.value;
-        setInputValue(newValue);
-        onChange({
-            originalItem: selectedItem,
-            modifiedText: newValue
-        });
+        setValue(
+            `${fieldName}.original${type === 'ingredient' ? 'Ingredient' : 'Instruction'}`,
+            type === 'ingredient' ? `${item.amount} ${item.substance}` : item.instruction
+        )
     }
 
     return (
@@ -43,8 +39,8 @@ const ModificationItem = ({ items, placeholder, onChange, value }) => {
                 </div>
                 {isOpen && (
                     <ul tabIndex={0} className="dropdown-content menu bg-secondary rounded-box z-[1] w-52 p-2 shadow">
-                        {items.map((item, index) => (
-                            <li key={index} onClick={() => handleSelect(item)}>
+                        {items.map((item, idx) => (
+                            <li key={idx} onClick={() => handleSelect(item)}>
                                 <a>{typeof item === 'object' ? (item.instruction || `${item.amount} ${item.substance}`) : item}</a>
                             </li>
                         ))}
@@ -52,18 +48,16 @@ const ModificationItem = ({ items, placeholder, onChange, value }) => {
                 )}
             </div>
             <input 
-                type="text" 
-                value={inputValue}
-                onChange={handleInputChange}
-                placeholder={placeholder} 
-                className="input w-80 max-w-xs customModification" 
+                type="text"
+                placeholder={placeholder}
+                className="input w-80 max-w-xs customModification"
+                {...register(`${fieldName}.modified${type === 'ingredient' ? 'Ingredient' : 'Instruction'}`)}
             />
         </div>
     )
 }
 
-
-const RecipeDropDown = (props) => {
+const RecipeDropDown = () => {
     const [recipeData, setRecipeData] = useState(null)
     const [selectedRecipe, setSelectedRecipe] = useState(null)
     const [ingredientData, setIngredientData] = useState(null)
@@ -72,9 +66,19 @@ const RecipeDropDown = (props) => {
     const [loading, setLoading] = useState(true)
     const [isRecipeDropdownOpen, setIsRecipeDropdownOpen] = useState(false)
 
+    const { control, setValue } = useFormContext()
+    const { fields: ingredientFields, append: appendIngredient } = useFieldArray({
+        control,
+        name: 'ingredientModifications'
+    })
+    const { fields: instructionFields, append: appendInstruction } = useFieldArray({
+        control,
+        name: 'instructionModifications'
+    })
+
     const fetchModItems = async (recipeId, recipeTitle) => {
-        props.setRecipeId(recipeId);
-        props.setRecipeTitle(recipeTitle);
+        setValue('recipeId', recipeId)
+        setValue('recipeTitle', recipeTitle)
 
         try {
             const { data: ingredientData, error: ingError } = await supabase
@@ -96,7 +100,7 @@ const RecipeDropDown = (props) => {
             setInstructionData(instructionData.instructions)
 
             setSelectedRecipe(recipeId)
-            setIsRecipeDropdownOpen(false) 
+            setIsRecipeDropdownOpen(false)
         } catch (err) {
             console.error('Error:', err)
             setError(err.message)
@@ -115,7 +119,6 @@ const RecipeDropDown = (props) => {
 
                 if (recipeError) throw recipeError
                 setRecipeData(recipeData)
-                console.log(recipeData)
             } catch (err) {
                 console.error('Error:', err)
                 setError(err.message)
@@ -126,39 +129,6 @@ const RecipeDropDown = (props) => {
         
         fetchRecipes()
     }, [])
-
-    const handleIngredientModificationChange = (index, value) => {
-        const newModifications = [...props.ingredientModifications];
-        newModifications[index] = {
-            originalIngredient: value.originalItem ? `${value.originalItem.amount} ${value.originalItem.substance}` : '',
-            modifiedIngredient: value.modifiedText
-        };
-        props.setIngredientModifications(newModifications);
-    }
-
-    const handleInstructionModificationChange = (index, value) => {
-        const newModifications = [...props.instructionModifications];
-        newModifications[index] = {
-            originalInstruction: value.originalItem?.instruction || '',
-            modifiedInstruction: value.modifiedText
-        };
-        props.setInstructionModifications(newModifications);
-    }
-
-    // Update the add modification functions
-    const addIngredientModification = () => {
-        props.setIngredientModifications([...props.ingredientModifications, {
-            originalIngredient: '',
-            modifiedIngredient: ''
-        }]);
-    }
-
-    const addInstructionModification = () => {
-        props.setInstructionModifications([...props.instructionModifications, {
-            originalInstruction: '',
-            modifiedInstruction: ''
-        }]);
-    }
 
     if (loading) return <div>Loading...</div>
     if (error) return <div>Error: {error}</div>
@@ -183,38 +153,41 @@ const RecipeDropDown = (props) => {
                         ))}
                     </ul>
                 )}
-                </div>
-                                    
+            </div>
             
-                {selectedRecipe && (
+            {selectedRecipe && (
                 <>
                     <h3 className="mt-4 mb-2 overflow-hidden">ingredient modifications:</h3>
-                    {props.ingredientModifications.map((mod, index) => (
+                    {ingredientFields.map((field, index) => (
                         <ModificationItem
-                            key={index}
+                            key={field.id}
                             items={ingredientData || []}
                             placeholder="enter your ingredient modification"
-                            value={mod}
-                            onChange={(value) => handleIngredientModificationChange(index, value)}
+                            index={index}
+                            type="ingredient"
                         />
                     ))}
-                    <a href="#" onClick={addIngredientModification} className="mb-4 justify-self-end">add another ingredient modification</a>
+                    <a href="#" onClick={() => appendIngredient({ originalIngredient: '', modifiedIngredient: '' })} className="mb-4 justify-self-end">
+                        add another ingredient modification
+                    </a>
 
                     <h3 className="mt-4 mb-2 overflow-hidden">instruction modifications:</h3>
-                    {props.instructionModifications.map((mod, index) => (
+                    {instructionFields.map((field, index) => (
                         <ModificationItem
-                            key={index}
+                            key={field.id}
                             items={instructionData || []}
                             placeholder="enter your instruction modification"
-                            value={mod}
-                            onChange={(value) => handleInstructionModificationChange(index, value)}
+                            index={index}
+                            type="instruction"
                         />
                     ))}
-                    <a href="#" onClick={addInstructionModification} className="mb-4 justify-self-end">add another instruction modification</a>
+                    <a href="#" onClick={() => appendInstruction({ originalInstruction: '', modifiedInstruction: '' })} className="mb-4 justify-self-end">
+                        add another instruction modification
+                    </a>
                 </>
             )}
         </div>
-    );
+    )
 }
 
 export default RecipeDropDown
