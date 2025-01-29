@@ -1,14 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { GoogleGenerativeAI } from "https://esm.sh/@google/generative-ai@0.2.0";
 
-// Debug environment variables
-console.log('Available environment variables:', Object.keys(Deno.env.toObject()));
-console.log('Attempting to get GOOGLE_API_KEY...');
-
 // Initialize Gemini
 const apiKey = Deno.env.get('GOOGLE_API_KEY');
-console.log('API Key present:', !!apiKey);
-
 const genAI = new GoogleGenerativeAI(apiKey || '');
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
 
@@ -26,21 +20,17 @@ serve(async (req) => {
   }
 
   try {
-    console.log('Request received')
-    
-    // Log request headers
-    console.log('Request headers:', Object.fromEntries(req.headers.entries()))
-    
-    // Parse and log request body
+    // Parse request body
     const body = await req.json()
     console.log('Request body:', JSON.stringify(body))
 
     const { 
       imageUrls, 
       recipeTitle,
+      hasModifications,
       originalInstructions,
-      originalIngredients,
       modifiedInstructions,
+      originalIngredients,
       modifiedIngredients 
     } = body
 
@@ -49,96 +39,99 @@ serve(async (req) => {
       throw new Error('imageUrls must be an array')
     }
 
-    const apiKey = Deno.env.get('GOOGLE_API_KEY')
-    if (!apiKey) {
-      throw new Error('GOOGLE_API_KEY is not set')
-    }
-    
-    // Log the first few characters of the API key for debugging
-    console.log('API key prefix:', apiKey.substring(0, 4) + '...')
-    
-    // Basic validation
-    if (!apiKey.startsWith('AI')) {
-      throw new Error('API key appears to be invalid - should start with "AI"')
+    if (!recipeTitle) {
+      throw new Error('recipeTitle is required')
     }
 
-    try {
-      console.log('Starting image analysis')
-      // Analyze each image using Gemini
-      const imageAnalysisPromises = imageUrls.map(async (url) => {
-        // Fetch the image data
-        const imageResponse = await fetch(url);
-        const imageBlob = await imageResponse.blob();
-        
-        // Convert blob to base64
-        const imageData = await new Promise((resolve) => {
-          const reader = new FileReader();
-          reader.onloadend = () => resolve(reader.result);
-          reader.readAsDataURL(imageBlob);
-        });
-        
-        // Create parts array for Gemini
-        const prompt = "Analyze this baked good. Focus on texture, appearance, and potential areas for improvement.";
-        
-        // Generate content with the image
-        const result = await model.generateContent({
-          contents: [{
-            parts: [
-              { text: prompt },
-              { 
-                inlineData: {
-                  mimeType: "image/jpeg",
-                  data: (imageData as string).split(',')[1] // Remove data URL prefix
-                }
-              }
-            ]
-          }]
-        });
-        
-        const response = await result.response;
-        return response.text();
+    // Analyze images
+    console.log('Starting image analysis')
+    const imageAnalysisPromises = imageUrls.map(async (url) => {
+      const imageResponse = await fetch(url);
+      const imageBlob = await imageResponse.blob();
+      
+      const imageData = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.readAsDataURL(imageBlob);
       });
+      
+      const prompt = "Analyze this baked good in detail. Assess the texture, color, shape, and overall appearance. Note any visible characteristics that might indicate potential improvements."
+      
+      const result = await model.generateContent({
+        contents: [{
+          parts: [
+            { text: prompt },
+            { 
+              inlineData: {
+                mimeType: "image/jpeg",
+                data: (imageData as string).split(',')[1]
+              }
+            }
+          ]
+        }]
+      });
+      
+      const response = await result.response;
+      return response.text();
+    });
 
-      const imageAnalyses = await Promise.all(imageAnalysisPromises)
-      console.log('Image analysis completed')
+    const imageAnalyses = await Promise.all(imageAnalysisPromises)
+    console.log('Image analysis completed')
 
-      console.log('Starting recipe analysis')
-      // Analyze recipe modifications using Gemini
-      const recipePrompt = `Analyze these recipe modifications for "${recipeTitle}":
-        Original Instructions: ${JSON.stringify(originalInstructions)}
-        Modified Instructions: ${JSON.stringify(modifiedInstructions)}
+    // Generate recipe analysis based on whether there are modifications
+    console.log('Starting recipe analysis')
+    let recipePrompt;
+    
+    if (hasModifications && originalInstructions.length > 0 && originalIngredients.length > 0) {
+      recipePrompt = `Analyze this bake of "${recipeTitle}" with the following modifications:
+        
         Original Ingredients: ${JSON.stringify(originalIngredients)}
         Modified Ingredients: ${JSON.stringify(modifiedIngredients)}
         
-        Consider the modifications' impact and suggest improvements.`;
-
-      const recipeResult = await model.generateContent(recipePrompt);
-      const recipeResponse = await recipeResult.response;
-      const recipeInsights = recipeResponse.text();
-
-      // Combine analyses
-      const imageInsights = imageAnalyses.join("\n")
-
-      console.log('Generating final analysis')
-      // Generate final insights
-      const finalPrompt = `Based on these analyses:
-        Image Analysis: ${imageInsights}
-        Recipe Analysis: ${recipeInsights}
+        Original Instructions: ${JSON.stringify(originalInstructions)}
+        Modified Instructions: ${JSON.stringify(modifiedInstructions)}
         
-        Provide concise, actionable insights for improving this recipe next time.`;
-
-      const finalResult = await model.generateContent(finalPrompt);
-      const finalResponse = await finalResult.response;
-      const finalInsights = finalResponse.text();
-
-      return new Response(
-        JSON.stringify({ insights: finalInsights }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
-    } catch (geminiError) {
-      console.error('Gemini API Error:', geminiError)
-      throw new Error(`Gemini API Error: ${geminiError.message}`)
+        Evaluate how these modifications might have affected the final result and what improvements could be made.`;
+    } else {
+      recipePrompt = `Analyze this bake of "${recipeTitle}".
+        No modifications were made to the original recipe.
+        Based on the visual analysis, what techniques could be improved and what modifications might enhance the result?`;
     }
+
+    const recipeResult = await model.generateContent(recipePrompt);
+    const recipeResponse = await recipeResult.response;
+    const recipeInsights = recipeResponse.text();
+
+    // Combine all analyses for final insights
+    const imageInsights = imageAnalyses.join("\n")
+    
+    console.log('Generating final analysis')
+    const finalPrompt = `You are providing feedback on a user's bake of "${recipeTitle}". 
+      Based on my analysis of the provided image(s) and ${hasModifications ? 'the recipe modifications they made' : 'the original recipe execution'}:
+
+      Image Analysis I Just Performed:
+      ${imageInsights}
+
+      Recipe Analysis I Just Performed:
+      ${recipeInsights}
+
+      Now, synthesize a helpful response to the user. Start with a brief comment about what you see in their bake photos.
+      Then provide clear, specific, and actionable insights for their next attempt. Include:
+      1. Technique improvements based on what you observe in their photos
+      2. ${hasModifications ? 'Suggestions to refine their modifications' : 'Potential beneficial modifications they could try'}
+      3. Specific tips for achieving better results
+
+      Keep the response friendly and constructive. Avoid referring to any "analysis" - instead, directly reference what you see in their photos.
+      Focus on giving them practical advice for their next bake.`;
+
+    const finalResult = await model.generateContent(finalPrompt);
+    const finalResponse = await finalResult.response;
+    const finalInsights = finalResponse.text();
+
+    return new Response(
+      JSON.stringify({ insights: finalInsights }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
 
   } catch (error) {
     console.error('Error in edge function:', error)

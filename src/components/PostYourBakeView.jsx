@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import HeaderFooter from './multipurpose/HeaderFooter.jsx';
 import RecipeDropDown from './multipurpose/RecipeDropDown.jsx';
 import heic2any from 'heic2any';
+import Toast from './multipurpose/Toast.jsx'
+import { Loader2 } from 'lucide-react'
 
 function ModificationRating() {
   const { control } = useFormContext();
@@ -63,6 +65,18 @@ function PostYourBakeView() {
   const [message, setMessage] = useState('');
   const [error, setError] = useState(null);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [isUploading, setIsUploading] = useState(false);
+  const [toasts, setToasts] = useState([]);
+  const [currentBakeId, setCurrentBakeId] = useState(null);
+
+  const addToast = (toast) => {
+    const id = Date.now();
+    setToasts(prev => [...prev, { ...toast, id }]);
+  };
+  
+  const removeToast = (id) => {
+    setToasts(prev => prev.filter(toast => toast.id !== id));
+  };
   
   const methods = useForm({
     defaultValues: {
@@ -174,8 +188,10 @@ function PostYourBakeView() {
 
   const onSubmit = async (formData) => {
     setError(null);
+    setIsUploading(true);
   
     try {
+      // Upload images and create bake record
       const imageUrls = [];
       for (const file of files) {
         const fileName = `${Date.now()}_${file.name}`;
@@ -195,59 +211,11 @@ function PostYourBakeView() {
   
         imageUrls.push(publicUrl);
       }
-
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      if (sessionError) throw sessionError;
-
-      const validIngredientMods = formData.ingredientModifications.filter(
-        mod => mod.originalIngredient && mod.modifiedIngredient
-      );
-      const validInstructionMods = formData.instructionModifications.filter(
-        mod => mod.originalInstruction && mod.modifiedInstruction
-      );
-
-// In the onSubmit function, before making the API call:
-console.log('Sending to AI analysis:', {
-  imageUrls,
-  recipeTitle: formData.recipeTitle,
-  originalInstructions: validInstructionMods.map(m => m.originalInstruction),
-  modifiedInstructions: validInstructionMods.map(m => m.modifiedInstruction),
-  originalIngredients: validIngredientMods.map(m => m.originalIngredient),
-  modifiedIngredients: validIngredientMods.map(m => m.modifiedIngredient)
-});
-
-// Also, let's improve the error handling for the API call:
-const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/analyze-bake`, {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${session.access_token}`,
-  },
-  body: JSON.stringify({
-    imageUrls,
-    recipeTitle: formData.recipeTitle,
-    originalInstructions: validInstructionMods.map(m => m.originalInstruction),
-    modifiedInstructions: validInstructionMods.map(m => m.modifiedInstruction),
-    originalIngredients: validIngredientMods.map(m => m.originalIngredient),
-    modifiedIngredients: validIngredientMods.map(m => m.modifiedIngredient)
-  })
-});
-
-if (!response.ok) {
-  const errorText = await response.text();
-  console.error('AI Analysis Response:', {
-    status: response.status,
-    statusText: response.statusText,
-    errorText
-  });
-  throw new Error(`AI analysis failed: ${errorText}`);
-}
-
-      const { insights } = await response.json();
   
       const { data: { user }, error: userError } = await supabase.auth.getUser();
       if (userError) throw userError;
   
+      // Create bake record
       const { data: bakeData, error: insertError } = await supabase
         .from('Bake_Details')
         .insert({
@@ -256,50 +224,114 @@ if (!response.ok) {
           recipe_title: formData.recipeTitle,
           photos: imageUrls,
           rating: formData.rating,
-          baked_at: formData.bakeDate,
-          ai_insights: insights 
+          baked_at: formData.bakeDate
         })
         .select();
   
       if (insertError) throw insertError;
   
       const bake_id = bakeData[0].id;
+      setCurrentBakeId(bake_id);
   
-      const modificationInserts = [
-        ...validIngredientMods.map(mod => ({
-          user_id: user.id,
-          bake_id: bake_id,
-          type: 'ingredient',
-          original_step_text: mod.originalIngredient,
-          updated_step: mod.modifiedIngredient,
-          recipe_id: formData.recipeId
-        })),
-        ...validInstructionMods.map(mod => ({
-          user_id: user.id,
-          bake_id: bake_id,
-          type: 'instruction',
-          original_step_text: mod.originalInstruction,
-          updated_step: mod.modifiedInstruction,
-          recipe_id: formData.recipeId
-        }))
-      ];
+      // Handle modifications
+      const validIngredientMods = formData.ingredientModifications.filter(
+        mod => mod.originalIngredient && mod.modifiedIngredient
+      );
+      const validInstructionMods = formData.instructionModifications.filter(
+        mod => mod.originalInstruction && mod.modifiedInstruction
+      );
   
-      if (modificationInserts.length > 0) {
+      if (validIngredientMods.length > 0 || validInstructionMods.length > 0) {
+        const modificationInserts = [
+          ...validIngredientMods.map(mod => ({
+            user_id: user.id,
+            bake_id: bake_id,
+            type: 'ingredient',
+            original_step_text: mod.originalIngredient,
+            updated_step: mod.modifiedIngredient,
+            recipe_id: formData.recipeId
+          })),
+          ...validInstructionMods.map(mod => ({
+            user_id: user.id,
+            bake_id: bake_id,
+            type: 'instruction',
+            original_step_text: mod.originalInstruction,
+            updated_step: mod.modifiedInstruction,
+            recipe_id: formData.recipeId
+          }))
+        ];
+  
         const { error: modInsertError } = await supabase
           .from('modifications')
           .insert(modificationInserts);
-    
+  
         if (modInsertError) throw modInsertError;
       }
   
+      // Reset form and navigate
       setFiles([]);
       methods.reset();
-      setMessage('Bake posted successfully!');
       navigate('/');
+      addToast({
+        type: 'loading',
+        message: 'Analyzing your bake...'
+      });
+  
+      // Start AI analysis in background
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      // Prepare AI payload
+      const aiPayload = {
+        imageUrls,
+        recipeTitle: formData.recipeTitle,
+        hasModifications: validIngredientMods.length > 0 || validInstructionMods.length > 0,
+        originalInstructions: validInstructionMods.map(m => m.originalInstruction),
+        modifiedInstructions: validInstructionMods.map(m => m.modifiedInstruction),
+        originalIngredients: validIngredientMods.map(m => m.originalIngredient),
+        modifiedIngredients: validIngredientMods.map(m => m.modifiedIngredient)
+      };
+  
+      // Send AI analysis request
+      fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/analyze-bake`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify(aiPayload)
+      })
+      .then(async (response) => {
+        if (!response.ok) throw new Error('AI analysis failed');
+        const { insights } = await response.json();
+        
+        // Update bake record with AI insights
+        const { error: updateError } = await supabase
+          .from('Bake_Details')
+          .update({ ai_insights: insights })
+          .eq('id', bake_id);
+        
+        if (updateError) throw updateError;
+  
+        // Show success toast with link
+        addToast({
+          type: 'success',
+          message: 'AI analysis complete!',
+          link: `/${user.id}/${formData.recipeId}`
+        });
+      })
+      .catch(error => {
+        console.error('AI Analysis Error:', error);
+        addToast({
+          type: 'error',
+          message: 'Failed to complete AI analysis. You can still view your bake post.'
+        });
+      });
   
     } catch (err) {
       console.error('Error:', err);
       setError(err.message);
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -314,7 +346,20 @@ if (!response.ok) {
               <PostImageUpload />
               <ModificationRating />
               <BakePostDate />
-              <button type="submit" className='bigSubmitButton'>post</button>
+              <button 
+  type="submit" 
+  className='bigSubmitButton' 
+  disabled={isUploading}
+>
+  {isUploading ? (
+    <div className="flex items-center gap-2">
+      <Loader2 className="w-4 h-4 animate-spin" />
+      <span>uploading...</span>
+    </div>
+  ) : (
+    'post'
+  )}
+</button>
               {error && <div className="error">{error}</div>}
               {message && <div className="success">{message}</div>}
             </div>
@@ -329,13 +374,34 @@ if (!response.ok) {
               <RecipeDropDown />
               <ModificationRating />
               <BakePostDate />
-              <button type="submit" className='bigSubmitButton'>post</button>
-              {error && <div className="error">{error}</div>}
+              <button 
+  type="submit" 
+  className='bigSubmitButton' 
+  disabled={isUploading}
+>
+  {isUploading ? (
+    <div className="flex items-center gap-2">
+      <Loader2 className="w-4 h-4 animate-spin" />
+      <span>uploading...</span>
+    </div>
+  ) : (
+    'post'
+  )}
+</button>              {error && <div className="error">{error}</div>}
               {message && <div className="success">{message}</div>}
             </div>
           </form>
         </FormProvider>
       )}
+      {toasts.map(toast => (
+  <Toast
+    key={toast.id}
+    message={toast.message}
+    type={toast.type}
+    link={toast.link}
+    onClose={() => removeToast(toast.id)}
+  />
+))}
     </HeaderFooter>
   );
 }
