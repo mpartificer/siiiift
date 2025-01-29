@@ -1,10 +1,9 @@
 import { useNavigate } from 'react-router-dom'
-import {supabase} from '../../supabaseClient.js'
+import { supabase } from '../../supabaseClient.js'
 import { useState } from 'react'
 
 function SettingLogOut(props) {
     const navigate = useNavigate()
-  
     const [loading, setLoading] = useState(false)
   
     const handleLogOut = async (e) => {
@@ -12,22 +11,27 @@ function SettingLogOut(props) {
       setLoading(true)
   
       try {
-      const { error } = await supabase.auth.signOut()
-    
-      if (error) alert(error.message)
+        const { error } = await supabase.auth.signOut()
+        if (error) alert(error.message)
+        navigate('/login')
+      } catch (error) {
+        alert(error.message)
+      } finally {
         setLoading(false)
-      navigate('/login')
-    } catch (error) {
-      alert(error.message)
-    } finally {
-      setLoading(false)
-    }
-    }
-      return (
-        <form className='settingNoToggle' onSubmit={handleLogOut}>
-          <button type="submit">{props.settingName}</button>
-        </form>
-      )
+      }
     }
 
-    export default SettingLogOut
+    return (
+      <form className="settingNoToggle" onSubmit={handleLogOut}>
+        <button 
+          type="submit"
+          className="px-4 py-2 transition-colors duration-200 border-none hover:border-none hover:text-primary"
+          disabled={loading}
+        >
+          {loading ? 'Signing out...' : props.settingName}
+        </button>
+      </form>
+    )
+}
+
+export default SettingLogOut
