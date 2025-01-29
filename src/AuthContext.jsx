@@ -11,11 +11,19 @@ export function AuthProvider({ children }) {
     let mounted = true
 
     async function getInitialSession() {
-      const { data: { session } } = await supabase.auth.getSession()
+      console.log('Getting initial session...')
+      const { data: { session }, error } = await supabase.auth.getSession()
+      
+      if (error) {
+        console.error('Session error:', error)
+      }
+
+      console.log('Initial session:', session)
 
       // only update the react state if the component is still mounted
       if (mounted) {
         if (session) {
+          console.log('Setting initial user:', session.user)
           setUser(session.user)
         }
         setLoading(false)
@@ -25,6 +33,7 @@ export function AuthProvider({ children }) {
     getInitialSession()
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      console.log('Auth state changed:', _event, session)
       setUser(session?.user ?? null)
     })
 
@@ -35,15 +44,38 @@ export function AuthProvider({ children }) {
   }, [])
 
   const value = {
-    signUp: (data) => supabase.auth.signUp(data),
-    signIn: (data) => supabase.auth.signInWithPassword(data),
-    signOut: () => supabase.auth.signOut(),
+    signUp: async (data) => {
+      console.log('Signing up...')
+      const response = await supabase.auth.signUp(data)
+      console.log('Sign up response:', response)
+      return response
+    },
+    signIn: async (data) => {
+      console.log('Signing in...')
+      const response = await supabase.auth.signInWithPassword(data)
+      console.log('Sign in response:', response)
+      return response
+    },
+    signOut: async () => {
+      console.log('Signing out...')
+      const response = await supabase.auth.signOut()
+      console.log('Sign out response:', response)
+      return response
+    },
     user,
   }
 
-  return <AuthContext.Provider value={value}>{!loading && children}</AuthContext.Provider>
+  return (
+    <AuthContext.Provider value={value}>
+      {!loading && children}
+    </AuthContext.Provider>
+  )
 }
 
 export function useAuth() {
-  return useContext(AuthContext)
+  const context = useContext(AuthContext)
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider')
+  }
+  return context
 }

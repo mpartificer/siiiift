@@ -3,64 +3,125 @@ import LogInGreeting from './multipurpose/LogInGreeting.jsx'
 import { supabase } from '../supabaseClient.js'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import * as z from 'zod'
 
-
+// Define the validation schema
+const signUpSchema = z.object({
+  email: z
+    .string()
+    .min(1, { message: 'Email is required' })
+    .email({ message: 'Must be a valid email' }),
+  password: z
+    .string()
+    .min(6, { message: 'Password must be at least 6 characters' })
+    .regex(/[A-Z]/, { message: 'Password must contain at least one uppercase letter' })
+    .regex(/[0-9]/, { message: 'Password must contain at least one number' }),
+  reenter_password: z
+    .string()
+    .min(1, { message: 'Please confirm your password' })
+}).refine((data) => data.password === data.reenter_password, {
+  message: "Passwords don't match",
+  path: ["reenter_password"]
+})
 
 function SignUpView() {
   const [loading, setLoading] = useState(false)
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [reenter_password, setReenter_password] = useState('')
   const navigate = useNavigate()
 
-
-
-  const handleSignUp = async (e) => {
-       e.preventDefault()
-       setLoading(true)
-       try {
-        if (password !== reenter_password) {
-          throw new Error('Passwords do not match')
-        }
-        console.log('Attempting signup with:', { email, password }) // Log the data being sent
-
-        const { data, error } = await supabase.auth.signUp({ 
-          email, 
-          password,
-          options: {
-            // emailRedirectTo: `${window.location.origin}/auth/callback`,
-          },
-        })
-        if (error) {
-          console.error('Error signing up:', error)
-          throw error
-        }
-
-        console.log('Signup successful:', data)
-        alert('Check your email for the confirmation link!')
-
-        //Postgres function that can run off of your database
-        //userId changes 
-
-        navigate('/')
-         // Log the response data
-      } catch (error) {
-        console.error('Caught error:', error)
-        alert(error.message)
-      } finally {
-        setLoading(false)
-      }
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm({
+    resolver: zodResolver(signUpSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+      reenter_password: ''
     }
-    return (
-      <form className='logInView' onSubmit={handleSignUp}>
-        <LogInGreeting openingTitle='siiiift' />
-        <input className='loginBar' type='text' placeholder='email' name='email' value={email} onChange={(e) => setEmail(e.target.value)} />
-        <input className='loginBar' type='password' placeholder='password' name='password' value={password} onChange={(e) => setPassword(e.target.value)} />
-        <input className='loginBar' type='password' placeholder='reenter password' name='reenter_password' id='reenter_password' value={reenter_password} onChange={(e) => setReenter_password(e.target.value)}/>
-        <button className='bigSubmitButton' type="submit" disabled={loading}>{loading ? 'Loading...' : 'sign up'}</button>
-      </form>
-    )
+  })
+
+  const onSubmit = async (data) => {
+    setLoading(true)
+    try {
+      console.log('Attempting signup with:', { email: data.email, password: data.password })
+
+      const { data: authData, error } = await supabase.auth.signUp({
+        email: data.email,
+        password: data.password,
+        options: {
+          // emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
+      })
+
+      if (error) {
+        console.error('Error signing up:', error)
+        throw error
+      }
+
+      console.log('Signup successful:', authData)
+      alert('Check your email for the confirmation link!')
+      navigate('/login')
+
+    } catch (error) {
+      console.error('Caught error:', error)
+      alert(error.message)
+    } finally {
+      setLoading(false)
+    }
   }
 
-  export default SignUpView
+  return (
+    <form className='logInView' onSubmit={handleSubmit(onSubmit)}>
+      <LogInGreeting openingTitle='siiiift' />
+      
+      <div>
+        <input
+          className='loginBar'
+          type='text'
+          placeholder='email'
+          {...register('email')}
+        />
+        {errors.email && (
+          <p className='error-message'>{errors.email.message}</p>
+        )}
+      </div>
+
+      <div>
+        <input
+          className='loginBar'
+          type='password'
+          placeholder='password'
+          {...register('password')}
+        />
+        {errors.password && (
+          <p className='error-message'>{errors.password.message}</p>
+        )}
+      </div>
+
+      <div>
+        <input
+          className='loginBar'
+          type='password'
+          placeholder='reenter password'
+          {...register('reenter_password')}
+        />
+        {errors.reenter_password && (
+          <p className='error-message'>{errors.reenter_password.message}</p>
+        )}
+      </div>
+
+      <button 
+        className='bigSubmitButton' 
+        type="submit" 
+        disabled={loading}
+      >
+        {loading ? 'Loading...' : 'sign up'}
+      </button>
+    </form>
+  )
+}
+
+export default SignUpView

@@ -1,14 +1,13 @@
 import '../App.css'
 import LogInGreeting from './multipurpose/LogInGreeting.jsx'
 import SignUpButton from './multipurpose/SignUpButton.jsx'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { supabase } from '../supabaseClient.js'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
+import { useAuth } from '../AuthContext.jsx'
 
-// Define the validation schema
 const loginSchema = z.object({
   email: z
     .string()
@@ -22,6 +21,15 @@ const loginSchema = z.object({
 function LogInView() {
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
+  const { signIn, user } = useAuth()
+
+  useEffect(() => {
+    console.log('Auth state changed:', { user })
+    if (user) {
+      console.log('Navigating to home...')
+      navigate('/', { replace: true })
+    }
+  }, [user, navigate])
 
   const {
     register,
@@ -38,13 +46,22 @@ function LogInView() {
   const onSubmit = async (data) => {
     setLoading(true)
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      console.log('Attempting sign in...')
+      const { data: signInData, error } = await signIn({
         email: data.email,
         password: data.password
       })
-      if (error) throw error
-      navigate('/')
+      
+      if (error) {
+        console.error('Sign in error:', error)
+        throw error
+      }
+      
+      console.log('Sign in successful:', signInData)
+      // Navigation will happen through useEffect when user state updates
+      
     } catch (error) {
+      console.error('Sign in error:', error)
       alert(error.message)
     } finally {
       setLoading(false)
@@ -79,7 +96,7 @@ function LogInView() {
         )}
       </div>
 
-      <button className='bigSubmitButton' disabled={loading}>
+      <button type="submit" className='bigSubmitButton' disabled={loading}>
         {loading ? 'loading...' : 'login'}
       </button>
       

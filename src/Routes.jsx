@@ -1,4 +1,5 @@
-import { createHashRouter } from "react-router-dom"
+import { createHashRouter, Navigate } from "react-router-dom"
+import { useAuth } from "./AuthContext.jsx"  // Make sure path is correct
 import HomeView from "./components/HomeView.jsx"
 import ProfileView from "./components/ProfileView.jsx"
 import FollowersView from "./components/FollowersView.jsx"
@@ -13,49 +14,57 @@ import SignUpView from "./components/SignUpView.jsx"
 import WebsiteRetrievalView from "./components/WebsiteRetrievalView.jsx"
 import SettingsManagementView from "./components/SettingsManagementView.jsx"
 
-
+// Protected Route Component
+const ProtectedRoute = ({ children }) => {
+    const { user } = useAuth();
+    
+    if (!user) {
+        return <Navigate to="/login" replace />;
+    }
+    
+    return children;
+};
 
 const router = createHashRouter([
-    { basename: "/" },
     {
         path: "/",
-        element: <HomeView />,
+        element: <ProtectedRoute><HomeView /></ProtectedRoute>,
     },
     {
         path: `/profile/:username`,
-        element: <ProfileView />,
+        element: <ProtectedRoute><ProfileView /></ProtectedRoute>,
     },
     {
         path: `/profile/:username/following`,
-        element: <FollowersView />,
+        element: <ProtectedRoute><FollowersView /></ProtectedRoute>,
     },
     {
         path: `/profile/:username/followers`,
-        element: <FollowersView />,
+        element: <ProtectedRoute><FollowersView /></ProtectedRoute>,
     },
     {
         path: "/profile/settings",
-        element: <SettingsManagementView />,
+        element: <ProtectedRoute><SettingsManagementView /></ProtectedRoute>,
     },
     {
         path: `/:username/:recipeid`,
-        element: <BakeHistoryView />,
+        element: <ProtectedRoute><BakeHistoryView /></ProtectedRoute>,
     },
     {
         path: "/postyourbake",
-        element: <PostYourBakeView />,
+        element: <ProtectedRoute><PostYourBakeView /></ProtectedRoute>,
     },
     {
         path: `/recipe/:recipeid`,
-        element: <RecipeView />,
+        element: <ProtectedRoute><RecipeView /></ProtectedRoute>,
     },
     {
         path: "/search",
-        element: <SearchView />,
+        element: <ProtectedRoute><SearchView /></ProtectedRoute>,
     },
     {
         path: "/recipebox",
-        element: <RecipeBoxView />,
+        element: <ProtectedRoute><RecipeBoxView /></ProtectedRoute>,
     },
     {
         path: "/login",
@@ -71,8 +80,10 @@ const router = createHashRouter([
     },
     {
         path: "/reciperetriever",
-        element: <WebsiteRetrievalView />,
+        element: <ProtectedRoute><WebsiteRetrievalView /></ProtectedRoute>,
     }
-])
+], {
+    basename: "/"
+})
 
 export default router

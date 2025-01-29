@@ -1,14 +1,11 @@
-import '../App.css'
-import LogInGreeting from './multipurpose/LogInGreeting.jsx'
-import LogInSubGreeting from './multipurpose/LogInSubGreeting.jsx'
 import { useState } from 'react'
-import { supabase } from '../supabaseClient.js'
 import { useNavigate } from 'react-router-dom'
+import { supabase } from '../supabaseClient.js'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
+import LogInGreeting from './multipurpose/LogInGreeting.jsx'
 
-// Define the validation schema
 const forgotPasswordSchema = z.object({
   email: z
     .string()
@@ -35,12 +32,16 @@ function ForgotPasswordView() {
     setLoading(true)
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(data.email)
-      if (error) throw error
-      
-      // Optionally show a success message or redirect
-      alert('Password reset email sent! Please check your inbox.')
-      navigate('/login') // Optional: redirect to login page
+
+      if (error) {
+        throw error
+      }
+
+      alert('Check your email for the password reset link!')
+      navigate('/login')
+
     } catch (error) {
+      console.error('Error:', error)
       alert(error.message)
     } finally {
       setLoading(false)
@@ -49,13 +50,12 @@ function ForgotPasswordView() {
 
   return (
     <form className='logInView' onSubmit={handleSubmit(onSubmit)}>
-      <LogInGreeting openingTitle='siiiift' />
-      <LogInSubGreeting />
+      <LogInGreeting openingTitle='reset password' />
       
       <div>
         <input
           className='loginBar'
-          type='text'
+          type='email'
           placeholder='email'
           {...register('email')}
         />
@@ -65,11 +65,11 @@ function ForgotPasswordView() {
       </div>
 
       <button 
-        type="submit" 
         className='bigSubmitButton' 
+        type="submit" 
         disabled={loading}
       >
-        {loading ? 'loading...' : 'send reset'}
+        {loading ? 'loading...' : 'send login link'}
       </button>
     </form>
   )
