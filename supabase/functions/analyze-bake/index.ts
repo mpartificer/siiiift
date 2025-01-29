@@ -13,7 +13,7 @@ const genAI = new GoogleGenerativeAI(apiKey || '');
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': 'http://localhost:3000',
+  'Access-Control-Allow-Origin': 'https://mpartificer.github.io',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   'Access-Control-Max-Age': '86400',
