@@ -1,8 +1,7 @@
-# React + Vite
+# siiiift
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+### Your AI-powered baking journaling tool
 
-Currently, two official plugins are available:
+siiiift allows you to connect with other bakers, share recipes, and learn from mistakes. That bûche de Noel that you botched last year and ruined the holidays? Find out what went wrong. That most perfect croquembouche that no one thought you could pull off? Share it with a community that gets it. Make the same birthday cake for that one friend every year? Get feedback on how you can make it even more magical at candle time next year.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+siiiift is powered by React.js, and borrows from other libraries such as Google Gemini, TailwindCSS, DaisyUI, Supabase, and more.
