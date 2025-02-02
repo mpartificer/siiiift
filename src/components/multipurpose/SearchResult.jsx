@@ -110,7 +110,7 @@ function SearchResult({ id, currentUserId, searchReturnValue, type, imageUrl }) 
             className="w-12 h-12 rounded-full object-cover"
           />
         ) : (
-          type === 'user' ? <User size={50} color='#EADDFF' /> : <Book size={50} color='#EADDFF' />
+          type === 'user' ? <User size={50} color='#EBD2AD' /> : <Book size={50} color='#EBD2AD' />
         )}
         <div className='ml-2 mr-2'>
           {searchReturnValue}
