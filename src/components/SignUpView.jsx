@@ -46,7 +46,6 @@ function SignUpView() {
   const onSubmit = async (data) => {
     setLoading(true)
     try {
-      console.log('Attempting signup with:', { email: data.email, password: data.password })
 
       const { data: authData, error } = await supabase.auth.signUp({
         email: data.email,
@@ -61,7 +60,6 @@ function SignUpView() {
         throw error
       }
 
-      console.log('Signup successful:', authData)
       alert('Check your email for the confirmation link!')
       navigate('/login')
 

@@ -11,13 +11,7 @@ function PostReactionBox({ currentUserId, username, recipeId, userId, bakeId }) 
 
   useEffect(() => {
     if (currentUserId && bakeId) {  // Only check if we have both values
-      console.log('PostReactionBox props:', {
-        currentUserId,
-        bakeId,
-        username,
-        recipeId,
-        userId
-      });
+
       checkLikeStatus();
     }
   }, [currentUserId, bakeId]); // Re-run when either of these change
@@ -25,10 +19,6 @@ function PostReactionBox({ currentUserId, username, recipeId, userId, bakeId }) 
   const checkLikeStatus = async () => {
     if (!currentUserId || !bakeId) return;  // Guard clause
     
-    console.log('Checking like status with:', {
-      currentUserId,
-      bakeId
-    });
     
     const { data, error } = await supabase
       .from('likes')
@@ -36,8 +26,6 @@ function PostReactionBox({ currentUserId, username, recipeId, userId, bakeId }) 
       .eq('user_id', currentUserId)
       .eq('bake_id', bakeId);
   
-    console.log('Like status response:', { data, error, isDataEmpty: !data || data.length === 0 });
-
     if (error) {
       console.error('Error checking like status:', {
         code: error.code,
@@ -46,7 +34,6 @@ function PostReactionBox({ currentUserId, username, recipeId, userId, bakeId }) 
       });
     } else {
       setIsLiked(data && data.length > 0);
-      console.log('Is liked:', data && data.length > 0);
     }
   };
 
@@ -120,11 +107,9 @@ function HomeCardDesktop(props) {
         if (session) {
           // We have a valid session
           if (isMounted && session.user) {
-            console.log("Got user ID from session:", session.user.id);
             setCurrentUserId(session.user.id);
           }
         } else {
-          console.log("No active session found");
           // Optionally redirect to login or handle no-session state
         }
       } catch (error) {
@@ -138,7 +123,6 @@ function HomeCardDesktop(props) {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (session?.user && isMounted) {
-        console.log("Auth state changed, new user ID:", session.user.id);
         setCurrentUserId(session.user.id);
       }
     });

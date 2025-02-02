@@ -25,7 +25,6 @@ function ModInsert({ detail }) {
 function ModDetailInsert (props) {
 
     const modDetails = props.modDetails;
-    console.log(modDetails)
     return (
         <div>
     <h2 className='font-bold'>{props.title}</h2>
@@ -176,8 +175,6 @@ function BakeHistoryView() {
     const userId = location.state.userId;
     const recipeId = location.state.recipeId;
     const username = location.state.username;
-
-    console.log(recipeId)
     const [bakeDetails, setBakeDetails] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -228,8 +225,6 @@ function BakeHistoryView() {
 
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
-
-    console.log(currentUserDetails)
 
     return (
         <div>

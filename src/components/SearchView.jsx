@@ -69,10 +69,6 @@ function SearchView() {
         .select('id, title, images')
         .ilike('title', `%${searchTerm}%`);
 
-      console.log(searchTerm)
-      console.log(userData)
-      console.log(recipeData)
-
       if (recipeError) throw recipeError;
       results = [...results, ...recipeData.map(recipe => ({ ...recipe, type: 'recipe' }))];
 

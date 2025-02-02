@@ -76,10 +76,7 @@ serve(async (req) => {
     });
 
     const imageAnalyses = await Promise.all(imageAnalysisPromises)
-    console.log('Image analysis completed')
 
-    // Generate recipe analysis based on whether there are modifications
-    console.log('Starting recipe analysis')
     let recipePrompt;
     
     if (hasModifications && originalInstructions.length > 0 && originalIngredients.length > 0) {

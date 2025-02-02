@@ -24,9 +24,7 @@ function LogInView() {
   const { signIn, user } = useAuth()
 
   useEffect(() => {
-    console.log('Auth state changed:', { user })
     if (user) {
-      console.log('Navigating to home...')
       navigate('/', { replace: true })
     }
   }, [user, navigate])
@@ -46,7 +44,6 @@ function LogInView() {
   const onSubmit = async (data) => {
     setLoading(true)
     try {
-      console.log('Attempting sign in...')
       const { data: signInData, error } = await signIn({
         email: data.email,
         password: data.password
@@ -56,9 +53,6 @@ function LogInView() {
         console.error('Sign in error:', error)
         throw error
       }
-      
-      console.log('Sign in successful:', signInData)
-      // Navigation will happen through useEffect when user state updates
       
     } catch (error) {
       console.error('Sign in error:', error)

@@ -35,24 +35,16 @@ const ImageUpload = ({ currentPhoto, userId, onPhotoUpdate }) => {
       .from('Bake_Image')
       .getPublicUrl(`profiles/${fileName}`);
     
-    
-      console.log('Generated public URL:', publicUrl);
-
-    console.log('Updating photo for user:', userId);
-    
     const { data: updateData, error: updateError } = await supabase
     .from('user_profile')
     .update({ photo: publicUrl })
     .eq('user_auth_id', userId)
     .select(); // Add this to get back the updated record
-  
-  console.log('Update response data:', updateData);
-  
+    
   if (updateError) {
     console.error('Error updating user_profile:', updateError);
     throw updateError;
   } else {
-    console.log('Successfully updated user_profile with new photo URL');
   }
 
   const { data: verifyData, error: verifyError } = await supabase
@@ -60,8 +52,6 @@ const ImageUpload = ({ currentPhoto, userId, onPhotoUpdate }) => {
   .select('photo')
   .eq('user_auth_id', userId)
   .single();
-
-console.log('Current photo URL in database:', verifyData?.photo);
 
       onPhotoUpdate?.(publicUrl);
     } catch (error) {

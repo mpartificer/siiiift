@@ -38,7 +38,6 @@ function FollowersView(){
       }
 
       try {
-        console.log('Attempting to fetch user profile data');
         const { data: profileData, error: profileError } = await supabase
             .from('user_profile')
             .select('*')
@@ -71,18 +70,12 @@ function FollowersView(){
 
         if (bakeError) throw error;
 
-        console.log('User profile data:', profileData);
-        console.log("follower data:", followersData)
-        console.log("following details: ", followingData)
         setUserDetails(profileData);
         setBakeDetails(bakeData)
         setFollowerDetails(followersData || []);
         setFollowingDetails(followingData || []);        
-        console.log("follower data:", followerDetails)
-        console.log("following details: ", followingDetails)
 
         const viewName = measure === 'followers' ? 'user_followers_view' : 'user_following_view';
-        console.log(`Fetching data from ${viewName}`);
 
         const { data: viewData, error: viewError } = await supabase
           .from(viewName)
@@ -91,7 +84,6 @@ function FollowersView(){
 
         if (viewError) throw viewError;
 
-        console.log(`${viewName} data:`, viewData);
         setSearchResults(viewData || []);
       } catch (error) {
         console.error('Detailed error:', error);
