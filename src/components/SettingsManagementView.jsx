@@ -96,41 +96,69 @@ const ImageUpload = ({ currentPhoto, userId, onPhotoUpdate }) => {
 };
 
 function EditBio(props) {
-    return (
-      <div className='flex flex-row md:flex-col md:items-end w-350 gap-1 md:gap-4'>
-        <ImageUpload 
-  currentPhoto={props.photo}
-  userId={props.userId}
-  onPhotoUpdate={(newUrl) => {
-    props.onPhotoUpdate?.(newUrl);
+  return (
+    <div className='flex flex-row md:flex-col md:items-end w-350 gap-1 md:gap-4'>
+      <ImageUpload 
+        currentPhoto={props.photo}
+        userId={props.userId}
+        onPhotoUpdate={props.onPhotoUpdate}
+      />
+      <TextAreaWithButton userBio={props.userBio} userId={props.userId} />
+    </div>
+  );
+}
 
-    // Update local state if needed
-  }}
-/>
-        <TextAreaWithButton userBio={props.userBio} />
-      </div>
-    )
-  }
+function TextAreaWithButton({ userBio, userId }) {
+  // Initialize state with userBio prop
+  const [isUpdating, setIsUpdating] = useState(false)
+  const [bio, setBio] = useState(userBio || '');
 
-  function TextAreaWithButton(props) {
-    let [userBio, setUserBio] = useState('')
-    userBio = props.userBio
+  // Update local state when userBio prop changes
+  useEffect(() => {
+    setBio(userBio || '');
+  }, [userBio]);
 
-    let textArea = <textarea className="textarea grow h-full w-full overflow-x-hidden bg-secondary" value={userBio} onChange={(e) => setUserBio(e.target.value)}></textarea>
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsUpdating(true);
 
-    const handleSubmit = (e) => {
-      e.preventDefault()
+    try {
+      const { data, error } = await supabase
+        .from('user_profile')
+        .update({ bio: bio })
+        .eq('user_auth_id', userId)
+        .select();
+
+      if (error) {
+        console.error('Error updating bio:', error);
+        throw error;
+      }
+    } catch (error) {
+      console.error('Error saving bio:', error);
+    } finally {
+      setIsUpdating(false);
     }
-    
-    return (
-      <form onSubmit={handleSubmit}>
-        <label className="input input-bordered flex items-center gap-2 bg-secondary profileBlurb h-full md:w-80">
-          {textArea}          
-          <button type="submit"className='btn btn-primary self-end justify-self-end'>save</button>
-        </label>
-      </form>
-    )
-  }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <label className="input input-bordered flex items-center gap-2 bg-secondary profileBlurb h-full md:w-80">
+        <textarea 
+          className="textarea grow h-full w-full overflow-x-hidden bg-secondary" 
+          value={bio} 
+          onChange={(e) => setBio(e.target.value)}
+        />          
+        <button 
+          type="submit" 
+          className='btn btn-primary self-end justify-self-end'
+          disabled={isUpdating}
+        >
+          {isUpdating ? 'saving...' : 'save'}
+        </button>
+      </label>
+    </form>
+  );
+}
 
 
 function SettingsManagementView(props) {
