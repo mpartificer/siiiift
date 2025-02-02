@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { supabase } from '../../supabaseClient.js';
 import { User, Book } from 'lucide-react';
 
@@ -98,7 +99,10 @@ function SearchResult({ id, currentUserId, searchReturnValue, type, imageUrl }) 
 
   return (
     <div className='searchResult w-350 md:w-96'>
-      <div className='searchDetail'>
+      <Link 
+        to={type === 'user' ? `/profile/${searchReturnValue}` : `/recipe/${id}`}
+        className='searchDetail hover:bg-primary hover:text-secondary transition-colors'
+      >
         {imageUrl ? (
           <img 
             src={imageUrl} 
@@ -109,9 +113,9 @@ function SearchResult({ id, currentUserId, searchReturnValue, type, imageUrl }) 
           type === 'user' ? <User size={50} color='#EADDFF' /> : <Book size={50} color='#EADDFF' />
         )}
         <div className='ml-2 mr-2'>
-        {searchReturnValue}
+          {searchReturnValue}
         </div>
-      </div>
+      </Link>
       <button className="searchResultButton" onClick={toggleAction} disabled={isLoading}>
         {getButtonText()}
       </button>
