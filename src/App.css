@@ -229,6 +229,15 @@ ul {
   gap: 10px;
 }
 
+.menu-horizontal li a.active {
+  background-color: #b1c6ba !important;
+}
+
+/* To ensure hover state doesn't override the active state */
+.menu-horizontal li a.active:hover {
+  background-color: #b1c6ba !important;
+}
+
 .searchResult {
   background-color: #496354;
   display: flex;
