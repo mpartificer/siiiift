@@ -11,19 +11,15 @@ export function AuthProvider({ children }) {
     let mounted = true
 
     async function getInitialSession() {
-      console.log('Getting initial session...')
       const { data: { session }, error } = await supabase.auth.getSession()
       
       if (error) {
         console.error('Session error:', error)
       }
 
-      console.log('Initial session:', session)
-
       // only update the react state if the component is still mounted
       if (mounted) {
         if (session) {
-          console.log('Setting initial user:', session.user)
           setUser(session.user)
         }
         setLoading(false)
@@ -33,7 +29,6 @@ export function AuthProvider({ children }) {
     getInitialSession()
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      console.log('Auth state changed:', _event, session)
       setUser(session?.user ?? null)
     })
 
@@ -45,21 +40,15 @@ export function AuthProvider({ children }) {
 
   const value = {
     signUp: async (data) => {
-      console.log('Signing up...')
       const response = await supabase.auth.signUp(data)
-      console.log('Sign up response:', response)
       return response
     },
     signIn: async (data) => {
-      console.log('Signing in...')
       const response = await supabase.auth.signInWithPassword(data)
-      console.log('Sign in response:', response)
       return response
     },
     signOut: async () => {
-      console.log('Signing out...')
       const response = await supabase.auth.signOut()
-      console.log('Sign out response:', response)
       return response
     },
     user,

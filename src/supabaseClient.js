@@ -11,9 +11,3 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     storage: window.localStorage
   }
 })
-
-// Add this to help debug
-supabase.auth.onAuthStateChange((event, session) => {
-  console.log('Supabase auth event:', event)
-  console.log('Session:', session)
-})
