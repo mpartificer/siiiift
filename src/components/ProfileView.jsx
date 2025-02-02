@@ -207,15 +207,15 @@ function ContentCap({ userId }) {
       <div className="flex justify-center w-full">
         <ul className="menu menu-horizontal bg-primary rounded-box w-350 justify-around">
           <li>      
-            <a className={`tooltip ${activeTab === 'bakes' ? 'active' : ''}`}
-              data-tip="Bakes"
+            <a className={`tooltip tooltip-bottom ${activeTab === 'bakes' ? 'active' : ''}`}
+              data-tip="bakes"
               onClick={() => setActiveTab('bakes')}>
               <Cookie />
             </a>
           </li>
           <li>
-            <a className={`tooltip ${activeTab === 'recipes' ? 'active' : ''}`}
-              data-tip="Saved Recipes"
+            <a className={`tooltip tooltip-bottom ${activeTab === 'recipes' ? 'active' : ''}`}
+              data-tip="saved recipes"
               onClick={() => setActiveTab('recipes')}>
               <BookOpen />
             </a>

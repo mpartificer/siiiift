@@ -82,8 +82,8 @@ function RecipeOptions({ originalLink, recipeId, currentUserId, onBakesClick }) 
         <ul className="menu menu-horizontal bg-primary rounded-box w-350 items-stretch justify-evenly">
             <li>
                 <button 
-                    className="tooltip" 
-                    data-tip={isSaved ? "remove from saved recipes" : "add to recipe box"}
+                    className="tooltip tooltip-bottom " 
+                    data-tip={isSaved ? "remove save" : "add to recipe box"}
                     onClick={handleSaveToggle}
                     disabled={isLoading || !currentUserId}
                 >
@@ -96,7 +96,7 @@ function RecipeOptions({ originalLink, recipeId, currentUserId, onBakesClick }) 
             </li>
             <li>
                 <button 
-                    className="tooltip" 
+                    className="tooltip tooltip-bottom" 
                     data-tip="see bakes"
                     onClick={onBakesClick}
                 >
@@ -104,12 +104,12 @@ function RecipeOptions({ originalLink, recipeId, currentUserId, onBakesClick }) 
                 </button>
             </li>
             <li>
-                <a className="tooltip" data-tip="go to original author" href={originalLink}>
+                <a className="tooltip tooltip-bottom" data-tip="go to original author" href={originalLink}>
                     <SquareArrowOutUpRight color="#EBD2AD" />
                 </a>
             </li>
             <li>
-                <button className="tooltip" data-tip="bake" disabled={!currentUserId}>
+                <button className="tooltip tooltip-bottom" data-tip="bake" disabled={!currentUserId}>
                     <ChefHat color="#EBD2AD"/>
                 </button>
             </li>
@@ -159,9 +159,9 @@ function RecipeCheckPanel(props) {
 function TimeCheck(props) {
     return (
         <div className='items-center text-lg'>
-         <b>prep</b><br /> {props.prepTime} minutes <br />
-         <b>cook</b><br /> {props.cookTime} minutes <br />
-         <b>total</b><br /> {props.totalTime} minutes <br />
+         <b>prep</b><br /> {props.prepTime} <br />
+         <b>cook</b><br /> {props.cookTime} <br />
+         <b>total</b><br /> {props.totalTime} <br />
         </div>
     )
 }
