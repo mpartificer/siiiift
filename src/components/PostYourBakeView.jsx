@@ -6,6 +6,7 @@ import HeaderFooter from './multipurpose/HeaderFooter.jsx';
 import RecipeDropDown from './multipurpose/RecipeDropDown.jsx';
 import heic2any from 'heic2any';
 import Toast from './multipurpose/Toast.jsx'
+import { addGlobalToast } from './multipurpose/ToastManager.jsx';
 import { Loader2 } from 'lucide-react'
 
 function ModificationRating() {
@@ -272,10 +273,6 @@ function PostYourBakeView() {
       setFiles([]);
       methods.reset();
       navigate('/');
-      addToast({
-        type: 'loading',
-        message: 'Analyzing your bake...'
-      });
   
       // Start AI analysis in background
       const { data: { session } } = await supabase.auth.getSession();
@@ -313,19 +310,20 @@ function PostYourBakeView() {
         if (updateError) throw updateError;
   
         // Show success toast with link
-        addToast({
+        addGlobalToast({
           type: 'success',
           message: 'AI analysis complete!',
           link: `/${user.id}/${formData.recipeId}`
         });
       })
-      .catch(error => {
-        console.error('AI Analysis Error:', error);
-        addToast({
-          type: 'error',
-          message: 'Failed to complete AI analysis. You can still view your bake post.'
-        });
-      });
+
+.catch(error => {
+  console.error('AI Analysis Error:', error);
+  addGlobalToast({
+    type: 'error',
+    message: 'Failed to complete AI analysis. You can still view your bake post.'
+  });
+});
   
     } catch (err) {
       console.error('Error:', err);

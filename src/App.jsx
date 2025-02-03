@@ -6,6 +6,8 @@ import { RouterProvider } from "react-router-dom"
 import router from './Routes.jsx'
 import SignUpView from './components/SignUpView.jsx'
 import { AuthProvider } from './AuthContext.jsx'
+import ToastManager from './components/multipurpose/ToastManager';
+
 
 
 
@@ -14,6 +16,7 @@ function App() {
     <div>
       <AuthProvider>
         <RouterProvider router={router}>
+          <ToastManager />
           <SignUpView />
         </RouterProvider>
       </AuthProvider>
