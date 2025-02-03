@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Toast from './multipurpose/Toast';
+import Toast from './multipurpose/Toast.jsx';
 
 // Create a custom event for toast updates
 const TOAST_UPDATE_EVENT = 'TOAST_UPDATE';
