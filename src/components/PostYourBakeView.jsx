@@ -177,6 +177,7 @@ function PostYourBakeView() {
   };
 
   const onSubmit = async (formData) => {
+    console.log('Starting onSubmit'); // Debug log
     setError(null);
     setIsUploading(true);
   
@@ -257,21 +258,23 @@ function PostYourBakeView() {
   
         if (modInsertError) throw modInsertError;
       }
+
+      addGlobalToast({
+        type: 'loading',
+        message: 'Analyzing your bake...'
+      });
+      console.log('Added loading toast');
   
       // Reset form and navigate
       setFiles([]);
       methods.reset();
       navigate('/');
 
-      addGlobalToast({
-        type: 'loading',
-        message: 'Analyzing your bake...'
-      });
-      console.log('Added loading toast'); // Debug log
-
   
       // Start AI analysis in background
       const { data: { session } } = await supabase.auth.getSession();
+      console.log('Starting AI analysis'); // Debug log
+
       
       // Prepare AI payload
       const aiPayload = {
@@ -294,6 +297,7 @@ function PostYourBakeView() {
         body: JSON.stringify(aiPayload)
       })
       .then(async (response) => {
+        console.log('AI analysis response received'); // Debug log
         if (!response.ok) throw new Error('AI analysis failed');
         const { insights } = await response.json();
         
@@ -302,9 +306,12 @@ function PostYourBakeView() {
           .from('Bake_Details')
           .update({ ai_insights: insights })
           .eq('id', bake_id);
-        
+
+
         if (updateError) throw updateError;
-  
+        
+        console.log('About to add success toast'); // Debug log
+
         // Show success toast with link
         addGlobalToast({
           type: 'success',
