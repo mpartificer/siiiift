@@ -14,7 +14,7 @@ const Toast = ({ message, type, link, onClose }) => {
     return () => clearTimeout(timer);
   }, [onClose]);
 
-  const baseClasses = "fixed top-4 right-4 p-4 rounded-lg shadow-lg transition-all duration-300 flex items-center gap-3 max-w-md";
+  const baseClasses = "fixed top-20 right-4 p-4 rounded-lg shadow-lg transition-all duration-300 flex items-center gap-3 max-w-md";
   const typeClasses = {
     success: "bg-green-100 text-green-800",
     loading: "bg-blue-100 text-blue-800",
