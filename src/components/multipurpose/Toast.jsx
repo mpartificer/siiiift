@@ -4,16 +4,6 @@ import { X, Loader2 } from 'lucide-react';
 const Toast = ({ message, type, link, onClose }) => {
     const [isVisible, setIsVisible] = useState(true);
   
-    const handleLinkClick = (e) => {
-      e.preventDefault();
-      if (link) {
-        const navigationEvent = new CustomEvent('toast-navigation', {
-          detail: { path: link }
-        });
-        window.dispatchEvent(navigationEvent);
-      }
-    };
-  
     useEffect(() => {
       const timer = setTimeout(() => {
         setIsVisible(false);
@@ -30,14 +20,20 @@ const Toast = ({ message, type, link, onClose }) => {
       error: "bg-red-100 text-red-800"
     };
   
+    // Construct the full URL with the correct base path
+    const getFullUrl = (path) => {
+      const baseUrl = 'https://mpartificer.github.io/siiiift/#';
+      return `${baseUrl}${path}`;
+    };
+  
     return (
       <div className={`${baseClasses} ${typeClasses[type]} ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
         {type === 'loading' && <Loader2 className="w-5 h-5 animate-spin" />}
         <span>{message}</span>
         {link && type === 'success' && (
-          <button onClick={handleLinkClick} className="underline font-medium">
+          <a href={getFullUrl(link)} className="underline font-medium">
             View Details
-          </button>
+          </a>
         )}
         <button 
           onClick={() => {
