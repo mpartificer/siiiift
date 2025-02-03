@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import '../App.css';
 import HeaderFooter from './multipurpose/HeaderFooter.jsx';
+import { useParams } from 'react-router-dom';
 import { Heart } from 'lucide-react';
-import { useLocation } from 'react-router-dom';
 import { supabase } from '../supabaseClient'; // Make sure to import your Supabase client
 
 function DateMarker({ date }) {
@@ -170,51 +170,63 @@ function BakeHistoryCard({ bakeDetail, likeDetails, modDetails, currentUserDetai
     );
 }
 
+
 function BakeHistoryView() {
-    const location = useLocation();
-    const userId = location.state.userId;
-    const recipeId = location.state.recipeId;
-    const username = location.state.username;
+    // Get values from URL parameters instead of location.state
+    const { username: userId, recipeid: recipeId } = useParams();
+    const [username, setUsername] = useState('');
     const [bakeDetails, setBakeDetails] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [likeDetails, setLikeDetails] = useState([]);
-    const [currentUserDetails, setCurrentUserDetails] = useState([])
-    const [modificationDetails, setModificationDetails] = useState([])
+    const [currentUserDetails, setCurrentUserDetails] = useState([]);
+    const [modificationDetails, setModificationDetails] = useState([]);
 
     useEffect(() => {
         async function fetchBakeDetails() {
             try {
-                const [ recipeResponse, likeResponse, modResponse, userResponse ] = await Promise.all([supabase
-                    .from('Bake_Details')
-                    .select('*')
-                    .eq('user_id', userId)
-                    .eq('recipe_id', recipeId)
-                    .order('baked_at', { ascending: false }),
-                supabase
-                    .from('likes')
-                    .select('*')
-                    .eq('recipe_id', recipeId),
-                supabase
-                    .from('modifications')
-                    .select('*')
-                    .eq('recipe_id', recipeId)
-                    .eq('user_id', userId),
-                supabase
-                    .auth.getUser()
-                ])
+                // First fetch the username for the userId
+                const userResponse = await supabase
+                    .from('profiles')  // assuming you have a profiles table
+                    .select('username')
+                    .eq('id', userId)
+                    .single();
+
+                if (userResponse.error) throw userResponse.error;
+                setUsername(userResponse.data.username);
+
+                const [ recipeResponse, likeResponse, modResponse, currentUserResponse ] = await Promise.all([
+                    supabase
+                        .from('Bake_Details')
+                        .select('*')
+                        .eq('user_id', userId)
+                        .eq('recipe_id', recipeId)
+                        .order('baked_at', { ascending: false }),
+                    supabase
+                        .from('likes')
+                        .select('*')
+                        .eq('recipe_id', recipeId),
+                    supabase
+                        .from('modifications')
+                        .select('*')
+                        .eq('recipe_id', recipeId)
+                        .eq('user_id', userId),
+                    supabase
+                        .auth.getUser()
+                ]);
 
                 if (recipeResponse.error) throw recipeResponse.error;
                 if (likeResponse.error) throw likeResponse.error;
                 if (modResponse.error) throw modResponse.error;
-                if (userResponse.error) throw userResponse.error
+                if (currentUserResponse.error) throw currentUserResponse.error;
 
                 setBakeDetails(recipeResponse.data);
                 setLikeDetails(likeResponse.data);
                 setModificationDetails(modResponse.data);
-                setCurrentUserDetails(userResponse);
+                setCurrentUserDetails(currentUserResponse);
             } catch (error) {
                 console.error(error.message);
+                setError(error.message);
             } finally {
                 setIsLoading(false);
             }
@@ -223,15 +235,30 @@ function BakeHistoryView() {
         fetchBakeDetails();
     }, [userId, recipeId]);
 
-    if (isLoading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error}</div>;
+    if (isLoading) return (
+        <HeaderFooter>
+            <div className="mt-16">Loading...</div>
+        </HeaderFooter>
+    );
+    
+    if (error) return (
+        <HeaderFooter>
+            <div className="mt-16">Error: {error}</div>
+        </HeaderFooter>
+    );
+
+    if (!bakeDetails.length) return (
+        <HeaderFooter>
+            <div className="mt-16">No bakes found</div>
+        </HeaderFooter>
+    );
 
     return (
         <div>
             <HeaderFooter>
                 <div className='container mx-auto px-4 mt-16 mb-20 flex flex-col items-center'>
                     <div className='text-xl mb-2'>{`${username}'s ${bakeDetails[0].recipe_title} history`}</div>
-                <div className="space-y-6">
+                    <div className="space-y-6">
                         {bakeDetails.map((detail) => (
                             <BakeHistoryCard 
                                 key={detail.id} 
@@ -248,4 +275,4 @@ function BakeHistoryView() {
     );
 }
 
-export default BakeHistoryView;
+export default BakeHistoryView
