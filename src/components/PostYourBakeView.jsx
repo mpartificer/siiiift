@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 import HeaderFooter from './multipurpose/HeaderFooter.jsx';
 import RecipeDropDown from './multipurpose/RecipeDropDown.jsx';
 import heic2any from 'heic2any';
-import Toast from './multipurpose/Toast.jsx'
 import { addGlobalToast } from './multipurpose/ToastManager.jsx';
 import { Loader2 } from 'lucide-react'
 
@@ -67,17 +66,7 @@ function PostYourBakeView() {
   const [error, setError] = useState(null);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [isUploading, setIsUploading] = useState(false);
-  const [toasts, setToasts] = useState([]);
   const [currentBakeId, setCurrentBakeId] = useState(null);
-
-  const addToast = (toast) => {
-    const id = Date.now();
-    setToasts(prev => [...prev, { ...toast, id }]);
-  };
-  
-  const removeToast = (id) => {
-    setToasts(prev => prev.filter(toast => toast.id !== id));
-  };
   
   const methods = useForm({
     defaultValues: {
@@ -273,6 +262,11 @@ function PostYourBakeView() {
       setFiles([]);
       methods.reset();
       navigate('/');
+
+      addGlobalToast({
+        type: 'loading',
+        message: 'Analyzing your bake...'
+      });
   
       // Start AI analysis in background
       const { data: { session } } = await supabase.auth.getSession();
@@ -391,15 +385,6 @@ function PostYourBakeView() {
           </form>
         </FormProvider>
       )}
-      {toasts.map(toast => (
-  <Toast
-    key={toast.id}
-    message={toast.message}
-    type={toast.type}
-    link={toast.link}
-    onClose={() => removeToast(toast.id)}
-  />
-))}
     </HeaderFooter>
   );
 }

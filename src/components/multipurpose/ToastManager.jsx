@@ -1,23 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import Toast from './Toast.jsx';  // Import your existing Toast component
+import Toast from './multipurpose/Toast';
+
+// Create a custom event for toast updates
+const TOAST_UPDATE_EVENT = 'TOAST_UPDATE';
 
 const ToastManager = () => {
   const [toasts, setToasts] = useState([]);
 
   useEffect(() => {
-    // Function to handle toast events from localStorage
-    const handleStorageChange = () => {
+    // Function to handle toast events
+    const handleToastUpdate = (event) => {
       const storedToasts = JSON.parse(localStorage.getItem('toasts') || '[]');
       setToasts(storedToasts);
     };
 
-    // Listen for changes
-    window.addEventListener('storage', handleStorageChange);
+    // Listen for custom toast events
+    window.addEventListener(TOAST_UPDATE_EVENT, handleToastUpdate);
     
     // Check for existing toasts on mount
-    handleStorageChange();
+    handleToastUpdate();
 
-    return () => window.removeEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener(TOAST_UPDATE_EVENT, handleToastUpdate);
   }, []);
 
   const removeToast = (id) => {
@@ -28,6 +31,7 @@ const ToastManager = () => {
     });
   };
 
+  // Remove fixed positioning from Toast component since container handles it
   return (
     <div className="fixed top-4 right-4 z-50 flex flex-col gap-2">
       {toasts.map(toast => (
@@ -50,8 +54,8 @@ export const addGlobalToast = (toast) => {
   const updatedToasts = [...storedToasts, { ...toast, id }];
   localStorage.setItem('toasts', JSON.stringify(updatedToasts));
   
-  // Dispatch storage event to notify ToastManager
-  window.dispatchEvent(new Event('storage'));
+  // Dispatch custom event to notify ToastManager
+  window.dispatchEvent(new Event(TOAST_UPDATE_EVENT));
 };
 
 export default ToastManager;

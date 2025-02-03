@@ -14,14 +14,14 @@ const Toast = ({ message, type, link, onClose }) => {
     return () => clearTimeout(timer);
   }, [onClose]);
 
-  const baseClasses = "fixed top-20 right-4 p-4 rounded-lg shadow-lg transition-all duration-300 flex items-center gap-3 max-w-md";
+  const baseClasses = "p-4 rounded-lg shadow-lg transition-all duration-300 flex items-center gap-3 max-w-md";
   const typeClasses = {
     success: "bg-green-100 text-green-800",
     loading: "bg-blue-100 text-blue-800",
     error: "bg-red-100 text-red-800"
   };
 
-  const content = (
+  return (
     <div className={`${baseClasses} ${typeClasses[type]} ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
       {type === 'loading' && <Loader2 className="w-5 h-5 animate-spin" />}
       <span>{message}</span>
@@ -41,8 +41,6 @@ const Toast = ({ message, type, link, onClose }) => {
       </button>
     </div>
   );
-
-  return content;
 };
 
 export default Toast;
