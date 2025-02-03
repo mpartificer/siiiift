@@ -173,14 +173,23 @@ function BakeHistoryCard({ bakeDetail, likeDetails, modDetails, currentUserDetai
 
 function BakeHistoryView() {
     // Get values from URL parameters instead of location.state
-    const { username: userId, recipeid: recipeId } = useParams();
-    const [username, setUsername] = useState('');
+    const params = useParams();
+    console.log("URL Parameters:", params); // Debug log
+    
+    // These should match your route pattern /:username/:recipeid
+    const userId = params.username;  // Getting from first URL parameter
+    const recipeId = params.recipeid;    const [username, setUsername] = useState('');
     const [bakeDetails, setBakeDetails] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [likeDetails, setLikeDetails] = useState([]);
     const [currentUserDetails, setCurrentUserDetails] = useState([]);
     const [modificationDetails, setModificationDetails] = useState([]);
+
+    useEffect(() => {
+        console.log("Current userId:", userId);
+        console.log("Current recipeId:", recipeId);
+    }, [userId, recipeId]);
 
     useEffect(() => {
         async function fetchBakeDetails() {
