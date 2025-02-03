@@ -2,12 +2,14 @@
 
 ### Your AI-powered baking journaling bestie
 
-siiiift allows you to connect with other bakers, share recipes, and learn from your mistakes. That bûche de Noel that you botched last year and ruined the holidays? Find out what went wrong. That most perfect croquembouche that no one thought you could pull off? Share it with a community that gets it. Make the same birthday cake for that one friend every year? Get feedback on how you can make it even more magical at candle time next year.
+**siiiift** allows you to connect with other bakers, share recipes, and learn from your mistakes. That bûche de Noel that you botched last year and ruined the holidays? Find out what went wrong. That most perfect croquembouche that no one thought you could pull off? Share it with a community that gets it. Make the same birthday cake for that one friend every year? Get feedback on how you can make it even more magical at candle time next year.
 
-siiiift is powered by React.js, and borrows from other libraries such as Google Gemini, TailwindCSS, DaisyUI, Supabase, and more.
+**siiiift** is powered by [React.js](https://react.dev/), and incorporates libraries such as [Google Gemini](https://ai.google.dev/), [Supabase](https://supabase.com/), [TailwindCSS](https://tailwindcss.com/), [DaisyUI](https://daisyui.com/), and more.
 
-My name is Megan, and I built siiiift because I am so sick of being bad at pie crust.
+**siiiift** allows users to upload an image as well as any modifications they may have made and, using **Google Gemini**, receives feedback on the outcome of their bake allowing them not only to document what goes right and wrong, but how they can improve upon their bake next time they make it. This post is then shared with the network, where the user can view other bakes, and get ideas for what they should bake next!
 
-I owe a huge thanks to my coach for this project Hai Nghiem for keeping me up to date on the coolest new product and offering his techy druidic wisdom at every turn. Additional thanks to the crowd at Get Building and techNL for giving me the opportunity to get better (and solve all of my baking grievances in one fell swoop.)
+My name is Megan, and I built **siiiift** because I am so sick of being bad at pie crust.
 
-siiiift will soon have backend support as well so that you can retrieve recipes from the internet as well as from your favourite recipe books.
+I owe a huge thanks to my coach for this project Hai Nghiem for keeping me up to date on the coolest new products and offering his techy druidic wisdom at every turn. Additional thanks to the crowd at [Get Building](https://get-building.ca/) and [techNL](https://findyourfuturenl.ca/) for giving me the opportunity to get better (and solve all of my baking grievances in one fell swoop.)
+
+**siiiift** will soon have backend support as well so that you can retrieve recipes from the internet as well as from your favourite recipe books. It will also feature additional integration to [No Hands Baking!](https://mpartificer.github.io/NoHandsBaking/) the predecessor of siiiift, which allows the user to have recipes dictated to them, while controlling the pace using voice commands.
