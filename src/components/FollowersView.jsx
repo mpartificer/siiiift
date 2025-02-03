@@ -116,14 +116,14 @@ function FollowersView(){
       <SearchBar />
       {searchResults.length > 0 ? (
         searchResults.map(result => (
-          <SearchResult
+<SearchResult
             key={result.follower_id || result.following_id}
-            id={result.follower_id || result.following_id}
-            username={result.follower_username || result.following_username}
+            userId={result.follower_id || result.following_id}
             searchReturnValue={result.follower_username || result.following_username}
             currentUserId={userId}
             type="user"
             imageUrl={result.follower_photo || result.following_photo}
+            recipeId={null}  // Since this is a user view, we pass null for recipeId
           />
         ))
       ) : (
