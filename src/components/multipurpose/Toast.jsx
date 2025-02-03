@@ -26,9 +26,9 @@ const Toast = ({ message, type, link, onClose }) => {
       {type === 'loading' && <Loader2 className="w-5 h-5 animate-spin" />}
       <span>{message}</span>
       {link && type === 'success' && (
-        <Link to={link} className="underline font-medium">
+        <a href={link} className="underline font-medium">
           View Details
-        </Link>
+        </a>
       )}
       <button 
         onClick={() => {
