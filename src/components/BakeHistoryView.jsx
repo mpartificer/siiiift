@@ -172,14 +172,12 @@ function BakeHistoryCard({ bakeDetail, likeDetails, modDetails, currentUserDetai
 
 
 function BakeHistoryView() {
-    // Get values from URL parameters instead of location.state
-    const params = useParams();
-    console.log("URL Parameters:", params); // Debug log
+    // Get params from URL instead of location.state
+    const { username, recipeid } = useParams();
     
-    // These should match your route pattern /:username/:recipeid
-    const userId = params.username;  // Getting from first URL parameter
-    const recipeId = params.recipeid;    const [username, setUsername] = useState('');
+    // Store all our state variables
     const [bakeDetails, setBakeDetails] = useState([]);
+    const [profileUsername, setProfileUsername] = useState('');
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [likeDetails, setLikeDetails] = useState([]);
@@ -187,86 +185,92 @@ function BakeHistoryView() {
     const [modificationDetails, setModificationDetails] = useState([]);
 
     useEffect(() => {
-        console.log("Current userId:", userId);
-        console.log("Current recipeId:", recipeId);
-    }, [userId, recipeId]);
-
-    useEffect(() => {
         async function fetchBakeDetails() {
             try {
-                // First fetch the username for the userId
-                const userResponse = await supabase
-                    .from('profiles')  // assuming you have a profiles table
-                    .select('username')
-                    .eq('id', userId)
-                    .single();
-
-                if (userResponse.error) throw userResponse.error;
-                setUsername(userResponse.data.username);
-
-                const [ recipeResponse, likeResponse, modResponse, currentUserResponse ] = await Promise.all([
+                setIsLoading(true);
+                
+                // Here username from the URL is actually the user_id
+                const [ recipeResponse, likeResponse, modResponse, userResponse, profileResponse ] = await Promise.all([
                     supabase
                         .from('Bake_Details')
                         .select('*')
-                        .eq('user_id', userId)
-                        .eq('recipe_id', recipeId)
+                        .eq('user_id', username) // username param is actually the user_id
+                        .eq('recipe_id', recipeid)
                         .order('baked_at', { ascending: false }),
                     supabase
                         .from('likes')
                         .select('*')
-                        .eq('recipe_id', recipeId),
+                        .eq('recipe_id', recipeid),
                     supabase
                         .from('modifications')
                         .select('*')
-                        .eq('recipe_id', recipeId)
-                        .eq('user_id', userId),
+                        .eq('recipe_id', recipeid)
+                        .eq('user_id', username),
                     supabase
-                        .auth.getUser()
+                        .auth.getUser(),
+                    supabase
+                        .from('profiles')
+                        .select('username')
+                        .eq('id', username)
+                        .single()
                 ]);
 
                 if (recipeResponse.error) throw recipeResponse.error;
                 if (likeResponse.error) throw likeResponse.error;
                 if (modResponse.error) throw modResponse.error;
-                if (currentUserResponse.error) throw currentUserResponse.error;
+                if (userResponse.error) throw userResponse.error;
+                if (profileResponse.error) throw profileResponse.error;
 
                 setBakeDetails(recipeResponse.data);
                 setLikeDetails(likeResponse.data);
                 setModificationDetails(modResponse.data);
-                setCurrentUserDetails(currentUserResponse);
+                setCurrentUserDetails(userResponse);
+                setProfileUsername(profileResponse.data.username);
+                
             } catch (error) {
-                console.error(error.message);
+                console.error('Error fetching data:', error);
                 setError(error.message);
             } finally {
                 setIsLoading(false);
             }
         }
 
-        fetchBakeDetails();
-    }, [userId, recipeId]);
+        if (username && recipeid) {
+            fetchBakeDetails();
+        }
+    }, [username, recipeid]);
 
-    if (isLoading) return (
-        <HeaderFooter>
-            <div className="mt-16">Loading...</div>
-        </HeaderFooter>
-    );
-    
-    if (error) return (
-        <HeaderFooter>
-            <div className="mt-16">Error: {error}</div>
-        </HeaderFooter>
-    );
+    if (isLoading) {
+        return (
+            <HeaderFooter>
+                <div className='container mx-auto px-4 mt-16'>Loading...</div>
+            </HeaderFooter>
+        );
+    }
 
-    if (!bakeDetails.length) return (
-        <HeaderFooter>
-            <div className="mt-16">No bakes found</div>
-        </HeaderFooter>
-    );
+    if (error) {
+        return (
+            <HeaderFooter>
+                <div className='container mx-auto px-4 mt-16'>Error: {error}</div>
+            </HeaderFooter>
+        );
+    }
+
+    if (!bakeDetails || bakeDetails.length === 0) {
+        return (
+            <HeaderFooter>
+                <div className='container mx-auto px-4 mt-16'>No bakes found</div>
+            </HeaderFooter>
+        );
+    }
 
     return (
         <div>
             <HeaderFooter>
                 <div className='container mx-auto px-4 mt-16 mb-20 flex flex-col items-center'>
-                    <div className='text-xl mb-2'>{`${username}'s ${bakeDetails[0].recipe_title} history`}</div>
+                    <div className='text-xl mb-2'>
+                        {`${profileUsername}'s ${bakeDetails[0].recipe_title} history`}
+                    </div>
                     <div className="space-y-6">
                         {bakeDetails.map((detail) => (
                             <BakeHistoryCard 
