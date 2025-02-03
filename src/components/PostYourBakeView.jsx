@@ -203,6 +203,11 @@ function PostYourBakeView() {
         imageUrls.push(publicUrl);
       }
 
+
+  
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError) throw userError;
+
       const { data: profileData, error: profileError } = await supabase
       .from('profiles')
       .select('username')
@@ -210,9 +215,6 @@ function PostYourBakeView() {
       .single();
 
     if (profileError) throw profileError;
-  
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
-      if (userError) throw userError;
   
       // Create bake record
       const { data: bakeData, error: insertError } = await supabase
