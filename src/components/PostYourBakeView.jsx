@@ -316,7 +316,7 @@ function PostYourBakeView() {
         addGlobalToast({
           type: 'success',
           message: 'AI analysis complete!',
-          link: `/siiiift/#/${user.id}/${formData.recipeId}`
+          link: `#/${user.id}/${formData.recipeId}`
         });
         console.log('Added success toast'); // Debug log
 
