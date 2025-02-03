@@ -211,7 +211,7 @@ function PostYourBakeView() {
       const { data: profileData, error: profileError } = await supabase
       .from('user_profile')
       .select('username')
-      .eq('id', user.id)
+      .eq('user_auth_id', user.id)
       .single();
 
     if (profileError) throw profileError;
