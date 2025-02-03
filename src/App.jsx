@@ -11,6 +11,15 @@ import ToastManager from './components/multipurpose/ToastManager';
 
 
 function App() {
+  useEffect(() => {
+    const handleToastNavigation = (event) => {
+      const path = event.detail.path;
+      router.navigate(path);
+    };
+
+    window.addEventListener('toast-navigation', handleToastNavigation);
+    return () => window.removeEventListener('toast-navigation', handleToastNavigation);
+  }, []);
   return (
       <AuthProvider>
       <ToastManager />
