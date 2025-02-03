@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import '../App.css'
 import HomeCardMobile from './multipurpose/HomeCardMobile.jsx'
 import HomeCardDesktop from './multipurpose/HomeCardDesktop.jsx'
-import RecipeCard from './multipurpose/RecipeCard.jsx'
+import RecipeCardProfile from './multipurpose/RecipeCardProfile.jsx'
 import { useLocation } from 'react-router-dom'
 import { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient.js'
@@ -199,7 +199,7 @@ function ContentCap({ userId }) {
   };
 
   const contentClass = windowWidth > 768 
-    ? "flex-1 overflow-y-auto mt-2 pr-2" 
+    ? "flex-1 overflow-y-auto mt-2" 
     : "mt-2";
 
   return (
@@ -240,14 +240,15 @@ function ContentCap({ userId }) {
           </div>
         )}
         {activeTab === 'recipes' && (
-          <div className="grid grid-cols-1 gap-4 w-350">
+          <div className="grid grid-cols-1 gap-4">
             {savedRecipes.map((recipe) => (
-              <RecipeCard
+              <RecipeCardProfile
                 key={recipe.recipe_id}
                 recipeTitle={recipe.recipe_title}
                 recipeId={recipe.recipe_id}
                 photo={recipe.recipe_images}
                 totalTime={recipe.total_time}
+                extraClass="w-350"
               />
             ))}
           </div>

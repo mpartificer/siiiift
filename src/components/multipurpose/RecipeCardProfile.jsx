@@ -11,7 +11,7 @@ function RecipeCard(props) {
     
 
     return (
-      <div className='card card-side bg-base-100 shadow-xl w-full standardBorder border-2 border-primary overflow-hidden m-2 hover:cursor-pointer' onClick={()=>{toRecipeProfile()}}>
+      <div className='card card-side bg-base-100 shadow-xl w-350 standardBorder border-2 border-primary overflow-hidden m-2 hover:cursor-pointer' onClick={()=>{toRecipeProfile()}}>
         <figure className="w-1/3">
           <img
             src={props.photo}
