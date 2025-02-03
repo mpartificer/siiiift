@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Toast from './Toast';  // Import your existing Toast component
+import Toast from './Toast.jsx';  // Import your existing Toast component
 
 const ToastManager = () => {
   const [toasts, setToasts] = useState([]);
