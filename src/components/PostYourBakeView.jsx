@@ -202,6 +202,14 @@ function PostYourBakeView() {
   
         imageUrls.push(publicUrl);
       }
+
+      const { data: profileData, error: profileError } = await supabase
+      .from('profiles')
+      .select('username')
+      .eq('id', user.id)
+      .single();
+
+    if (profileError) throw profileError;
   
       const { data: { user }, error: userError } = await supabase.auth.getUser();
       if (userError) throw userError;
