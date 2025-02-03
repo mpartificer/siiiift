@@ -62,7 +62,12 @@ function SearchView() {
         .ilike('username', `%${searchTerm}%`);
 
       if (userError) throw userError;
-      results = [...results, ...userData.map(user => ({ ...user, type: 'user' }))];
+      results = [...results, ...userData.map(user => ({ 
+        ...user, 
+        type: 'user',
+        userId: user.user_auth_id,  // Explicitly include userId
+        id: user.user_auth_id  // Maintain id for key prop
+      }))];
 
       const { data: recipeData, error: recipeError } = await supabase
         .from('recipe_profile')
@@ -70,7 +75,12 @@ function SearchView() {
         .ilike('title', `%${searchTerm}%`);
 
       if (recipeError) throw recipeError;
-      results = [...results, ...recipeData.map(recipe => ({ ...recipe, type: 'recipe' }))];
+      results = [...results, ...recipeData.map(recipe => ({ 
+        ...recipe, 
+        type: 'recipe',
+        recipeId: recipe.id,  // Explicitly include recipeId
+        id: recipe.id  // Maintain id for key prop
+      }))];
 
       setAllSearchResults(results);
       filterResults(results, activeFilter);
@@ -120,12 +130,14 @@ function SearchView() {
             <div className="flex flex-col gap-2 md:gap-4">
               {filteredResults.map((result) => (
                 <SearchResult 
-                  key={result.type === 'user' ? result.user_auth_id : result.id}
-                  id={result.type === 'user' ? result.user_auth_id : result.id}
+                  key={result.id}
+                  id={result.id}
                   currentUserId={currentUserId}
                   searchReturnValue={result.type === 'user' ? result.username : result.title}
                   imageUrl={result.type === 'user' ? result.photo : result.images?.[0]}
                   type={result.type}
+                  userId={result.userId}
+                  recipeId={result.recipeId}
                 />
               ))}
             </div>

@@ -3,14 +3,17 @@ import { Link } from 'react-router-dom';
 import { supabase } from '../../supabaseClient.js';
 import { User, Book } from 'lucide-react';
 
-function SearchResult({ id, currentUserId, searchReturnValue, type, imageUrl }) {
+function SearchResult({ currentUserId, searchReturnValue, type, imageUrl, userId, recipeId }) {
   const [isFollowingOrSaved, setIsFollowingOrSaved] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // Use the correct ID based on type
+  const relevantId = type === 'user' ? userId : recipeId;
+
   useEffect(() => {
     checkStatus();
-  }, [id, currentUserId, type]);
+  }, [relevantId, currentUserId, type]);
 
   async function checkStatus() {
     setIsLoading(true);
@@ -20,7 +23,7 @@ function SearchResult({ id, currentUserId, searchReturnValue, type, imageUrl }) 
           .from('followers')
           .select('*')
           .eq('follower_id', currentUserId)
-          .eq('following_id', id);
+          .eq('following_id', userId);
 
         if (error) throw error;
         setIsFollowingOrSaved(data.length > 0);
@@ -29,7 +32,7 @@ function SearchResult({ id, currentUserId, searchReturnValue, type, imageUrl }) 
           .from('saves')
           .select('*')
           .eq('user_id', currentUserId)
-          .eq('recipe_id', id);
+          .eq('recipe_id', recipeId);
 
         if (error) throw error;
         setIsFollowingOrSaved(data.length > 0);
@@ -53,13 +56,13 @@ function SearchResult({ id, currentUserId, searchReturnValue, type, imageUrl }) 
             .from('followers')
             .delete()
             .eq('follower_id', currentUserId)
-            .eq('following_id', id);
+            .eq('following_id', userId);
 
           if (error) throw error;
         } else {
           const { error } = await supabase
             .from('followers')
-            .insert({ follower_id: currentUserId, following_id: id });
+            .insert({ follower_id: currentUserId, following_id: userId });
 
           if (error) throw error;
         }
@@ -69,13 +72,13 @@ function SearchResult({ id, currentUserId, searchReturnValue, type, imageUrl }) 
             .from('saves')
             .delete()
             .eq('user_id', currentUserId)
-            .eq('recipe_id', id);
+            .eq('recipe_id', recipeId);
 
           if (error) throw error;
         } else {
           const { error } = await supabase
             .from('saves')
-            .insert({ user_id: currentUserId, recipe_id: id });
+            .insert({ user_id: currentUserId, recipe_id: recipeId });
 
           if (error) throw error;
         }
@@ -100,7 +103,8 @@ function SearchResult({ id, currentUserId, searchReturnValue, type, imageUrl }) 
   return (
     <div className='searchResult w-350 md:w-96'>
       <Link 
-        to={type === 'user' ? `/profile/${searchReturnValue}` : `/recipe/${id}`}
+        to={type === 'user' ? `/profile/${searchReturnValue}` : `/recipe/${recipeId}`}
+        state={type === 'user' ? { userId: userId } : { recipeId: recipeId }}
         className='searchDetail hover:bg-primary hover:text-secondary transition-colors'
       >
         {imageUrl ? (
