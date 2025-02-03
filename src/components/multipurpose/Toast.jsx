@@ -16,9 +16,9 @@ const Toast = ({ message, type, link, onClose }) => {
 
   const baseClasses = "p-4 rounded-lg shadow-lg transition-all duration-300 flex items-center gap-3 max-w-md";
   const typeClasses = {
-    success: "bg-green-100 text-green-800",
-    loading: "bg-blue-100 text-blue-800",
-    error: "bg-red-100 text-red-800"
+    success: "bg-green-500 text-white", // Made brighter
+    loading: "bg-blue-500 text-white", // Made brighter
+    error: "bg-red-500 text-white"     // Made brighter
   };
 
   return (

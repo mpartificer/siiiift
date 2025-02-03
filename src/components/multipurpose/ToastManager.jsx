@@ -8,6 +8,10 @@ const ToastManager = () => {
   const [toasts, setToasts] = useState([]);
 
   useEffect(() => {
+    console.log('Current toasts:', toasts); // Debug log
+  }, [toasts]);
+
+  useEffect(() => {
     // Function to handle toast events
     const handleToastUpdate = (event) => {
       const storedToasts = JSON.parse(localStorage.getItem('toasts') || '[]');
@@ -33,7 +37,7 @@ const ToastManager = () => {
 
   // Remove fixed positioning from Toast component since container handles it
   return (
-    <div className="fixed top-4 right-4 z-50 flex flex-col gap-2">
+    <div className="fixed top-4 right-4 z-[100] flex flex-col gap-2">
       {toasts.map(toast => (
         <Toast
           key={toast.id}

@@ -267,6 +267,8 @@ function PostYourBakeView() {
         type: 'loading',
         message: 'Analyzing your bake...'
       });
+      console.log('Added loading toast'); // Debug log
+
   
       // Start AI analysis in background
       const { data: { session } } = await supabase.auth.getSession();
@@ -309,7 +311,10 @@ function PostYourBakeView() {
           message: 'AI analysis complete!',
           link: `/${user.id}/${formData.recipeId}`
         });
+        console.log('Added success toast'); // Debug log
+
       })
+      
 
 .catch(error => {
   console.error('AI Analysis Error:', error);
