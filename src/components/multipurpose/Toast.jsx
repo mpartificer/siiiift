@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { X, Loader2 } from 'lucide-react';
-import { Link } from 'react-router-dom';
 
 const Toast = ({ message, type, link, onClose }) => {
   const [isVisible, setIsVisible] = useState(true);

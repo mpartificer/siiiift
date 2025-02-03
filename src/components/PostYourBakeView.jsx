@@ -309,14 +309,14 @@ function PostYourBakeView() {
 
 
         if (updateError) throw updateError;
-        
+
         console.log('About to add success toast'); // Debug log
 
         // Show success toast with link
         addGlobalToast({
           type: 'success',
           message: 'AI analysis complete!',
-          link: `/${user.id}/${formData.recipeId}`
+          link: `/siiiift/#/${user.id}/${formData.recipeId}`
         });
         console.log('Added success toast'); // Debug log
 
