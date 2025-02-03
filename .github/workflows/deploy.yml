@@ -16,17 +16,20 @@ concurrency:
 
 jobs:
   deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
-      
+        uses: actions/checkout@v4
+
       - name: Set up Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: 'npm'
-      
+
       - name: Check secrets
         run: |
           if [ -n "${{ secrets.VITE_SUPABASE_URL }}" ]; then
@@ -39,7 +42,7 @@ jobs:
           else
             echo "Supabase Key is NOT set"
           fi
-      
+
       - name: Create env file
         run: |
           touch .env
@@ -47,20 +50,21 @@ jobs:
           echo "VITE_SUPABASE_ANON_KEY=${{ secrets.VITE_SUPABASE_ANON_KEY }}" >> .env
           echo "Content of .env file:"
           cat .env
-      
-      - name: Install dependencies and Build
-        run: |
-          npm install
-          npm run build
-      
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
       - name: Setup Pages
-        uses: actions/configure-pages@v3
-      
+        uses: actions/configure-pages@v4
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './dist'
-      
+          path: 'dist'
+
       - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
         id: deployment
-        uses: actions/deploy-pages@v1
