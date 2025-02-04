@@ -172,12 +172,8 @@ function BakeHistoryCard({ bakeDetail, likeDetails, modDetails, currentUserDetai
 
 
 function BakeHistoryView() {
-    // Get params from URL instead of location.state
     const { username, recipeid } = useParams();
-    
-    // Store all our state variables
     const [bakeDetails, setBakeDetails] = useState([]);
-    const [profileUsername, setProfileUsername] = useState('');
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [likeDetails, setLikeDetails] = useState([]);
@@ -187,14 +183,21 @@ function BakeHistoryView() {
     useEffect(() => {
         async function fetchBakeDetails() {
             try {
-                setIsLoading(true);
-                
-                // Here username from the URL is actually the user_id
-                const [ recipeResponse, likeResponse, modResponse, userResponse, profileResponse ] = await Promise.all([
+                // First get the user_id from the username
+                const { data: userData, error: userError } = await supabase
+                    .from('profiles')
+                    .select('id')
+                    .eq('username', username)
+                    .single();
+
+                if (userError) throw userError;
+
+                // Now use the user_id for the rest of the queries
+                const [ recipeResponse, likeResponse, modResponse, userResponse ] = await Promise.all([
                     supabase
                         .from('Bake_Details')
                         .select('*')
-                        .eq('user_id', username) // username param is actually the user_id
+                        .eq('user_id', userData.id)  // Use the user_id here
                         .eq('recipe_id', recipeid)
                         .order('baked_at', { ascending: false }),
                     supabase
@@ -205,39 +208,29 @@ function BakeHistoryView() {
                         .from('modifications')
                         .select('*')
                         .eq('recipe_id', recipeid)
-                        .eq('user_id', username),
+                        .eq('user_id', userData.id),  // And here
                     supabase
-                        .auth.getUser(),
-                    supabase
-                        .from('profiles')
-                        .select('username')
-                        .eq('id', username)
-                        .single()
+                        .auth.getUser()
                 ]);
 
                 if (recipeResponse.error) throw recipeResponse.error;
                 if (likeResponse.error) throw likeResponse.error;
                 if (modResponse.error) throw modResponse.error;
                 if (userResponse.error) throw userResponse.error;
-                if (profileResponse.error) throw profileResponse.error;
 
                 setBakeDetails(recipeResponse.data);
                 setLikeDetails(likeResponse.data);
                 setModificationDetails(modResponse.data);
                 setCurrentUserDetails(userResponse);
-                setProfileUsername(profileResponse.data.username);
-                
             } catch (error) {
-                console.error('Error fetching data:', error);
+                console.error('Error:', error);
                 setError(error.message);
             } finally {
                 setIsLoading(false);
             }
         }
 
-        if (username && recipeid) {
-            fetchBakeDetails();
-        }
+        fetchBakeDetails();
     }, [username, recipeid]);
 
     if (isLoading) {
