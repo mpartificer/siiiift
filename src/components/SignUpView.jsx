@@ -7,12 +7,16 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 
-// Define the validation schema
 const signUpSchema = z.object({
   email: z
     .string()
     .min(1, { message: 'Email is required' })
     .email({ message: 'Must be a valid email' }),
+  username: z
+    .string()
+    .min(3, { message: 'Username must be at least 3 characters' })
+    .max(20, { message: 'Username must be less than 20 characters' })
+    .regex(/^[a-zA-Z0-9_]+$/, { message: 'Username can only contain letters, numbers, and underscores' }),
   password: z
     .string()
     .min(6, { message: 'Password must be at least 6 characters' })
@@ -28,6 +32,7 @@ const signUpSchema = z.object({
 
 function SignUpView() {
   const [loading, setLoading] = useState(false)
+  const [usernameError, setUsernameError] = useState('')
   const navigate = useNavigate()
 
   const {
@@ -38,26 +43,65 @@ function SignUpView() {
     resolver: zodResolver(signUpSchema),
     defaultValues: {
       email: '',
+      username: '',
       password: '',
       reenter_password: ''
     }
   })
 
+  const checkUsernameAvailability = async (username) => {
+    const { data, error } = await supabase
+      .from('usernames_view')
+      .select('username')
+      .eq('username', username)
+      .single()
+
+    if (error && error.code !== 'PGRST116') {
+      throw error
+    }
+
+    return !data
+  }
+
   const onSubmit = async (data) => {
     setLoading(true)
-    try {
+    setUsernameError('')
 
-      const { data: authData, error } = await supabase.auth.signUp({
+    try {
+      // First check if username is available
+      const isUsernameAvailable = await checkUsernameAvailability(data.username)
+      if (!isUsernameAvailable) {
+        setUsernameError('Username is already taken')
+        setLoading(false)
+        return
+      }
+
+      // Proceed with signup
+      const { data: authData, error: signUpError } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
         options: {
           // emailRedirectTo: `${window.location.origin}/auth/callback`,
+          data: {
+            username: data.username // Store username in user metadata
+          }
         },
       })
 
-      if (error) {
-        console.error('Error signing up:', error)
-        throw error
+      if (signUpError) throw signUpError
+
+      // The trigger will create the user_profile entry
+      // Now update it with the username
+      if (authData?.user) {
+        const { error: updateError } = await supabase
+          .from('user_profile')
+          .update({ username: data.username })
+          .eq('user_auth_id', authData.user.id)
+
+        if (updateError) {
+          console.error('Error updating username:', updateError)
+          // Don't throw - still want to proceed with signup
+        }
       }
 
       alert('Check your email for the confirmation link!')
@@ -84,6 +128,21 @@ function SignUpView() {
         />
         {errors.email && (
           <p className='error-message'>{errors.email.message}</p>
+        )}
+      </div>
+
+      <div>
+        <input
+          className='loginBar'
+          type='text'
+          placeholder='username'
+          {...register('username')}
+        />
+        {errors.username && (
+          <p className='error-message'>{errors.username.message}</p>
+        )}
+        {usernameError && (
+          <p className='error-message'>{usernameError}</p>
         )}
       </div>
 

@@ -26,6 +26,26 @@ function HomeView() {
         const { data: { user } } = await supabase.auth.getUser();
         if (user && isMounted) {
           setCurrentUserId(user.id);
+          
+          // Check for pending username after authentication is confirmed
+          const pendingUsername = localStorage.getItem('pendingUsername');
+          if (pendingUsername) {
+            try {
+              const { error: updateError } = await supabase
+                .from('user_profile')
+                .update({ username: pendingUsername })
+                .eq('user_auth_id', user.id);
+              
+              if (updateError) {
+                console.error('Error updating username:', updateError);
+              } else {
+                // Only remove username if update succeeded
+                localStorage.removeItem('pendingUsername');
+              }
+            } catch (error) {
+              console.error('Error updating profile:', error);
+            }
+          }
         }
 
         // Fetch bake details

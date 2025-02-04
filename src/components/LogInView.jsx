@@ -50,9 +50,9 @@ function LogInView() {
       })
       
       if (error) {
-        console.error('Sign in error:', error)
         throw error
       }
+
       
     } catch (error) {
       console.error('Sign in error:', error)
