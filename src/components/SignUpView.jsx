@@ -55,6 +55,7 @@ function SignUpView() {
       .select('username')
       .eq('username', username)
       .single()
+      
 
     if (error && error.code !== 'PGRST116') {
       throw error
@@ -66,7 +67,7 @@ function SignUpView() {
   const onSubmit = async (data) => {
     setLoading(true)
     setUsernameError('')
-
+  
     try {
       // First check if username is available
       const isUsernameAvailable = await checkUsernameAvailability(data.username)
@@ -75,41 +76,36 @@ function SignUpView() {
         setLoading(false)
         return
       }
-
-      // Proceed with signup
+  
+      // Proceed with signup, including username in user metadata
       const { data: authData, error: signUpError } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
         options: {
-          // emailRedirectTo: `${window.location.origin}/auth/callback`,
           data: {
-            username: data.username // Store username in user metadata
+            username: data.username
           }
-        },
-      })
-
-      if (signUpError) throw signUpError
-
-      // The trigger will create the user_profile entry
-      // Now update it with the username
-      if (authData?.user) {
-        const { error: updateError } = await supabase
-          .from('user_profile')
-          .update({ username: data.username })
-          .eq('user_auth_id', authData.user.id)
-
-        if (updateError) {
-          console.error('Error updating username:', updateError)
-          // Don't throw - still want to proceed with signup
         }
+      })
+  
+      if (signUpError) {
+        // Check if the error is related to username conflict
+        if (signUpError.message?.includes('Database error saving new user')) {
+          setUsernameError('username is already taken')
+          return
+        }
+        throw signUpError
       }
-
+  
       alert('Check your email for the confirmation link!')
       navigate('/login')
-
+  
     } catch (error) {
       console.error('Caught error:', error)
-      alert(error.message)
+      // Only show generic error message if it's not a username conflict
+      if (!usernameError) {
+        alert(error.message)
+      }
     } finally {
       setLoading(false)
     }
