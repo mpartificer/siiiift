@@ -179,16 +179,22 @@ function BakeHistoryView() {
     const [likeDetails, setLikeDetails] = useState([]);
     const [currentUserDetails, setCurrentUserDetails] = useState([]);
     const [modificationDetails, setModificationDetails] = useState([]);
+    console.log(username, recipeid)
 
     useEffect(() => {
         async function fetchBakeDetails() {
             try {
                 // First get the user_id from the username
+                console.log("Fetching details for:", { username, recipeid }); // Debug log
+
                 const { data: userData, error: userError } = await supabase
                     .from('user_profile')
                     .select('user_auth_id')
                     .eq('username', username)
                     .single();
+
+                    console.log("User data:", userData); // Debug log
+
 
                 if (userError) throw userError;
 
