@@ -38,7 +38,7 @@ const ModificationItem = ({ items, placeholder, index, type }) => {
                         : 'select item'}
                 </div>
                 {isOpen && (
-                    <ul tabIndex={0} className="dropdown-content menu bg-secondary rounded-box z-[1] w-52 p-2 shadow">
+                    <ul tabIndex={0} className="dropdown-content menu bg-secondary rounded-box z-[1] w-52 p-2 shadow max-h-64 flex-nowrap overflow-y-auto">
                         {items.map((item, idx) => (
                             <li key={idx} onClick={() => handleSelect(item)}>
                                 <a>{typeof item === 'object' ? (item.instruction || `${item.amount} ${item.substance}`) : item}</a>
@@ -135,7 +135,7 @@ const RecipeDropDown = () => {
 
     return (
         <div className="profilePlate items-center">
-            <div className="dropdown">
+            <div className="dropdown ">
                 <div 
                     tabIndex={0} 
                     role="button" 
@@ -145,7 +145,7 @@ const RecipeDropDown = () => {
                     {selectedRecipe ? recipeData.find(item => item.recipe_id === selectedRecipe)?.recipe_title : 'select a recipe:'}
                 </div>
                 {isRecipeDropdownOpen && (
-                    <ul tabIndex={0} className="dropdown-content menu bg-secondary overflow-hidden rounded-box z-[1] w-52 p-2 shadow">
+                    <ul tabIndex={0} className="dropdown-content menu bg-secondary max-h-64 flex-nowrap overflow-y-auto rounded-box z-[1] w-52 p-2 shadow">
                         {recipeData && recipeData.map((item) => (
                             <li key={item.recipe_id} onClick={() => fetchModItems(item.recipe_id, item.recipe_title)}>
                                 <a>{item.recipe_title}</a>
@@ -157,7 +157,7 @@ const RecipeDropDown = () => {
             
             {selectedRecipe && (
                 <>
-                    <h3 className="mt-4 mb-2 overflow-hidden">ingredient modifications:</h3>
+                    <div className="flex w-80 justify-start"><h3 className="mt-4 mb-2 overflow-hidden">ingredient modifications:</h3></div>
                     {ingredientFields.map((field, index) => (
                         <ModificationItem
                             key={field.id}
@@ -174,10 +174,10 @@ const RecipeDropDown = () => {
                         }} 
                         className="mb-4 justify-self-end text-left hover:underline cursor-pointer"
                     >
-                        add another ingredient modification
+                        <div className="flex w-80 justify-end">add another ingredient modification</div>
                     </button>
 
-                    <h3 className="mt-4 mb-2 overflow-hidden">instruction modifications:</h3>
+                    <div className="flex w-80 justify-start"><h3 className="mt-4 mb-2 overflow-hidden">instruction modifications:</h3></div>
                     {instructionFields.map((field, index) => (
                         <ModificationItem
                             key={field.id}
@@ -190,11 +190,11 @@ const RecipeDropDown = () => {
                     <button 
                         onClick={(e) => {
                             e.preventDefault();
-                            appendIngredient({ originalInstruction: '', modifiedInstruction: '' });
+                            appendInstruction({ originalInstruction: '', modifiedInstruction: '' });
                         }}
                         className="mb-4 justify-self-end text-left hover:underline cursor-pointer">
                     
-                        add another instruction modification
+                    <div className="flex w-80 justify-end">add another instruction modification</div>
                     </button>
                 </>
             )}
