@@ -174,7 +174,7 @@ function BakeHistoryCard({ bakeDetail, likeDetails, modDetails, currentUserDetai
 function BakeHistoryView() {
     const { username, recipeid } = useParams();
     console.log("URL params:", { username, recipeid });
-
+    const [profileData, setProfileData] = useState(null);  // Add this state
     const [bakeDetails, setBakeDetails] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -194,40 +194,32 @@ function BakeHistoryView() {
             try {
                 console.log("Starting fetch with:", { username, recipeid });
                 
-                // Let's first check what profiles exist
-                const { data: allProfiles, error: profilesError } = await supabase
-                    .from('profiles')
-                    .select('id, username');
-                
-                console.log("All profiles:", allProfiles); // This will help us see what usernames exist
-                
-                // Then try to find our specific user
+                // First, let's get our specific user
                 const { data: userData, error: userError } = await supabase
-                    .from('profiles')
-                    .select('id, username') // Added username to the select for debugging
-                    .ilike('username', username) // Using ilike for case-insensitive matching
+                    .from('user_profile')
+                    .select('user_auth_id, username')
+                    .eq('username', username)
                     .single();
-        
-                console.log("User query result:", { userData, userError });
-        
+            
+                console.log("Found user data:", userData);  // We can see this log is working
+            
                 if (userError) {
                     console.error("Error fetching user:", userError);
                     throw userError;
                 }
-        
-                if (!userData || !userData.id) {
-                    console.error("No user found for username:", username);
-                    throw new Error(`No user found for username: ${username}. Available usernames: ${allProfiles.map(p => p.username).join(', ')}`);
+                setProfileData(userData);  // Save the profile data
+
+            
+                if (!userData || !userData.user_auth_id) {
+                    throw new Error(`No user found for username: ${username}`);
                 }
-
-                console.log("Found user data:", userData);
-
-                // Now use the user_id for the rest of the queries
+            
+                // Now use the found user_auth_id for the subsequent queries
                 const [ recipeResponse, likeResponse, modResponse, userResponse ] = await Promise.all([
                     supabase
                         .from('Bake_Details')
                         .select('*')
-                        .eq('user_id', userData.id)
+                        .eq('user_id', userData.user_auth_id)  // Use the user_auth_id we found
                         .eq('recipe_id', recipeid)
                         .order('baked_at', { ascending: false }),
                     supabase
@@ -238,7 +230,7 @@ function BakeHistoryView() {
                         .from('modifications')
                         .select('*')
                         .eq('recipe_id', recipeid)
-                        .eq('user_id', userData.id),
+                        .eq('user_id', userData.user_auth_id),  // Here too
                     supabase
                         .auth.getUser()
                 ]);
@@ -305,7 +297,7 @@ function BakeHistoryView() {
             <HeaderFooter>
                 <div className='container mx-auto px-4 mt-16 mb-20 flex flex-col items-center'>
                     <div className='text-xl mb-2'>
-                        {`${profileUsername}'s ${bakeDetails[0].recipe_title} history`}
+                        {`${profileData.username}'s ${bakeDetails[0].recipe_title} history`}
                     </div>
                     <div className="space-y-6">
                         {bakeDetails.map((detail) => (
