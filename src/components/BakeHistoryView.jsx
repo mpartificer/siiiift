@@ -196,8 +196,8 @@ function BakeHistoryView() {
                 
                 // First get the user_id from the username
                 const { data: userData, error: userError } = await supabase
-                    .from('profiles')
-                    .select('id')
+                    .from('user_profile')
+                    .select('user_auth_id')
                     .eq('username', username)
                     .single();
 
