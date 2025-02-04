@@ -142,7 +142,7 @@ function PostYourBakeView() {
 
   const PostImageUpload = () => {
     return (
-      <div className="w-5/6 md:w-full flex-shrink-0">
+      <div className="w-5/6 md:w-full md:max-w-sm flex-shrink-0">
         <div className="rounded-lg shadow-xl bg-primary">
           <div className="m-4 md:mt-0">
             <span className="flex justify-center items-center text-[12px] mb-1 text-red-500">{message}</span>
@@ -156,8 +156,8 @@ function PostYourBakeView() {
                       d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
                       clipRule="evenodd" />
                   </svg>
-                  <p className="pt-1 text-sm tracking-wider text-gray-400 group-hover:text-gray-600">
-                    Select a photo</p>
+                  <p className="p-3 text-center text-sm tracking-wider text-gray-400 group-hover:text-gray-600">
+                    select a photo of your bake - we recommend a nice cross-section so we can see all the layers and textures</p>
                 </div>
                 <input type="file" onChange={handleFile} className="opacity-0" multiple="multiple" name="files[]" />
               </label>
