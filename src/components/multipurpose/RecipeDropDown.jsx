@@ -167,9 +167,15 @@ const RecipeDropDown = () => {
                             type="ingredient"
                         />
                     ))}
-                    <a href="#" onClick={() => appendIngredient({ originalIngredient: '', modifiedIngredient: '' })} className="mb-4 justify-self-end">
+                    <button 
+                        onClick={(e) => {
+                            e.preventDefault();
+                            appendIngredient({ originalIngredient: '', modifiedIngredient: '' });
+                        }} 
+                        className="mb-4 justify-self-end text-left hover:underline cursor-pointer"
+                    >
                         add another ingredient modification
-                    </a>
+                    </button>
 
                     <h3 className="mt-4 mb-2 overflow-hidden">instruction modifications:</h3>
                     {instructionFields.map((field, index) => (
@@ -181,9 +187,15 @@ const RecipeDropDown = () => {
                             type="instruction"
                         />
                     ))}
-                    <a href="#" onClick={() => appendInstruction({ originalInstruction: '', modifiedInstruction: '' })} className="mb-4 justify-self-end">
+                    <button 
+                        onClick={(e) => {
+                            e.preventDefault();
+                            appendIngredient({ originalInstruction: '', modifiedInstruction: '' });
+                        }}
+                        className="mb-4 justify-self-end text-left hover:underline cursor-pointer">
+                    
                         add another instruction modification
-                    </a>
+                    </button>
                 </>
             )}
         </div>
