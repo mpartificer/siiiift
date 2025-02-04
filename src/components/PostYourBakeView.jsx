@@ -270,7 +270,7 @@ function PostYourBakeView() {
 
       addGlobalToast({
         type: 'loading',
-        message: 'analyzing your bake...'
+        message: 'analyzing your bake... (this may take a few minutes)'
       });
   
       // Reset form and navigate

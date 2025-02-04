@@ -119,7 +119,7 @@ function BakeHistoryCard({ bakeDetail, likeDetails, modDetails, currentUserDetai
     };
 
     return (
-        <div className='recipeCheckPanel border-2 border-primary w-full md:w-3/5 mx-auto bg-secondary p-4 rounded-lg'>
+        <div className='recipeCheckPanel border-2 border-primary w-full mx-auto bg-secondary p-4 rounded-lg'>
             <div className="flex flex-col md:flex-row gap-4">
                 <div className="md:w-1/2">
                     <DateMarker date={bakeDetail.baked_at} />
