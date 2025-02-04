@@ -119,7 +119,7 @@ function BakeHistoryCard({ bakeDetail, likeDetails, modDetails, currentUserDetai
     };
 
     return (
-        <div className='recipeCheckPanel w-full md:w-3/5 mx-auto bg-secondary p-4 rounded-lg'>
+        <div className='recipeCheckPanel border-2 border-primary w-full md:w-3/5 mx-auto bg-secondary p-4 rounded-lg'>
             <div className="flex flex-col md:flex-row gap-4">
                 <div className="md:w-1/2">
                     <DateMarker date={bakeDetail.baked_at} />
@@ -293,7 +293,7 @@ function BakeHistoryView() {
     return (
         <div>
             <HeaderFooter>
-                <div className='container mx-auto px-4 mt-16 mb-20 flex flex-col items-center'>
+                <div className='container mx-auto px-4 mt-20 mb-20 flex flex-col items-center'>
                     <div className='text-xl mb-2'>
                         {`${profileData.username}'s ${bakeDetails[0].recipe_title} history`}
                     </div>

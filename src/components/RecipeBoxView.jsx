@@ -12,7 +12,8 @@ function RecipeBoxHeader({ username }) {
   return (
     <div className='w-350 md:w-full max-w-4xl flex flex-row justify-between items-center'>
       <div className='pageTitle text-xl'>{pageTitle}</div>
-      <Plus size={30} color='#192F01' onClick={() => navigate('/reciperetriever')}/>
+      <Plus size={30} color='#192F01' />
+      {/* <Plus size={30} color='#192F01' onClick={() => navigate('/reciperetriever')}/> */}
     </div>
   )
 }

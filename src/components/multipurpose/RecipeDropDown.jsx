@@ -134,7 +134,7 @@ const RecipeDropDown = () => {
     if (error) return <div>Error: {error}</div>
 
     return (
-        <div className="profilePlate">
+        <div className="profilePlate items-center">
             <div className="dropdown">
                 <div 
                     tabIndex={0} 

@@ -157,7 +157,7 @@ function PostYourBakeView() {
                       clipRule="evenodd" />
                   </svg>
                   <p className="p-3 text-center text-sm tracking-wider text-gray-400 group-hover:text-gray-600">
-                    select a photo of your bake - we recommend a nice cross-section so we can see all the layers and textures</p>
+                    select a photo of your bake - we recommend a nice cross-section so we can examine all the layers and textures</p>
                 </div>
                 <input type="file" onChange={handleFile} className="opacity-0" multiple="multiple" name="files[]" />
               </label>

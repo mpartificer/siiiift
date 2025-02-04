@@ -116,7 +116,7 @@ function SearchView() {
   return (
     <div>
       <HeaderFooter>
-        <div className="mt-16 mb-16">
+        <div className="mt-20 mb-16">
           <div className='flex flex-col w-full items-center gap-4'>
             <form onSubmit={handleSearch}>
               <SearchBar 
