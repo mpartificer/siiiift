@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../App.css';
 import HeaderFooter from './multipurpose/HeaderFooter.jsx';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { Heart } from 'lucide-react';
 import { supabase } from '../supabaseClient'; // Make sure to import your Supabase client
 
@@ -283,7 +283,22 @@ function BakeHistoryView() {
             <HeaderFooter>
                 <div className='container mx-auto px-4 mt-20 mb-20 flex flex-col items-center'>
                     <div className='text-xl mb-2'>
-                        {`${profileData.username}'s ${bakeDetails[0].recipe_title} history`}
+                        <Link 
+                            to={`/profile/${profileData.username}`} 
+                            state={{ userId: profileData.user_auth_id }}
+                            className="text-primary hover:underline"
+                        >
+                            {profileData.username}
+                        </Link>
+                        's{' '}
+                        <Link 
+                            to={`/recipe/${recipeid}`}
+                            state={{ recipeId: recipeid }}
+                            className="text-primary hover:underline"
+                        >
+                            {bakeDetails[0].recipe_title}
+                        </Link>
+                        {' '}history
                     </div>
                     <div className="space-y-6">
                         {bakeDetails.map((detail) => (
