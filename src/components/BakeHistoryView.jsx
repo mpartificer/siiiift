@@ -144,7 +144,7 @@ function BakeHistoryCard({ bakeDetail, likeDetails, modDetails, currentUserDetai
                         <span className="font-bold text-lg">{likeCount}</span>
                     </div>
                     
-                    <div className="h-80 overflow-y-auto pr-2">
+                    <div className="max-h-80 overflow-y-auto pr-2">
                         {mods && mods.length > 0 && (
                             <div className="mb-4">
                                 <h2 className='font-bold text-lg mb-2'>modifications</h2>

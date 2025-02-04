@@ -194,7 +194,7 @@ function SettingsManagementView(props) {
     return (
       <div className='w-350 md:w-full'>
         <HeaderFooter />
-          <div className="flex flex-col md:flex-row gap-5 mt-14 mb-14 md:mt-20 items-center md:items-start justify-self-center">
+          <div className="flex flex-col md:flex-row gap-5 mb-14 mt-20 items-center md:items-start justify-self-center">
             <div className="flex flex-col flex-wrap justify-end">
               <div className='pageTitle text-xl md:text-3xl mb-1 justify-self-start md:self-end'>{userDetails.username}</div>
               <EditBio userBio={userDetails.bio} photo={userDetails.photo} userId={userId}/>            </div>

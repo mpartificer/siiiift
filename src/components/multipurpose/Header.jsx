@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp, Linkedin, Github } from 'lucide-react';
 import '../../App.css';
 
 function Header() {
@@ -54,6 +54,24 @@ function Header() {
                 <section>
                   <h4 className="font-semibold mb-2 text-primary">about me</h4>
                   <p>my name is Megan Forsey and I am a hobby baker and the architect of siiiift. I built this project to learn React, but to be honest, I'm also just so over trying to figure out pie crust on my own.</p>
+                  <div className="flex gap-4 mt-2">
+                    <a
+                      href="https://www.linkedin.com/in/meganforsey?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:opacity-80 transition-opacity"
+                    >
+                      <Linkedin size={40} color='#496354' />
+                    </a>
+                    <a
+                      href="https://github.com/mpartificer"
+                      target="_blank"
+                      rel="noopener noreferrer" 
+                      className="text-primary hover:opacity-80 transition-opacity"
+                    >
+                      <Github size={40} color='#496354' />
+                    </a>
+                  </div>                
                 </section>
               </div>
             </div>

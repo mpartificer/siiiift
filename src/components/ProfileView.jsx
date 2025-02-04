@@ -31,7 +31,7 @@ function SettingsButton(props) {
   
 function ProfileBlurb(props) {
     return (
-      <div className='profileBlurb'>
+      <div className='profileBlurb overflow-y-scroll'>
         {props.profileDescription}
       </div>
     )
