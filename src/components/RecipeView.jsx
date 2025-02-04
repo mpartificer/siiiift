@@ -158,7 +158,7 @@ function RecipeCheckPanel(props) {
 
 function TimeCheck(props) {
     return (
-        <div className='items-center text-lg'>
+        <div className='items-center max-w-28 text-sm md:text-md'>
          <b>prep</b><br /> {props.prepTime} <br />
          <b>cook</b><br /> {props.cookTime} <br />
          <b>total</b><br /> {props.totalTime} <br />
@@ -168,7 +168,7 @@ function TimeCheck(props) {
 
 function PopularityCheck(props) {
     return (
-        <div className='grid grid-cols-2 '>
+        <div className='grid grid-cols-2 text-sm md:text-md'>
             <PopularityCounter Label='Heart' Count={props.likes} />
             <PopularityCounter Label='Star' Count={props.rating} />
             <PopularityCounter Label='ChefHat' Count={props.bakes} />
