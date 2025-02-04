@@ -53,15 +53,16 @@ function BakeHistoryCard({ bakeDetail, likeDetails, modDetails, currentUserDetai
         likeDetails = [];
     }
 
-    const likes = likeDetails.filter(like => bakeDetail.id === like.bake_id);
     const mods = modDetails.filter(mod => bakeDetail.id === mod.bake_id);
     
-    const likeCount = likes.length;
     const [isLiked, setIsLiked] = useState(false);
+    const [likeCount, setLikeCount] = useState(0);
 
     useEffect(() => {
+        const likes = likeDetails.filter(like => bakeDetail.id === like.bake_id);
+        setLikeCount(likes.length);
         checkLikeStatus();
-    }, []);
+    }, [bakeDetail.id, likeDetails]);
   
     const checkLikeStatus = async () => {
         if (!currentUserDetails?.data?.user?.id) {
@@ -89,38 +90,37 @@ function BakeHistoryCard({ bakeDetail, likeDetails, modDetails, currentUserDetai
             return;
         }
 
-        if (isLiked) {
-            const { error } = await supabase
-                .from('likes')
-                .delete()
-                .eq('user_id', currentUserDetails.data.user.id)
-                .eq('bake_id', bakeDetail.id);
-  
-            if (error) {
-                console.error('Error removing like:', error);
-            } else {
+        try {
+            if (isLiked) {
+                const { error } = await supabase
+                    .from('likes')
+                    .delete()
+                    .eq('user_id', currentUserDetails.data.user.id)
+                    .eq('bake_id', bakeDetail.id);
+    
+                if (error) throw error;
                 setIsLiked(false);
-            }
-        } else {
-            const { error } = await supabase
-                .from('likes')
-                .insert({ 
-                    user_id: currentUserDetails.data.user.id, 
-                    bake_id: bakeDetail.id 
-                });
-  
-            if (error) {
-                console.error('Error adding like:', error);
+                setLikeCount(prev => prev - 1);
             } else {
+                const { error } = await supabase
+                    .from('likes')
+                    .insert({ 
+                        user_id: currentUserDetails.data.user.id, 
+                        bake_id: bakeDetail.id 
+                    });
+    
+                if (error) throw error;
                 setIsLiked(true);
+                setLikeCount(prev => prev + 1);
             }
+        } catch (error) {
+            console.error('Error toggling like:', error);
         }
     };
 
     return (
         <div className='recipeCheckPanel w-full md:w-3/5 mx-auto bg-secondary p-4 rounded-lg'>
             <div className="flex flex-col md:flex-row gap-4">
-                {/* Left side - Image section with fixed height */}
                 <div className="md:w-1/2">
                     <DateMarker date={bakeDetail.baked_at} />
                     <div className="h-96 mt-2">
@@ -132,7 +132,6 @@ function BakeHistoryCard({ bakeDetail, likeDetails, modDetails, currentUserDetai
                     </div>
                 </div>
                 
-                {/* Right side - Content section with fixed height */}
                 <div className="md:w-1/2">
                     <div className='flex items-center gap-2 mb-4'>
                         <Heart
@@ -145,7 +144,6 @@ function BakeHistoryCard({ bakeDetail, likeDetails, modDetails, currentUserDetai
                         <span className="font-bold text-lg">{likeCount}</span>
                     </div>
                     
-                    {/* Scrollable content area with fixed height */}
                     <div className="h-80 overflow-y-auto pr-2">
                         {mods && mods.length > 0 && (
                             <div className="mb-4">

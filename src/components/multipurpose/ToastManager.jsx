@@ -8,10 +8,6 @@ const ToastManager = () => {
   const [toasts, setToasts] = useState([]);
 
   useEffect(() => {
-    console.log('Current toasts:', toasts); // Debug log
-  }, [toasts]);
-
-  useEffect(() => {
     // Function to handle toast events
     const handleToastUpdate = (event) => {
       const storedToasts = JSON.parse(localStorage.getItem('toasts') || '[]');

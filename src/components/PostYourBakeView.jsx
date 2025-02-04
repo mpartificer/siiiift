@@ -177,7 +177,6 @@ function PostYourBakeView() {
   };
 
   const onSubmit = async (formData) => {
-    console.log('Starting onSubmit'); // Debug log
     setError(null);
     setIsUploading(true);
   
@@ -271,9 +270,8 @@ function PostYourBakeView() {
 
       addGlobalToast({
         type: 'loading',
-        message: 'Analyzing your bake...'
+        message: 'analyzing your bake...'
       });
-      console.log('Added loading toast');
   
       // Reset form and navigate
       setFiles([]);
@@ -283,8 +281,6 @@ function PostYourBakeView() {
   
       // Start AI analysis in background
       const { data: { session } } = await supabase.auth.getSession();
-      console.log('Session token:', session?.access_token ? 'Present' : 'Missing');
-      console.log('Starting AI analysis'); // Debug log
 
       
       // Prepare AI payload
@@ -308,7 +304,6 @@ function PostYourBakeView() {
         body: JSON.stringify(aiPayload)
       })
       .then(async (response) => {
-        console.log('AI analysis response received'); // Debug log
         if (!response.ok) throw new Error('AI analysis failed');
         const { insights } = await response.json();
         
@@ -320,17 +315,12 @@ function PostYourBakeView() {
 
 
         if (updateError) throw updateError;
-
-        console.log('About to add success toast'); // Debug log
-
         // Show success toast with link
         addGlobalToast({
           type: 'success',
           message: 'AI analysis complete!',
           link: `/${profileData.username}/${formData.recipeId}`  // Make sure we have the correct user ID
         });
-        console.log('Added success toast'); // Debug log
-
       })
       
 
@@ -344,7 +334,7 @@ function PostYourBakeView() {
         }
         addGlobalToast({
           type: 'error',
-          message: 'Failed to complete AI analysis. You can still view your bake post.'
+          message: 'failed to complete AI analysis. you can still view your bake post.'
         });
       });
   
@@ -373,7 +363,7 @@ function PostYourBakeView() {
   disabled={isUploading}
 >
   {isUploading ? (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center justify-center w-full gap-2">
       <Loader2 className="w-4 h-4 animate-spin" />
       <span>uploading...</span>
     </div>

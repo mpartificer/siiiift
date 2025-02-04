@@ -15,9 +15,9 @@ const Toast = ({ message, type, link, onClose }) => {
   
     const baseClasses = "p-4 rounded-lg shadow-lg transition-all duration-300 flex items-center gap-3 max-w-md";
     const typeClasses = {
-      success: "bg-green-100 text-green-800",
-      loading: "bg-blue-100 text-blue-800",
-      error: "bg-red-100 text-red-800"
+      success: "bg-secondary text-primary",
+      loading: "bg-secondary text-primary",
+      error: "bg-secondary text-primary"
     };
   
     // Construct the full URL with the correct base path
@@ -32,7 +32,7 @@ const Toast = ({ message, type, link, onClose }) => {
         <span>{message}</span>
         {link && type === 'success' && (
           <a href={getFullUrl(link)} className="underline font-medium">
-            View Details
+            view details
           </a>
         )}
         <button 
