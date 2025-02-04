@@ -190,25 +190,34 @@ function BakeHistoryView() {
                 setIsLoading(false);
                 return;
             }
-
+        
             try {
                 console.log("Starting fetch with:", { username, recipeid });
                 
-                // First get the user_id from the username
+                // Let's first check what profiles exist
+                const { data: allProfiles, error: profilesError } = await supabase
+                    .from('profiles')
+                    .select('id, username');
+                
+                console.log("All profiles:", allProfiles); // This will help us see what usernames exist
+                
+                // Then try to find our specific user
                 const { data: userData, error: userError } = await supabase
-                    .from('user_profile')
-                    .select('user_auth_id')
-                    .eq('username', username)
+                    .from('profiles')
+                    .select('id, username') // Added username to the select for debugging
+                    .ilike('username', username) // Using ilike for case-insensitive matching
                     .single();
-
+        
+                console.log("User query result:", { userData, userError });
+        
                 if (userError) {
                     console.error("Error fetching user:", userError);
                     throw userError;
                 }
-
+        
                 if (!userData || !userData.id) {
                     console.error("No user found for username:", username);
-                    throw new Error(`No user found for username: ${username}`);
+                    throw new Error(`No user found for username: ${username}. Available usernames: ${allProfiles.map(p => p.username).join(', ')}`);
                 }
 
                 console.log("Found user data:", userData);
