@@ -10,24 +10,36 @@ function PostReactionBox({ currentUserId, username, recipeId, userId, bakeId }) 
   const [isLiked, setIsLiked] = useState(false);
 
   useEffect(() => {
-    checkLikeStatus();
-  }, []);
+    if (currentUserId && bakeId) {  // Only check if we have both values
+
+      checkLikeStatus();
+    }
+  }, [currentUserId, bakeId]); // Re-run when either of these change
 
   const checkLikeStatus = async () => {
+    if (!currentUserId || !bakeId) return;  // Guard clause
+    
+    
     const { data, error } = await supabase
       .from('likes')
       .select('*')
       .eq('user_id', currentUserId)
-      .eq('bake_id', bakeId)
-
+      .eq('bake_id', bakeId);
+  
     if (error) {
-      if (error.code != 'PGRST116')
-      console.error('Error checking like status:', error);
+      console.error('Error checking like status:', {
+        code: error.code,
+        msg: error.message,
+        details: error.details
+      });
     } else {
-      setIsLiked(data && data.length > 0);    }
+      setIsLiked(data && data.length > 0);
+    }
   };
 
   const toggleLike = async () => {
+    if (!currentUserId || !bakeId) return;  // Guard clause
+
     if (isLiked) {
       const { error } = await supabase
         .from('likes')
@@ -52,6 +64,7 @@ function PostReactionBox({ currentUserId, username, recipeId, userId, bakeId }) 
       }
     }
   };
+
 
   const bakeData = { "userId": userId, "recipeId": recipeId, "username": username }
 

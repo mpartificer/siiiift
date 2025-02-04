@@ -61,7 +61,7 @@ function ProfilePlateTop(props) {
   
 function ProfilePlateBottom(props) {
     return (
-      <div className='flex flex-row md:flex-col flex-wrap gap-2 md:items-end w-350 justify-center md:justify-end mb-2'>
+      <div className='flex flex-row md:flex-col flex-nowrap md:flex-wrap gap-2 md:items-end w-350 justify-center md:justify-end mb-2'>
         {props.children}
       </div>
     )
