@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Heart, MessageCircle, History } from 'lucide-react';
+import { Heart, Lightbulb } from 'lucide-react';
 import { useNavigate } from 'react-router-dom'; 
 import PageTitle from './PageTitle.jsx';
 import { supabase } from '../../supabaseClient.js';
@@ -80,8 +80,8 @@ function PostReactionBox({ currentUserId, username, recipeId, userId, bakeId }) 
         onClick={toggleLike}
         style={{ cursor: 'pointer' }}
       />
-      <History 
-        size={40} 
+      <Lightbulb 
+        size={39} 
         color='#496354' 
         onClick={toBakeProfile}
         style={{ cursor: 'pointer' }}

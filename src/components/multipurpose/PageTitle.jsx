@@ -17,7 +17,7 @@ function PageTitle(props) {
   if (props.path) {
     return (
       <div className='pageTitle ml-2.5 md:text-xl hover:text-primary'>
-        <a className='hover:text-primary hover:cursor-pointer'onClick={()=>{toUserProfile()}}>{props.pageTitle[0]}</a> made <a className='hover:text-primary hover:cursor-pointer'onClick={()=>{toRecipeProfile()}}>{props.pageTitle[1]}</a>
+        <a className='hover:text-primary font-semibold hover:cursor-pointer'onClick={()=>{toUserProfile()}}>{props.pageTitle[0]}</a> made <a className='font-semibold hover:text-primary hover:cursor-pointer'onClick={()=>{toRecipeProfile()}}>{props.pageTitle[1]}</a>
       </div>
     )
 }

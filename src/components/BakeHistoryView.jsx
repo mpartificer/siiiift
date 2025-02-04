@@ -171,7 +171,6 @@ function BakeHistoryCard({ bakeDetail, likeDetails, modDetails, currentUserDetai
 
 function BakeHistoryView() {
     const { username, recipeid } = useParams();
-    console.log("URL params:", { username, recipeid });
     const [profileData, setProfileData] = useState(null);  // Add this state
     const [bakeDetails, setBakeDetails] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -189,18 +188,14 @@ function BakeHistoryView() {
                 return;
             }
         
-            try {
-                console.log("Starting fetch with:", { username, recipeid });
-                
+            try {                
                 // First, let's get our specific user
                 const { data: userData, error: userError } = await supabase
                     .from('user_profile')
                     .select('user_auth_id, username')
                     .eq('username', username)
                     .single();
-            
-                console.log("Found user data:", userData);  // We can see this log is working
-            
+                        
                 if (userError) {
                     console.error("Error fetching user:", userError);
                     throw userError;
@@ -232,13 +227,6 @@ function BakeHistoryView() {
                     supabase
                         .auth.getUser()
                 ]);
-
-                console.log("Query responses:", {
-                    bakes: recipeResponse.data,
-                    likes: likeResponse.data,
-                    mods: modResponse.data,
-                    user: userResponse
-                });
 
                 if (recipeResponse.error) throw recipeResponse.error;
                 if (likeResponse.error) throw likeResponse.error;
