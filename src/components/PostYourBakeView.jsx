@@ -283,6 +283,7 @@ function PostYourBakeView() {
   
       // Start AI analysis in background
       const { data: { session } } = await supabase.auth.getSession();
+      console.log('Session token:', session?.access_token ? 'Present' : 'Missing');
       console.log('Starting AI analysis'); // Debug log
 
       
@@ -333,13 +334,19 @@ function PostYourBakeView() {
       })
       
 
-.catch(error => {
-  console.error('AI Analysis Error:', error);
-  addGlobalToast({
-    type: 'error',
-    message: 'Failed to complete AI analysis. You can still view your bake post.'
-  });
-});
+      .catch(error => {
+        console.error('AI Analysis Error:', error);
+        if (error.response) {
+          // Get more details about the HTTP error
+          error.response.text().then(text => {
+            console.error('Edge function response:', text);
+          });
+        }
+        addGlobalToast({
+          type: 'error',
+          message: 'Failed to complete AI analysis. You can still view your bake post.'
+        });
+      });
   
     } catch (err) {
       console.error('Error:', err);
