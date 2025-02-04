@@ -173,37 +173,52 @@ function BakeHistoryCard({ bakeDetail, likeDetails, modDetails, currentUserDetai
 
 function BakeHistoryView() {
     const { username, recipeid } = useParams();
+    console.log("URL params:", { username, recipeid });
+
     const [bakeDetails, setBakeDetails] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [likeDetails, setLikeDetails] = useState([]);
     const [currentUserDetails, setCurrentUserDetails] = useState([]);
     const [modificationDetails, setModificationDetails] = useState([]);
-    console.log(username, recipeid)
 
     useEffect(() => {
         async function fetchBakeDetails() {
-            try {
-                // First get the user_id from the username
-                console.log("Fetching details for:", { username, recipeid }); // Debug log
+            if (!username || !recipeid) {
+                console.error("Missing required parameters:", { username, recipeid });
+                setError("Missing required parameters");
+                setIsLoading(false);
+                return;
+            }
 
+            try {
+                console.log("Starting fetch with:", { username, recipeid });
+                
+                // First get the user_id from the username
                 const { data: userData, error: userError } = await supabase
-                    .from('user_profile')
-                    .select('user_auth_id')
+                    .from('profiles')
+                    .select('id')
                     .eq('username', username)
                     .single();
 
-                    console.log("User data:", userData); // Debug log
+                if (userError) {
+                    console.error("Error fetching user:", userError);
+                    throw userError;
+                }
 
+                if (!userData || !userData.id) {
+                    console.error("No user found for username:", username);
+                    throw new Error(`No user found for username: ${username}`);
+                }
 
-                if (userError) throw userError;
+                console.log("Found user data:", userData);
 
                 // Now use the user_id for the rest of the queries
                 const [ recipeResponse, likeResponse, modResponse, userResponse ] = await Promise.all([
                     supabase
                         .from('Bake_Details')
                         .select('*')
-                        .eq('user_id', userData.id)  // Use the user_id here
+                        .eq('user_id', userData.id)
                         .eq('recipe_id', recipeid)
                         .order('baked_at', { ascending: false }),
                     supabase
@@ -214,10 +229,17 @@ function BakeHistoryView() {
                         .from('modifications')
                         .select('*')
                         .eq('recipe_id', recipeid)
-                        .eq('user_id', userData.id),  // And here
+                        .eq('user_id', userData.id),
                     supabase
                         .auth.getUser()
                 ]);
+
+                console.log("Query responses:", {
+                    bakes: recipeResponse.data,
+                    likes: likeResponse.data,
+                    mods: modResponse.data,
+                    user: userResponse
+                });
 
                 if (recipeResponse.error) throw recipeResponse.error;
                 if (likeResponse.error) throw likeResponse.error;
@@ -229,7 +251,7 @@ function BakeHistoryView() {
                 setModificationDetails(modResponse.data);
                 setCurrentUserDetails(userResponse);
             } catch (error) {
-                console.error('Error:', error);
+                console.error('Fetch error:', error);
                 setError(error.message);
             } finally {
                 setIsLoading(false);
@@ -242,7 +264,9 @@ function BakeHistoryView() {
     if (isLoading) {
         return (
             <HeaderFooter>
-                <div className='container mx-auto px-4 mt-16'>Loading...</div>
+                <div className='container mx-auto px-4 mt-16'>
+                    <div>Loading...</div>
+                </div>
             </HeaderFooter>
         );
     }
@@ -250,7 +274,9 @@ function BakeHistoryView() {
     if (error) {
         return (
             <HeaderFooter>
-                <div className='container mx-auto px-4 mt-16'>Error: {error}</div>
+                <div className='container mx-auto px-4 mt-16'>
+                    <div>Error: {error}</div>
+                </div>
             </HeaderFooter>
         );
     }
@@ -258,7 +284,9 @@ function BakeHistoryView() {
     if (!bakeDetails || bakeDetails.length === 0) {
         return (
             <HeaderFooter>
-                <div className='container mx-auto px-4 mt-16'>No bakes found</div>
+                <div className='container mx-auto px-4 mt-16'>
+                    <div>No bakes found for this recipe</div>
+                </div>
             </HeaderFooter>
         );
     }
