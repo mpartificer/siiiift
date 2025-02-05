@@ -176,7 +176,8 @@ function ContentCap({ userId }) {
     const { data, error } = await supabase
       .from('bake_details_view')
       .select('*')
-      .eq('user_id', userId);
+      .eq('user_id', userId)
+      .order('baked_at', { ascending: false });
 
     if (error) {
       console.error('Error fetching bakes:', error);

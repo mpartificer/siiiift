@@ -31,7 +31,8 @@ function HomeView() {
         // Fetch bake details
         const { data, error } = await supabase
           .from('bake_details_view')
-          .select('*');
+          .select('*')
+          .order('baked_at', { ascending: false })
 
         if (error) throw error;
 
