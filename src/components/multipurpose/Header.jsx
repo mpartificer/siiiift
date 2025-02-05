@@ -40,10 +40,14 @@ function Header() {
               welcome to siiiift, your AI-powered baking journaling bestie. siiiift allows you to connect with other bakers, share recipes, and learn from your mistakes. That bûche de Noel that you botched last year and ruined the holidays? Find out what went wrong. That most perfect croquembouche that no one thought you could pull off? Share it with a community that gets it. Make the same birthday cake for that one friend every year? Get feedback on how you can make it even more magical at candle time next year.
               </p>
               
-              {/* Video placeholder - uncomment when ready */}
-              {/* <div className="aspect-video bg-secondary/20 mb-4 flex items-center justify-center">
-                <span className="text-primary">Video content coming soon</span>
-              </div> */}
+              <div className="aspect-video mb-4 w-full">
+                <iframe
+                  src="https://www.loom.com/embed/62cc6095ed4f4f8f9f20323ec04af4e9"
+                  frameBorder="0"
+                  allowFullScreen
+                  className="w-full h-full rounded-lg"
+                ></iframe>
+              </div>
               
               <div className="space-y-4">
                 <section>
