@@ -275,7 +275,7 @@ function BakeHistoryView() {
         <div>
             <HeaderFooter>
                 <div className='container mx-auto px-4 mt-20 mb-20 flex flex-col items-center'>
-                    <div className='text-xl mb-2'>
+                    <div className='text-xl text-primary mb-2'>
                         <Link 
                             to={`/profile/${profileData.username}`} 
                             state={{ userId: profileData.user_auth_id }}
