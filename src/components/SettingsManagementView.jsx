@@ -42,7 +42,6 @@ const ImageUpload = ({ currentPhoto, userId, onPhotoUpdate }) => {
     .select(); // Add this to get back the updated record
     
   if (updateError) {
-    console.error('Error updating user_profile:', updateError);
     throw updateError;
   } else {
   }
@@ -55,7 +54,6 @@ const ImageUpload = ({ currentPhoto, userId, onPhotoUpdate }) => {
 
       onPhotoUpdate?.(publicUrl);
     } catch (error) {
-      console.error('Error uploading image:', error);
     } finally {
       setUploading(false);
       setPreviewUrl(null);
@@ -130,11 +128,9 @@ function TextAreaWithButton({ userBio, userId }) {
         .select();
 
       if (error) {
-        console.error('Error updating bio:', error);
         throw error;
       }
     } catch (error) {
-      console.error('Error saving bio:', error);
     } finally {
       setIsUpdating(false);
     }
@@ -186,7 +182,6 @@ function SettingsManagementView(props) {
       setUserDetails(data);
       setIsLoading(false);
     } catch (error) {
-      console.error('Error fetching user_profile:', error);
       setIsLoading(false);
     }
   };

@@ -66,7 +66,6 @@ function BakeHistoryCard({ bakeDetail, likeDetails, modDetails, currentUserDetai
   
     const checkLikeStatus = async () => {
         if (!currentUserDetails?.data?.user?.id) {
-            console.error('No user details available');
             return;
         }
 
@@ -78,7 +77,6 @@ function BakeHistoryCard({ bakeDetail, likeDetails, modDetails, currentUserDetai
             .single();
   
         if (error) {
-            console.error('Error checking like status:', error);
         } else {
             setIsLiked(!!data);
         }
@@ -86,7 +84,6 @@ function BakeHistoryCard({ bakeDetail, likeDetails, modDetails, currentUserDetai
   
     const toggleLike = async () => {
         if (!currentUserDetails?.data?.user?.id) {
-            console.error('No user details available');
             return;
         }
 
@@ -114,12 +111,11 @@ function BakeHistoryCard({ bakeDetail, likeDetails, modDetails, currentUserDetai
                 setLikeCount(prev => prev + 1);
             }
         } catch (error) {
-            console.error('Error toggling like:', error);
         }
     };
 
     return (
-        <div className='recipeCheckPanel border-2 border-primary w-full mx-auto bg-secondary p-4 rounded-lg'>
+        <div className='recipeCheckPanel border-2 border-primary w-3/5 mx-auto bg-secondary p-4 rounded-lg'>
             <div className="flex flex-col md:flex-row gap-4">
                 <div className="md:w-1/2">
                     <DateMarker date={bakeDetail.baked_at} />
@@ -182,7 +178,6 @@ function BakeHistoryView() {
     useEffect(() => {
         async function fetchBakeDetails() {
             if (!username || !recipeid) {
-                console.error("Missing required parameters:", { username, recipeid });
                 setError("Missing required parameters");
                 setIsLoading(false);
                 return;
@@ -197,7 +192,6 @@ function BakeHistoryView() {
                     .single();
                         
                 if (userError) {
-                    console.error("Error fetching user:", userError);
                     throw userError;
                 }
                 setProfileData(userData);  // Save the profile data
@@ -238,7 +232,6 @@ function BakeHistoryView() {
                 setModificationDetails(modResponse.data);
                 setCurrentUserDetails(userResponse);
             } catch (error) {
-                console.error('Fetch error:', error);
                 setError(error.message);
             } finally {
                 setIsLoading(false);

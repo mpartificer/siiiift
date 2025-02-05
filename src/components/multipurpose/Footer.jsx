@@ -35,7 +35,6 @@ function Footer() {
           }
         }
       } catch (error) {
-        console.error('Error fetching user_profile:', error);
         if (isMounted) setIsLoading(false);
       }
     }

@@ -102,7 +102,6 @@ const RecipeDropDown = () => {
             setSelectedRecipe(recipeId)
             setIsRecipeDropdownOpen(false)
         } catch (err) {
-            console.error('Error:', err)
             setError(err.message)
         }
     }
@@ -120,7 +119,6 @@ const RecipeDropDown = () => {
                 if (recipeError) throw recipeError
                 setRecipeData(recipeData)
             } catch (err) {
-                console.error('Error:', err)
                 setError(err.message)
             } finally {
                 setLoading(false)

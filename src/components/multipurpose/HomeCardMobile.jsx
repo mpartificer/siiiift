@@ -27,11 +27,6 @@ function PostReactionBox({ currentUserId, username, recipeId, userId, bakeId }) 
       .eq('bake_id', bakeId);
   
     if (error) {
-      console.error('Error checking like status:', {
-        code: error.code,
-        msg: error.message,
-        details: error.details
-      });
     } else {
       setIsLiked(data && data.length > 0);
     }
@@ -48,7 +43,6 @@ function PostReactionBox({ currentUserId, username, recipeId, userId, bakeId }) 
         .eq('bake_id', bakeId);
 
       if (error) {
-        console.error('Error removing like:', error);
       } else {
         setIsLiked(false);
       }
@@ -58,7 +52,6 @@ function PostReactionBox({ currentUserId, username, recipeId, userId, bakeId }) 
         .insert({ user_id: currentUserId, bake_id: bakeId, recipe_id: recipeId });
 
       if (error) {
-        console.error('Error adding like:', error);
       } else {
         setIsLiked(true);
       }

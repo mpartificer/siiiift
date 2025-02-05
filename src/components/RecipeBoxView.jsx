@@ -36,7 +36,6 @@ function RecipeBoxView() {
   useEffect(() => {
     async function fetchUserAndRecipes() {
       if (!userId) {
-        console.error('No userId provided');
         setIsLoading(false);
         return;
       }
@@ -67,7 +66,6 @@ function RecipeBoxView() {
         setUserDetails(userData);
         setSavedRecipes(recipesData);
       } catch (error) {
-        console.error('Error fetching data:', error);
       } finally {
         setIsLoading(false);
       }

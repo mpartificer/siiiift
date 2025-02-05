@@ -86,7 +86,6 @@ function FollowersView(){
 
         setSearchResults(viewData || []);
       } catch (error) {
-        console.error('Detailed error:', error);
         setError(`Error fetching data: ${error.message}`);
       } finally {
         setIsLoading(false);

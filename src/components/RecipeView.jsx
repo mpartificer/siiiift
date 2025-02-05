@@ -34,12 +34,10 @@ function RecipeOptions({ originalLink, recipeId, currentUserId, onBakesClick }) 
                 .single();
 
             if (error && error.code !== 'PGRST116') {
-                console.error('Error checking save status:', error);
             }
 
             setIsSaved(!!data);
         } catch (error) {
-            console.error('Error checking save status:', error);
         } finally {
             setIsLoading(false);
         }
@@ -72,7 +70,6 @@ function RecipeOptions({ originalLink, recipeId, currentUserId, onBakesClick }) 
 
             setIsSaved(!isSaved);
         } catch (error) {
-            console.error('Error toggling save:', error);
         } finally {
             setIsLoading(false);
         }
@@ -122,7 +119,6 @@ function RecipeCheckPanel(props) {
     const confirmRecipeItem = props.confirmRecipeItem;
 
     if (!Array.isArray(propInsert)) {
-        console.error(`PropInsert is not an array for ${confirmRecipeItem}`);
         return <div>Error: Invalid data format</div>;
     }
 
@@ -142,7 +138,6 @@ function RecipeCheckPanel(props) {
             return <li key={index} className="mb-2">{index + 1}. {instruction}</li>;
         });
     } else {
-        console.error(`Unknown confirmRecipeItem: ${confirmRecipeItem}`);
         return <div>Error: Unknown recipe item type</div>;
     }
 
@@ -258,7 +253,6 @@ function BakesList({ recipeId, currentUserId, isMobile }) {
                 if (error) throw error;
                 setBakes(data || []);
             } catch (error) {
-                console.error('Error fetching bakes:', error);
             } finally {
                 setIsLoading(false);
             }
@@ -317,7 +311,6 @@ function RecipeView() {
                     setCurrentUserId(null);
                 }
             } catch (error) {
-                console.error('Error checking auth status:', error);
                 setCurrentUserId(null);
             } finally {
                 setAuthChecked(true);
@@ -409,7 +402,6 @@ function RecipeView() {
                 setSavesCount(savesResponse.count || 0);
                 setBakesCount(bakesResponse.count || 0);
             } catch (error) {
-                console.error('Error fetching data:', error);
             } finally {
                 setIsLoading(false);
             }

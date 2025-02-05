@@ -55,7 +55,6 @@ function LogInView() {
 
       
     } catch (error) {
-      console.error('Sign in error:', error)
       alert(error.message)
     } finally {
       setLoading(false)

@@ -41,7 +41,6 @@ function ForgotPasswordView() {
       navigate('/login')
 
     } catch (error) {
-      console.error('Error:', error)
       alert(error.message)
     } finally {
       setLoading(false)

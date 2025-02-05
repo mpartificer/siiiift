@@ -74,7 +74,6 @@ function ProfilePlateMobile(props) {
     const fetchCurrentUser = async () => {
       const { data: { user }, error } = await supabase.auth.getUser();
       if (error) {
-        console.error('Error fetching current user:', error);
         return;
       }
       setCurrentUserId(user?.id || null);
@@ -115,7 +114,6 @@ function ProfilePlateDesktop(props) {
     const fetchCurrentUser = async () => {
       const { data: { user }, error } = await supabase.auth.getUser();
       if (error) {
-        console.error('Error fetching current user:', error);
         return;
       }
       setCurrentUserId(user?.id || null);
@@ -180,7 +178,6 @@ function ContentCap({ userId }) {
       .order('baked_at', { ascending: false });
 
     if (error) {
-      console.error('Error fetching bakes:', error);
     } else {
       setBakes(data);
     }
@@ -193,7 +190,6 @@ function ContentCap({ userId }) {
       .eq('user_id', userId);
 
     if (error) {
-      console.error('Error fetching saved recipes:', error);
     } else {
       setSavedRecipes(data);
     }
@@ -318,7 +314,6 @@ function ProfileView() {
       setIsLoading(false);
   
     } catch (error) {
-      console.error('Error fetching user data:', error);
       setIsLoading(false);
     }
   };

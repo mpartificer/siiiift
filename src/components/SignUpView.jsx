@@ -101,8 +101,6 @@ function SignUpView() {
       navigate('/login')
   
     } catch (error) {
-      console.error('Caught error:', error)
-      // Only show generic error message if it's not a username conflict
       if (!usernameError) {
         alert(error.message)
       }

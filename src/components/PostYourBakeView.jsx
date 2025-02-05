@@ -103,7 +103,6 @@ function PostYourBakeView() {
         { type: 'image/jpeg' }
       );
     } catch (error) {
-      console.error('Error converting HEIC file:', error);
       throw new Error('Failed to convert HEIC file');
     }
   }
@@ -325,11 +324,9 @@ function PostYourBakeView() {
       
 
       .catch(error => {
-        console.error('AI Analysis Error:', error);
         if (error.response) {
           // Get more details about the HTTP error
           error.response.text().then(text => {
-            console.error('Edge function response:', text);
           });
         }
         addGlobalToast({
@@ -339,7 +336,6 @@ function PostYourBakeView() {
       });
   
     } catch (err) {
-      console.error('Error:', err);
       setError(err.message);
     } finally {
       setIsUploading(false);

@@ -22,7 +22,6 @@ serve(async (req) => {
   try {
     // Parse request body
     const body = await req.json()
-    console.log('Request body:', JSON.stringify(body))
 
     const { 
       imageUrls, 
@@ -44,7 +43,6 @@ serve(async (req) => {
     }
 
     // Analyze images
-    console.log('Starting image analysis')
     const imageAnalysisPromises = imageUrls.map(async (url) => {
       const imageResponse = await fetch(url);
       const imageBlob = await imageResponse.blob();
@@ -102,7 +100,6 @@ serve(async (req) => {
     // Combine all analyses for final insights
     const imageInsights = imageAnalyses.join("\n")
     
-    console.log('Generating final analysis')
     const finalPrompt = `You are providing feedback on a user's bake of "${recipeTitle}". 
       Based on my analysis of the provided image(s) and ${hasModifications ? 'the recipe modifications they made' : 'the original recipe execution'}:
 
@@ -131,7 +128,6 @@ serve(async (req) => {
     )
 
   } catch (error) {
-    console.error('Error in edge function:', error)
     return new Response(
       JSON.stringify({ 
         error: error.message,

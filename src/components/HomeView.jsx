@@ -41,7 +41,6 @@ function HomeView() {
           setIsLoading(false);
         }
       } catch (error) {
-        console.error('Error fetching data:', error);
         if (isMounted) setIsLoading(false);
       }
     }

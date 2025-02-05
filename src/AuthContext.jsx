@@ -14,7 +14,6 @@ export function AuthProvider({ children }) {
       const { data: { session }, error } = await supabase.auth.getSession()
       
       if (error) {
-        console.error('Session error:', error)
       }
 
       // only update the react state if the component is still mounted

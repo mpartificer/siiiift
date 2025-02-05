@@ -85,7 +85,6 @@ function SearchView() {
       setAllSearchResults(results);
       filterResults(results, activeFilter);
     } catch (error) {
-      console.error('Error performing search:', error);
       setError('An error occurred while searching. Please try again.');
     } finally {
       setIsLoading(false);
