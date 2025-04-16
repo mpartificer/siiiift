@@ -65,7 +65,7 @@ function FollowersView() {
         console.log(`Fetching profile for user ${userId}`);
 
         const profileResponse = await axios.get(
-          `${API_BASE_URL}/follows/${userId}/profile`,
+          `${API_BASE_URL}/users/${userId}/profile`,
           config
         );
 
@@ -81,7 +81,7 @@ function FollowersView() {
 
         const endpoint = measure === "followers" ? "followers" : "following";
         const viewResponse = await axios.get(
-          `${API_BASE_URL}/follows/${userId}/${endpoint}`,
+          `${API_BASE_URL}/users/${userId}/${endpoint}`,
           config
         );
 
