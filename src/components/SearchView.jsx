@@ -44,8 +44,8 @@ function SearchFilterBar({ activeFilter, setActiveFilter }) {
 
 function SearchView() {
   const location = useLocation();
-  const currentUserId = location.state?.userId;
-  const { getToken } = useAuth();
+  const { user, getToken } = useAuth();
+  const currentUserId = user?.id;
 
   const [searchTerm, setSearchTerm] = useState("");
   const [allSearchResults, setAllSearchResults] = useState([]);
@@ -80,38 +80,19 @@ function SearchView() {
       );
 
       console.log("API Response:", response.data);
-      console.log("Response data type:", typeof response.data);
 
-      // Log specific parts of the response to understand structure
-      if (response.data && typeof response.data === "object") {
-        console.log("Response keys:", Object.keys(response.data));
-        if (response.data.recipes) {
-          console.log("Recipes count:", response.data.recipes.length);
-          console.log("First recipe sample:", response.data.recipes[0]);
-        }
-        if (response.data.users) {
-          console.log("Users count:", response.data.users.length);
-          console.log("First user sample:", response.data.users[0]);
-        }
-        if (response.data.all) {
-          console.log("All items count:", response.data.all.length);
-          console.log("First item sample:", response.data.all[0]);
-        }
-      }
-
-      // Check response structure and handle accordingly
       if (response.data && typeof response.data === "object") {
         let results = [];
 
-        // Handle case where response.data.all exists
-        if (Array.isArray(response.data.all)) {
-          results = response.data.all;
-          console.log("Using response.data.all:", results.length, "items");
-        }
         // Handle case where response.data itself is the array
-        else if (Array.isArray(response.data)) {
+        if (Array.isArray(response.data)) {
           results = response.data;
           console.log("Using response.data as array:", results.length, "items");
+        }
+        // Handle case where response.data.all exists
+        else if (Array.isArray(response.data.all)) {
+          results = response.data.all;
+          console.log("Using response.data.all:", results.length, "items");
         }
         // Handle case where response contains userResults and recipeResults
         else if (response.data.userResults || response.data.recipeResults) {
@@ -161,11 +142,42 @@ function SearchView() {
           );
         }
 
-        // Store all results
-        setAllSearchResults(results);
+        // Log all results to help debug
+        console.log("Processed search results:", results);
+
+        // Ensure each result has the correct ID properties
+        const normalizedResults = results.map((result) => {
+          // Make a copy to avoid modifying the original
+          const normalizedResult = { ...result };
+
+          if (normalizedResult.type === "user") {
+            // Ensure userId is set correctly based on various possible ID fields
+            normalizedResult.userId =
+              normalizedResult.userId ||
+              normalizedResult.user_auth_id ||
+              normalizedResult.id;
+
+            console.log(
+              `User result: id=${normalizedResult.id}, userId=${normalizedResult.userId}, username=${normalizedResult.username}`
+            );
+          } else if (normalizedResult.type === "recipe") {
+            // Ensure recipeId is set correctly
+            normalizedResult.recipeId =
+              normalizedResult.recipeId || normalizedResult.id;
+
+            console.log(
+              `Recipe result: id=${normalizedResult.id}, recipeId=${normalizedResult.recipeId}, title=${normalizedResult.title}`
+            );
+          }
+
+          return normalizedResult;
+        });
+
+        // Store normalized results
+        setAllSearchResults(normalizedResults);
 
         // Initial filtering based on current activeFilter
-        filterResults(results, activeFilter);
+        filterResults(normalizedResults, activeFilter);
       } else {
         console.error("Unexpected API response format:", response.data);
         setError("Received unexpected data format from server");
@@ -235,38 +247,27 @@ function SearchView() {
 
             <div className="flex flex-col gap-2 md:gap-4">
               {filteredResults && filteredResults.length > 0
-                ? filteredResults.map((result) => {
-                    console.log("Rendering result:", result);
-                    return (
-                      <SearchResult
-                        key={
-                          result.id ||
-                          `${result.type}-${result.userId || result.recipeId}`
-                        }
-                        id={result.id}
-                        currentUserId={currentUserId}
-                        searchReturnValue={
-                          result.type === "user"
-                            ? result.username
-                            : result.title
-                        }
-                        imageUrl={
-                          result.type === "user"
-                            ? result.photo
-                            : result.images?.[0]
-                        }
-                        type={result.type}
-                        userId={
-                          result.userId ||
-                          (result.type === "user" ? result.id : null)
-                        }
-                        recipeId={
-                          result.recipeId ||
-                          (result.type === "recipe" ? result.id : null)
-                        }
-                      />
-                    );
-                  })
+                ? filteredResults.map((result, index) => (
+                    <SearchResult
+                      key={`${result.type}-${
+                        result.userId || result.recipeId || index
+                      }`}
+                      currentUserId={currentUserId}
+                      searchReturnValue={
+                        result.type === "user" ? result.username : result.title
+                      }
+                      imageUrl={
+                        result.type === "user"
+                          ? result.photo
+                          : result.images?.[0]
+                      }
+                      type={result.type}
+                      userId={result.type === "user" ? result.userId : null}
+                      recipeId={
+                        result.type === "recipe" ? result.recipeId : null
+                      }
+                    />
+                  ))
                 : !isLoading && <p></p>}
             </div>
           </div>
