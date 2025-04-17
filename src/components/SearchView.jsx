@@ -267,7 +267,7 @@ function SearchView() {
                       />
                     );
                   })
-                : !isLoading && <p>No results found</p>}
+                : !isLoading && <p></p>}
             </div>
           </div>
         </div>
