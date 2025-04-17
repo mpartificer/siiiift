@@ -13,7 +13,6 @@ import {
 import React from "react";
 import { useLocation } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
-import { supabase } from "../supabaseClient.js";
 import HomeCardMobile from "./multipurpose/HomeCardMobile";
 import { useAuth } from "../AuthContext";
 
