@@ -98,7 +98,6 @@ const RecipeDropDown = () => {
       name: "instructionModifications",
     });
 
-  // Helper to make authenticated API requests
   const apiRequest = async (url, method = "GET", data = null) => {
     try {
       const token = getToken();
@@ -128,7 +127,6 @@ const RecipeDropDown = () => {
     setValue("recipeTitle", recipeTitle);
 
     try {
-      // Get recipe details from the new backend endpoint
       const recipeDetails = await apiRequest(`/api/recipes/${recipeId}`);
 
       if (!recipeDetails) throw new Error("Recipe details not found");
@@ -150,7 +148,6 @@ const RecipeDropDown = () => {
           throw new Error("User not authenticated");
         }
 
-        // Get user's saved recipes from the new dropdown-specific endpoint
         const savedRecipes = await apiRequest(
           `/api/recipes/dropdown-data/${user.id}`
         );

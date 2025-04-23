@@ -16,31 +16,20 @@ function Footer() {
   const API_URL =
     import.meta.env.VITE_APP_API_URL || "http://localhost:8080/api";
 
-  // Debug information
-  console.log("Footer component rendered");
-
   useEffect(() => {
-    console.log("Footer useEffect triggered");
     let isMounted = true;
 
     async function fetchUserDetails() {
-      console.log("Fetching user details...");
-
       if (!isMounted) {
-        console.log("Component unmounted, aborting fetch");
         return;
       }
 
       try {
-        // First get the authenticated user from Supabase
-        console.log("Getting user from Supabase");
         const authResponse = await supabase.auth.getUser();
-        console.log("Supabase auth response:", authResponse);
 
         const user = authResponse.data.user;
 
         if (!user) {
-          console.log("No user found in Supabase");
           if (isMounted) {
             setError("No authenticated user found");
             setIsLoading(false);
@@ -48,25 +37,17 @@ function Footer() {
           return;
         }
 
-        console.log("User found in Supabase:", user.id);
         const userId = user.id;
 
-        // Set basic user details from Supabase immediately so we have something to work with
-        // This serves as a fallback if the API call fails
         setUserDetails({
           user_auth_id: userId,
           username: user.email ? user.email.split("@")[0] : "user", // Fallback username from email
           email: user.email || "unknown",
-          // Add any other fields your app requires
         });
 
-        // Get token for API request
-        console.log("Getting auth token");
         const token = getToken();
-        console.log("Token retrieved:", token ? "Yes" : "No");
 
         if (!token) {
-          console.log("No valid token found");
           if (isMounted) {
             setError("Your session has expired. Please log in again.");
             setIsLoading(false);
@@ -81,10 +62,6 @@ function Footer() {
           },
         };
 
-        // Use the API endpoint to get user profile
-        console.log(`Making API request to ${API_URL}/users/${userId}/`);
-
-        // Set a timeout for the API request
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 5000);
 
@@ -95,11 +72,8 @@ function Footer() {
           });
 
           clearTimeout(timeoutId);
-          console.log("API response:", response.data);
-
           if (isMounted) {
             if (response.data && response.data.success) {
-              console.log("Setting user details from API:", response.data.data);
               setUserDetails(response.data.data);
             }
           }
@@ -109,7 +83,6 @@ function Footer() {
             "API request failed, using fallback user details:",
             apiError
           );
-          // We already set basic user details above, so we can continue
         } finally {
           if (isMounted) {
             setIsLoading(false);
@@ -129,40 +102,26 @@ function Footer() {
     fetchUserDetails();
 
     return () => {
-      console.log("Footer component cleanup");
       isMounted = false;
     };
   }, [getToken, API_URL]);
 
-  // Add fallback for loading state that's been active too long
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (isLoading) {
-        console.log("Loading timeout occurred");
         setIsLoading(false);
-        // Don't set an error if we have fallback user details
         if (!userDetails) {
           setError("Loading timed out. Navigation is still available.");
         }
       }
-    }, 5000); // Reduced to 5 second timeout
+    }, 5000);
 
     return () => clearTimeout(timeoutId);
   }, [isLoading, userDetails]);
 
-  console.log("Current component state:", {
-    isLoading,
-    error,
-    userDetailsExists: !!userDetails,
-  });
-
-  // If still loading, render an invisible placeholder to maintain layout but show nothing
   if (isLoading) return <div className="btm-nav invisible"></div>;
 
-  // Even if there's an error, if we have userDetails (from fallback), render the footer
   if (error && !userDetails) {
-    console.log("Error condition but proceeding with footer rendering");
-    // Instead of showing error, render the footer with limited functionality
     return (
       <div className="btm-nav footerBackground z-50">
         <button className="navIcons" onClick={() => navigate("/")}>
@@ -187,27 +146,19 @@ function Footer() {
   const userName = userDetails.username;
   const userId = userDetails.user_auth_id;
 
-  // Create user data object for navigation
   const userData = { userName: userName, userId: userId };
-  console.log("Navigation userData:", userData);
 
   const toUserProfile = () => {
-    console.log("Navigating to profile");
     navigate(`/profile/${userName}`, { state: userData });
   };
 
   const toUserRecipeBox = () => {
-    console.log("Navigating to recipe box");
     navigate("/recipebox", { state: userData });
   };
 
   const toSearch = () => {
-    console.log("Navigating to search");
     navigate("/search", { state: userData });
   };
-
-  // Render the footer navigation
-  console.log("Rendering footer navigation");
 
   return (
     <div className="btm-nav footerBackground z-50">
