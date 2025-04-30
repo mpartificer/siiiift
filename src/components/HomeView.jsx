@@ -72,7 +72,7 @@ function HomeView() {
           headers: headers,
         });
 
-        console.log("Response received:", response.status);
+        console.log("Response received:", response);
 
         if (isMounted) {
           setBakeDetails(response.data.bakeDetails || []);

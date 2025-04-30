@@ -267,7 +267,7 @@ function PostYourBakeView() {
       });
 
       // Send request to backend API
-      const response = await fetch(`${API_BASE_URL}/post-bake`, {
+      const response = await fetch(`${API_BASE_URL}/bakes/post-bake`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${session.access_token}`,
