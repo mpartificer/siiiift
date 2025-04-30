@@ -3,11 +3,11 @@
 @tailwind utilities;
 
 body {
-  background-color: #F2F2F2;
-  font-family: 'Inria Serif';
+  background-color: #f2f2f2;
+  font-family: "Inria Serif";
   width: 100vw;
   display: flex;
-  flex-direction:column;
+  flex-direction: column;
   justify-items: flex-start;
 }
 
@@ -19,7 +19,7 @@ button:focus {
   outline: none !important;
 }
 
-button:focus-visible{
+button:focus-visible {
   outline: none !important;
 }
 
@@ -32,18 +32,18 @@ ul {
 }
 
 .recipeCheckPanelList {
-  margin-left: 20px;
+  padding-left: 20px;
 }
 
 .bottomPanel {
-  margin-left:20px;
-  margin-right:20px;
-  margin-top:10px;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: 10px;
 }
 
 .header {
   font-size: 38px;
-  color:#496354;
+  color: #496354;
   /* padding-left: 20px; */
 }
 
@@ -55,26 +55,26 @@ ul {
 
 .footerBackground {
   background-color: #496354 !important;
-  width:100vw !important;
+  width: 100vw !important;
 }
 
 .recipeCheckPanel {
-  background-color: #EBD2AD;
+  background-color: #ebd2ad;
   border-radius: 20px;
-  color:#496354 !important;
+  color: #496354 !important;
 }
 
 .websiteRetrievalView {
   display: flex;
   flex-direction: column;
-  gap:10px;
+  gap: 10px;
   align-items: center;
 }
 
 .postReactionBox {
-  display:flex;
-  flex-direction:row;
-  gap:10px;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
 }
 
 .pageTitle {
@@ -104,8 +104,8 @@ ul {
 
 .carouselRecipeItem {
   display: flex;
-    flex: none;
-    scroll-snap-align: start;
+  flex: none;
+  scroll-snap-align: start;
 }
 .carousel-start .carouselRecipeItem {
   scroll-snap-align: start;
@@ -119,32 +119,32 @@ ul {
 .profileBlurb {
   font-size: 15px;
   border-radius: 20px;
-  background-color: #EBD2AD;
-  color:#496354; 
-  height:100%;
-  padding:10px;
+  background-color: #ebd2ad;
+  color: #496354;
+  height: 100%;
+  padding: 10px;
   width: 100%;
 }
 
 .customModification {
   font-size: 15px;
   border-radius: 20px;
-  background-color: #EBD2AD;
-  color:#496354; 
-  padding:10px;
-  width:350px;
+  background-color: #ebd2ad;
+  color: #496354;
+  padding: 10px;
+  width: 350px;
 }
 
 .profileSummary {
   display: flex;
   flex-direction: column;
   justify-items: center;
-  gap:10px;
+  gap: 10px;
 }
 
 .profilePlateTop {
-  display:flex;
-  flex-direction:row;
+  display: flex;
+  flex-direction: row;
   justify-content: space-between;
   align-items: center;
   /* margin-right: 20px;
@@ -152,31 +152,31 @@ ul {
 }
 
 .profilePlateBottom {
-  justify-content:space-evenly;
+  justify-content: space-evenly;
 }
 
 .profilePlate {
   display: flex;
   flex-direction: column;
-  gap:10px;
-  width:350px;
+  gap: 10px;
+  width: 350px;
 }
 
 .followTab {
   display: flex;
   flex-direction: column;
-  text-align:center;
+  text-align: center;
   align-items: center;
   justify-content: center;
-  color:#496354;
+  color: #496354;
 }
 
 .followBar {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  width:100%;
-  gap:25px;
+  width: 100%;
+  gap: 25px;
 }
 
 .searchBar {
@@ -184,42 +184,42 @@ ul {
   color: #496354;
   border-radius: 20px;
   padding: 0px;
-  border-style:solid;
+  border-style: solid;
   border-width: 1px;
-  font-family: 'Inria Serif';
+  font-family: "Inria Serif";
   font-size: 16px;
 }
 
 .searchDetail {
-  color:#EBD2AD;
+  color: #ebd2ad;
   display: flex;
   flex-direction: row;
   align-items: center;
   font-size: 15px;
-  padding-left:15px;
+  padding-left: 15px;
 }
 
 .searchResultButton {
-  background-color: #EBD2AD !important;
-  color:#496354;
+  background-color: #ebd2ad !important;
+  color: #496354;
   border-radius: 20px;
   border-style: solid;
-  border-width:1px;
-  text-align:center;
-  font-size:15px;
+  border-width: 1px;
+  text-align: center;
+  font-size: 15px;
   width: 72px;
-  height:32px;
-  padding:5px;
+  height: 32px;
+  padding: 5px;
   border-color: #496354;
-  margin-right:15px;
+  margin-right: 15px;
 }
 
 .searchFilter {
   padding-top: 0px;
-  padding-bottom:0px;
-  padding-left:15px;
+  padding-bottom: 0px;
+  padding-left: 15px;
   padding-right: 15px;
-  font-size:15px;
+  font-size: 15px;
 }
 
 .searchFilterBar {
@@ -245,13 +245,13 @@ ul {
   justify-content: space-between;
   align-items: center;
   border-radius: 20px;
-  height:87px;
+  height: 87px;
 }
 
 .followersView {
   display: flex;
   flex-direction: column;
-  gap:10px;
+  gap: 10px;
   align-items: center;
 }
 
@@ -260,10 +260,10 @@ ul {
 }
 
 .logInView {
-  display:flex;
-  flex-direction:column;
-  height:100vh;
-  width:100vw;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
   justify-content: center;
   align-items: center;
   gap: 10px;
@@ -272,19 +272,19 @@ ul {
 .loginBar {
   width: 250px;
   height: 50px;
-  background-color: #EBD2AD;
-  font-family:'Inria Serif';
-  font-size:24px;
-  border-radius:20px;
-  border-style:solid;
-  border-width:1px;
+  background-color: #ebd2ad;
+  font-family: "Inria Serif";
+  font-size: 24px;
+  border-radius: 20px;
+  border-style: solid;
+  border-width: 1px;
   text-align: center;
-  color:#000000;
+  color: #000000;
 }
 
 .logInGreeting {
   font-size: 38px;
-  color:#496354;
+  color: #496354;
 }
 
 .logInSubGreeting {
@@ -294,62 +294,62 @@ ul {
 
 .signUpButton {
   font-size: 16px;
-  background-color: #F8EFEA !important;
-  color:#496354;
+  background-color: #f8efea !important;
+  color: #496354;
   text-decoration: underline;
-  padding:0px;
+  padding: 0px;
 }
 
 .bigSubmitButton {
   background-color: #496354;
-  color: #EBD2AD;
+  color: #ebd2ad;
   font-size: 30px;
   border-radius: 20px;
-  padding-left:20px;
-  padding-right:20px;
+  padding-left: 20px;
+  padding-right: 20px;
   padding-top: 10px;
-  padding-bottom:10px;
-  margin-bottom:10px;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
   margin-top: 10px;
 }
 
 .upperBioFlexParent {
-  display:flex;
-  flex-direction:row;
-  justify-content:space-between;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .settingWithToggle {
-  display:flex;
-  flex-direction:row;
-  justify-content:space-between;
-  color:#496354;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  color: #496354;
   align-items: center;
-  font-size:20px
+  font-size: 20px;
 }
 
 .settingNoToggle {
-  color:#496354;
-  font-size:20px;
+  color: #496354;
+  font-size: 20px;
 }
 
 .modificationDropDown {
   width: 350px;
   height: 50px;
-  background-color: #EBD2AD;
-  font-family:'Inria Serif';
-  font-size:15px;
-  border-radius:20px;
-  border-style:solid;
-  border-width:1px;
+  background-color: #ebd2ad;
+  font-family: "Inria Serif";
+  font-size: 15px;
+  border-radius: 20px;
+  border-style: solid;
+  border-width: 1px;
   text-align: center;
-  color:#000000;
+  color: #000000;
   align-self: center;
 }
 
 .dayMonthDateEntry {
-  background-color: #EBD2AD;
-  color:#496354;
+  background-color: #ebd2ad;
+  color: #496354;
   border-radius: 20px;
   width: 12%;
   margin-left: 10px;
@@ -358,8 +358,8 @@ ul {
 }
 
 .yearDateEntry {
-  background-color: #EBD2AD;
-  color:#496354;
+  background-color: #ebd2ad;
+  color: #496354;
   border-radius: 20px;
   width: 24%;
   margin-left: 10px;
@@ -368,9 +368,9 @@ ul {
 }
 
 .recipeBoxCardImg {
-  max-height:250px;
+  max-height: 250px;
   min-height: 100%;
-  max-width:50%;
+  max-width: 50%;
 }
 
 .recipeImg {
@@ -378,13 +378,13 @@ ul {
   height: 350px;
   object-fit: cover;
   border-radius: 20px;
-  overflow:hidden;
+  overflow: hidden;
 }
 
 .recipeImgMobile {
-  width:100px;
-  height:100px;
-  object-fit:cover;
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
   border-radius: 20px;
   overflow: hidden;
 }
