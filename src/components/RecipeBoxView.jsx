@@ -83,7 +83,7 @@ function RecipeBoxView() {
         console.log(response);
 
         setUserDetails(response.data.username);
-        setSavedRecipes(response.data.savedRecipes.data);
+        setSavedRecipes(response.data.savedRecipes);
       } catch (error) {
       } finally {
         setIsLoading(false);
