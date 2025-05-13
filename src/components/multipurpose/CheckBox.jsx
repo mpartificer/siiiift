@@ -7,7 +7,7 @@ function CheckBox(props) {
         <span>confirm {props.confirmRecipeItem}?</span>
         <input
           type="checkbox"
-          className="checkbox checkbox-accent border-width-2 border-primary"
+          className="checkbox checkbox-accent self-end border-width-2 border-primary"
         />
       </label>
     </div>
