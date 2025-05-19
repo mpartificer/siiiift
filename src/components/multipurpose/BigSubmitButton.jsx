@@ -1,13 +1,33 @@
-import '../../App.css'
-import { useNavigate } from 'react-router-dom';
+import "../../App.css";
+import { useNavigate } from "react-router-dom";
 
 function BigSubmitButton(props) {
-    const path = props.path;
-    const navigate = useNavigate();
-  
-    return (
-          <button className='bigSubmitButton' onClick={() => navigate(path)}>{props.submitValue}</button>
-    )
+  const { path, onClick, submitValue, disabled } = props;
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    if (disabled) {
+      return;
+    }
+
+    if (onClick) {
+      onClick();
+    } else if (path) {
+      navigate(path);
+    }
+  };
+
+  return (
+    <button
+      className={`bigSubmitButton ${
+        disabled ? "opacity-70 cursor-not-allowed" : ""
+      }`}
+      onClick={handleClick}
+      disabled={disabled}
+    >
+      {submitValue}
+    </button>
+  );
 }
 
-export default BigSubmitButton
+export default BigSubmitButton;

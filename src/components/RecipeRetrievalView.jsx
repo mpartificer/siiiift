@@ -12,6 +12,11 @@ function RecipeCheckPanel(props) {
   const [isEditing, setIsEditing] = useState(false);
   const [items, setItems] = useState(propInsert || []);
 
+  // Update items when propInsert changes
+  useEffect(() => {
+    setItems(propInsert || []);
+  }, [propInsert]);
+
   const toggleEdit = () => {
     setIsEditing(!isEditing);
 
@@ -149,9 +154,10 @@ function InputSelector() {
     cookTime: "",
     totalTime: "",
     originalAuthor: "",
-    defaultImage: "",
-    originalText: "", // Store original OCR text for reference
+    defaultImage: "", // Keep this for display but don't send to server
+    originalText: "",
   });
+  const [error, setError] = useState(null);
   const { getToken, user } = useAuth();
 
   const API_BASE_URL =
@@ -214,7 +220,7 @@ function InputSelector() {
     }
   };
 
-  // Handle recipe field updates from  panels
+  // Handle recipe field updates from panels
   const handleRecipeFieldUpdate = (fieldName, fieldValue) => {
     const updatedRecipe = { ...extractedRecipe };
 
@@ -253,7 +259,31 @@ function InputSelector() {
       return;
     }
 
+    setIsLoading(true);
+    setError(null);
+
     try {
+      console.log("Saving recipe to database");
+
+      // Format the recipe data according to what the backend expects
+      // Explicitly exclude the defaultImage property
+      const recipeDataToSend = {
+        title: extractedRecipe.title || "Untitled Recipe",
+        ingredients: extractedRecipe.ingredients || [],
+        instructions: extractedRecipe.instructions || [],
+        prep_time: extractedRecipe.prepTime || "",
+        cook_time: extractedRecipe.cookTime || "",
+        total_time: extractedRecipe.totalTime || "",
+        original_link: extractedRecipe.originalAuthor || "Unknown",
+        // Note: we're not including the image data at all
+      };
+
+      // Log the data being sent to help debug
+      console.log("Sending recipe data:", {
+        userId: user.id,
+        recipeData: recipeDataToSend,
+      });
+
       const token = getToken();
       const response = await fetch(`${API_BASE_URL}/recipes/store-recipe`, {
         method: "POST",
@@ -263,19 +293,46 @@ function InputSelector() {
         },
         body: JSON.stringify({
           userId: user.id,
-          recipeData: extractedRecipe,
+          recipeData: recipeDataToSend,
         }),
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        alert("Recipe saved successfully!");
-      } else {
-        alert("Error saving recipe. Please try again.");
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Server error response:", errorText);
+
+        let errorMessage;
+        try {
+          const errorData = JSON.parse(errorText);
+          errorMessage =
+            errorData.error || errorData.message || "Unknown server error";
+        } catch (e) {
+          errorMessage = errorText || "Unknown server error";
+        }
+
+        throw new Error(errorMessage);
       }
+
+      const data = await response.json();
+      alert("Recipe saved successfully!");
+
+      // Clear the form after success
+      setExtractedRecipe({
+        title: "",
+        ingredients: [],
+        instructions: [],
+        prepTime: "",
+        cookTime: "",
+        totalTime: "",
+        originalAuthor: "",
+        defaultImage: "",
+        originalText: "",
+      });
     } catch (error) {
       console.error("Error saving recipe:", error);
-      alert("Error saving recipe. Please try again.");
+      setError(error.message || "Error saving recipe. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -318,7 +375,7 @@ function InputSelector() {
             onSubmit={handleUrlSubmit}
             isLoading={isLoading}
           />
-          {isLoading && (
+          {isLoading && !extractedRecipe.title && (
             <div className="mt-2 text-center">
               <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-accent border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
               <p className="mt-2 text-sm text-gray-600">Processing URL...</p>
@@ -330,6 +387,12 @@ function InputSelector() {
           onImagesSelected={handleImagesSelected}
           onRecipeExtracted={handleRecipeExtracted}
         />
+      )}
+
+      {error && (
+        <div className="mt-4 p-3 bg-red-50 text-red-700 rounded-md">
+          <p className="font-medium">Error: {error}</p>
+        </div>
       )}
 
       {/* Recipe display panels only show when we have data */}
@@ -402,10 +465,12 @@ function InputSelector() {
             onItemUpdate={handleRecipeFieldUpdate}
           />
 
-          {/* Recipe image display */}
+          {/* Recipe image display - keep just for display purposes */}
           {extractedRecipe.defaultImage && (
             <div className="mt-4">
-              <p className="font-medium mb-2">Recipe Image</p>
+              <p className="font-medium mb-2">
+                recipe image (preview only - will not be saved)
+              </p>
               <img
                 src={
                   typeof extractedRecipe.defaultImage === "string"
@@ -419,7 +484,11 @@ function InputSelector() {
           )}
 
           <div className="mt-6">
-            <BigSubmitButton submitValue="Save Recipe" onClick={saveRecipe} />
+            <BigSubmitButton
+              submitValue={isLoading ? "Saving..." : "Save Recipe"}
+              onClick={saveRecipe}
+              disabled={isLoading}
+            />
           </div>
         </div>
       )}
@@ -464,7 +533,7 @@ function RecipeRetrievalView() {
       <HeaderFooter>
         <div className="max-w-3xl mx-auto px-4 py-8">
           <h1 className="text-2xl font-bold text-center mb-6">
-            Recipe Extractor
+            recipe extractor
           </h1>
 
           <InputSelector />

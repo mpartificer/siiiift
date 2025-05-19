@@ -14,6 +14,7 @@
     "@hookform/resolvers": "^3.10.0",
     "@supabase/supabase-js": "^2.45.4",
     "axios": "^1.8.4",
+    "heic-to": "^1.1.13",
     "heic2any": "^0.0.4",
     "lucide-react": "^0.436.0",
     "react": "^18.3.1",
