@@ -158,22 +158,14 @@ function RecipeCheckPanel(props) {
   if (confirmRecipeItem === "ingredients") {
     myComponentList = propInsert.map((item, index) => {
       if (typeof item === "object" && item !== null) {
-        return (
-          <li key={index}>
-            {item.amount} {item.substance}
-          </li>
-        );
+        return <li key={index}>{item}</li>;
       } else {
-        return (
-          <li key={index}>
-            {JSON.stringify(item.amount)} {JSON.stringify(item.substance)}
-          </li>
-        );
+        return <li key={index}>{item}</li>;
       }
     });
   } else if (confirmRecipeItem === "instructions") {
     myComponentList = propInsert.map((item, index) => {
-      const instruction = typeof item === "string" ? item : item.instruction;
+      const instruction = typeof item === "string" ? item : item;
       return (
         <li key={index} className="mb-2">
           {index + 1}. {instruction}
@@ -185,9 +177,9 @@ function RecipeCheckPanel(props) {
   }
 
   return (
-    <div className="recipeCheckPanel w-350">
+    <div className="recipeCheckPanel p-4 w-350">
       <RecipeCheckTitle recipeCheckTitle={confirmRecipeItem} />
-      <ul className="recipeCheckPanelList">{myComponentList}</ul>
+      <ul className="pl-1.5">{myComponentList}</ul>
     </div>
   );
 }
