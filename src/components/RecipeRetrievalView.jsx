@@ -168,12 +168,75 @@ function InputSelector() {
   };
 
   const handleRecipeExtracted = (recipeData) => {
-    console.log("Recipe extracted:", recipeData);
-    setExtractedRecipe(recipeData);
-    setIsLoading(false);
+    console.log("Raw recipe data received:", recipeData);
+
+    try {
+      // Handle case where the data is already a JavaScript object
+      let parsedData;
+
+      if (typeof recipeData === "string") {
+        // Clean up the string if it contains code blocks
+        let cleanedJsonString = recipeData;
+
+        // Remove ```json from the beginning if present
+        if (cleanedJsonString.startsWith("```json")) {
+          cleanedJsonString = cleanedJsonString.substring(7);
+        } else if (cleanedJsonString.startsWith("```")) {
+          cleanedJsonString = cleanedJsonString.substring(3);
+        }
+
+        // Remove ``` from the end if present
+        if (cleanedJsonString.endsWith("```")) {
+          cleanedJsonString = cleanedJsonString.substring(
+            0,
+            cleanedJsonString.length - 3
+          );
+        }
+
+        cleanedJsonString = cleanedJsonString.trim();
+        console.log("Cleaned JSON string:", cleanedJsonString);
+
+        // Parse the cleaned JSON string
+        try {
+          parsedData = JSON.parse(cleanedJsonString);
+          console.log("Successfully parsed JSON:", parsedData);
+        } catch (jsonError) {
+          console.error("Error parsing JSON:", jsonError);
+          setError("Failed to parse recipe data. Please try again.");
+          setIsLoading(false);
+          return;
+        }
+      } else {
+        // If it's already an object, use it directly
+        parsedData = recipeData;
+      }
+
+      // Now update the state with the parsed data using functional update to preserve values
+      setExtractedRecipe((prevState) => ({
+        title: parsedData.title || "",
+        ingredients: parsedData.ingredients || [],
+        instructions: parsedData.instructions || [],
+        prepTime: parsedData.prep_time || "",
+        cookTime: parsedData.cook_time || "",
+        totalTime: parsedData.total_time || "",
+        originalAuthor: parsedData.original_author || "",
+        defaultImage: prevState.defaultImage, // Preserve existing value
+        originalText: parsedData.original_text || "",
+      }));
+
+      console.log(
+        "State update dispatched with recipe title:",
+        parsedData.title
+      );
+    } catch (error) {
+      console.error("Error processing recipe data:", error);
+      setError("Failed to process recipe data: " + error.message);
+    } finally {
+      setIsLoading(false);
+    }
 
     // If there was an OCR error, show a notification
-    if (recipeData.ocrError) {
+    if (recipeData && recipeData.ocrError) {
       alert(
         "OCR processing encountered an error. You can still enter the recipe details manually."
       );
@@ -343,6 +406,14 @@ function InputSelector() {
     setShowOriginalText(!showOriginalText);
   };
 
+  // Add a useEffect to log state AFTER it has updated for debugging
+  useEffect(() => {
+    console.log(
+      "extractedRecipe state after update (via useEffect):",
+      extractedRecipe
+    );
+  }, [extractedRecipe]);
+
   return (
     <div className="mb-6">
       <div className="flex grow space-x-4 mb-4">
@@ -395,8 +466,10 @@ function InputSelector() {
         </div>
       )}
 
-      {/* Recipe display panels only show when we have data */}
-      {extractedRecipe.title && (
+      {/* Recipe display panels - modified to show with any valid content */}
+      {(extractedRecipe.title ||
+        extractedRecipe.ingredients.length > 0 ||
+        extractedRecipe.instructions.length > 0) && (
         <div className="space-y-4 mt-6">
           {/* Original OCR Text Toggle */}
           {extractedRecipe.originalText && (
