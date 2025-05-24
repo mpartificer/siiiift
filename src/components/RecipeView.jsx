@@ -19,6 +19,8 @@ import { useAuth } from "../AuthContext";
 // API base URL - should be configured from environment variables in a real app
 const API_BASE_URL =
   import.meta.env.REACT_APP_API_URL || "http://localhost:8080/api";
+const DEFAULT_IMAGE_URL =
+  "https://iivozawppltyhsrkixlk.supabase.co/storage/v1/object/public/recipe-images//ChatGPT%20Image%20May%2019,%202025,%2003_17_24%20PM.png";
 
 function RecipeOptions({
   originalLink,
@@ -308,8 +310,9 @@ function BakesList({ recipeId, currentUserId, isMobile }) {
     fetchBakes();
   }, [recipeId, getToken]);
 
-  if (isLoading) return <div>Loading bakes...</div>;
-  if (bakes.length === 0) return <div>No bakes yet</div>;
+  if (isLoading) return <div className="text-center">Loading bakes...</div>;
+  if (bakes.length === 0)
+    return <div className="text-center">No bakes yet</div>;
 
   return (
     <div
@@ -500,9 +503,11 @@ function RecipeView() {
                 ref={leftColumnRef}
                 className="flex flex-col gap-4 items-end"
               >
-                <div className="pageTitle text-xl">{recipeTitle}</div>
+                <div className="pageTitle text-xl text-right w-350">
+                  {recipeTitle}
+                </div>
                 <img
-                  src={photos}
+                  src={photos || DEFAULT_IMAGE_URL}
                   alt="recipe image"
                   className="recipeImg"
                   onLoad={updateLeftColumnHeight} // Add this to handle image load
@@ -555,8 +560,12 @@ function RecipeView() {
           </div>
         ) : (
           <div className="followersView mt-16 mb-16 text-xl wrap">
-            <div className="pageTitle">{recipeTitle}</div>
-            <img src={photos} alt="recipe image" className="recipeImg" />
+            <div className="pageTitle max-w-350">{recipeTitle}</div>
+            <img
+              src={photos || DEFAULT_IMAGE_URL}
+              alt="recipe image"
+              className="recipeImg"
+            />
             <RecipeOptions
               originalLink={originalLink}
               recipeId={recipeId}

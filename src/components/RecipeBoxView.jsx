@@ -124,7 +124,7 @@ function RecipeBoxView() {
           </div>
         ) : (
           <div className="mt-16 mb-16  flex flex-col items-center w-full">
-            <RecipeBoxHeader username={username} />
+            <RecipeBoxHeader username={userDetails} />
             <div className="flex flex-col gap-2 mt-4 w-350">
               {savedRecipes && savedRecipes.length > 0 ? (
                 savedRecipes.map((recipe) => (

@@ -1,6 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import "../../App.css";
 
+const DEFAULT_IMAGE_URL =
+  "https://iivozawppltyhsrkixlk.supabase.co/storage/v1/object/public/recipe-images//ChatGPT%20Image%20May%2019,%202025,%2003_17_24%20PM.png";
+
 function RecipeCardProfile(props) {
   const navigate = useNavigate();
 
@@ -21,7 +24,7 @@ function RecipeCardProfile(props) {
     >
       <figure className="w-1/3">
         <img
-          src={props.photo}
+          src={props.photo || DEFAULT_IMAGE_URL}
           alt="recipe image"
           className="recipeBoxCardImg w-full h-full object-cover"
         />

@@ -4,6 +4,9 @@ import { User, Book } from "lucide-react";
 import { useAuth } from "../../AuthContext.jsx";
 import axios from "axios"; // Import axios for API calls
 
+const DEFAULT_IMAGE_URL =
+  "https://iivozawppltyhsrkixlk.supabase.co/storage/v1/object/public/recipe-images//ChatGPT%20Image%20May%2019,%202025,%2003_17_24%20PM.png";
+
 function SearchResult({
   currentUserId,
   searchReturnValue,
@@ -212,7 +215,11 @@ function SearchResult({
         ) : type === "user" ? (
           <User size={50} color="#EBD2AD" />
         ) : (
-          <Book size={50} color="#EBD2AD" />
+          <img
+            src={DEFAULT_IMAGE_URL}
+            alt="recipe image"
+            className="w-12 h-12 rounded-full object-cover"
+          />
         )}
         <div className="ml-2 mr-2">
           {searchReturnValue ||
