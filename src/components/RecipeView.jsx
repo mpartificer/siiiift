@@ -274,42 +274,7 @@ function RecipeCheckTitle(props) {
   return <div className="recipeCheckTitle">{props.recipeCheckTitle}</div>;
 }
 
-function BakesList({ recipeId, currentUserId, isMobile }) {
-  const [bakes, setBakes] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const { getToken } = useAuth();
-
-  useEffect(() => {
-    async function fetchBakes() {
-      try {
-        const token = getToken();
-        const response = await fetch(
-          `${API_BASE_URL}/recipes/${recipeId}/bakes`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error(`API request failed with status ${response.status}`);
-        }
-
-        const data = await response.json();
-        setBakes(data || []);
-      } catch (error) {
-        console.error("Error fetching bakes:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    fetchBakes();
-  }, [recipeId, getToken]);
-
+function BakesList({ bakes, isMobile, currentUserId, isLoading }) {
   if (isLoading) return <div className="text-center">Loading bakes...</div>;
   if (bakes.length === 0)
     return <div className="text-center">No bakes yet</div>;
@@ -349,6 +314,7 @@ function RecipeView() {
   const [likesCount, setLikesCount] = useState(0);
   const [savesCount, setSavesCount] = useState(0);
   const [bakesCount, setBakesCount] = useState(0);
+  const [bakes, setBakes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const { user, getToken } = useAuth();
@@ -382,13 +348,155 @@ function RecipeView() {
     }
   };
 
+  // Add this enhanced debugging version to your RecipeView component
+  // Replace the existing checkAndUpdateRecipeImage function with this one
+
+  const checkAndUpdateRecipeImage = async (recipeData, bakesData) => {
+    console.log("=== DEBUG: Starting image update check ===");
+    console.log("Recipe ID:", recipeId);
+    console.log("Recipe data received:", recipeData);
+    console.log("Recipe images field:", recipeData.images);
+    console.log("Recipe images type:", typeof recipeData.images);
+    console.log("Is images array?", Array.isArray(recipeData.images));
+    console.log("DEFAULT_IMAGE_URL:", DEFAULT_IMAGE_URL);
+    console.log("Bakes data:", bakesData);
+    console.log(
+      "Number of bakes:",
+      bakesData ? bakesData.length : "null/undefined"
+    );
+
+    try {
+      // Since images is text[], we need to check if it's empty or has default image
+      const currentImages = recipeData.images;
+      const hasNoImage =
+        !currentImages ||
+        currentImages.length === 0 ||
+        (currentImages.length === 1 &&
+          currentImages[0] === DEFAULT_IMAGE_URL) ||
+        (currentImages.length === 1 && currentImages[0].trim() === "");
+
+      console.log("Current images:", currentImages);
+      console.log("Has no image check breakdown:");
+      console.log("  !currentImages:", !currentImages);
+      console.log(
+        "  currentImages.length === 0:",
+        currentImages ? currentImages.length === 0 : "N/A"
+      );
+      console.log(
+        "  has default image:",
+        currentImages && currentImages.length === 1
+          ? currentImages[0] === DEFAULT_IMAGE_URL
+          : "N/A"
+      );
+      console.log(
+        "  has empty string:",
+        currentImages && currentImages.length === 1
+          ? currentImages[0].trim() === ""
+          : "N/A"
+      );
+      console.log("Final hasNoImage result:", hasNoImage);
+
+      if (!hasNoImage) {
+        console.log("=== Recipe already has an image, skipping update ===");
+        return recipeData;
+      }
+
+      console.log("=== Recipe needs image, looking for bakes with photos ===");
+
+      // Find the first bake with photos
+      bakesData.forEach((bake, index) => {
+        console.log(`Bake ${index}:`, {
+          bake_id: bake.bake_id,
+          photos: bake.photos,
+          photos_type: typeof bake.photos,
+          is_photos_array: Array.isArray(bake.photos),
+          photos_length: bake.photos ? bake.photos.length : "null/undefined",
+        });
+      });
+
+      const bakeWithPhoto = bakesData.find((bake) => {
+        const hasPhotos =
+          bake.photos &&
+          Array.isArray(bake.photos) &&
+          bake.photos.length > 0 &&
+          bake.photos[0].trim() !== "";
+        console.log(`Bake ${bake.bake_id} has photos:`, hasPhotos);
+        return hasPhotos;
+      });
+
+      console.log("Bake with photo found:", bakeWithPhoto);
+
+      if (!bakeWithPhoto) {
+        console.log("=== No bakes with photos found ===");
+        return recipeData;
+      }
+
+      // Get the first photo from the bake
+      const newImageUrl = bakeWithPhoto.photos[0];
+      console.log("New image URL to set:", newImageUrl);
+
+      // Update the recipe image in Supabase
+      console.log("=== Making API call to update image ===");
+      const token = getToken();
+      console.log("Auth token exists:", !!token);
+
+      const requestBody = { imageUrl: newImageUrl };
+      console.log("Request body:", requestBody);
+
+      const updateResponse = await fetch(
+        `${API_BASE_URL}/recipes/${recipeId}/update-image`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestBody),
+        }
+      );
+
+      console.log("Update response status:", updateResponse.status);
+      console.log("Update response ok:", updateResponse.ok);
+
+      if (!updateResponse.ok) {
+        const errorText = await updateResponse.text();
+        console.error("Update response error text:", errorText);
+        throw new Error(
+          `Update image API request failed: ${updateResponse.status} - ${errorText}`
+        );
+      }
+
+      const updateResult = await updateResponse.json();
+      console.log("Update API response:", updateResult);
+
+      console.log(
+        `=== Successfully updated recipe ${recipeId} image to: ${newImageUrl} ===`
+      );
+
+      // Return updated recipe data with images as array
+      const updatedRecipeData = {
+        ...recipeData,
+        images: [newImageUrl],
+      };
+      console.log("Returning updated recipe data:", updatedRecipeData);
+      return updatedRecipeData;
+    } catch (error) {
+      console.error("=== ERROR in checkAndUpdateRecipeImage ===", error);
+      console.error("Error stack:", error.stack);
+      return recipeData; // Return original data if update fails
+    }
+  };
+
+  // Also add this debugging to your main fetchData function:
   useEffect(() => {
     async function fetchData() {
+      console.log("=== Starting fetchData ===");
       try {
         const token = getToken();
+        console.log("Auth token exists:", !!token);
 
         // Make API requests to your backend
-        const [recipeResponse, ratingsResponse, statsResponse] =
+        const [recipeResponse, ratingsResponse, statsResponse, bakesResponse] =
           await Promise.all([
             // Get recipe details
             fetch(`${API_BASE_URL}/recipes/${recipeId}`, {
@@ -414,7 +522,22 @@ function RecipeView() {
                 "Content-Type": "application/json",
               },
             }),
+            // Get bakes
+            fetch(`${API_BASE_URL}/recipes/${recipeId}/bakes`, {
+              method: "GET",
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+            }),
           ]);
+
+        console.log("API responses status:", {
+          recipe: recipeResponse.status,
+          ratings: ratingsResponse.status,
+          stats: statsResponse.status,
+          bakes: bakesResponse.status,
+        });
 
         // Check for HTTP errors
         if (!recipeResponse.ok)
@@ -427,11 +550,23 @@ function RecipeView() {
           );
         if (!statsResponse.ok)
           throw new Error(`Stats API request failed: ${statsResponse.status}`);
+        if (!bakesResponse.ok)
+          throw new Error(`Bakes API request failed: ${bakesResponse.status}`);
 
         // Parse JSON responses
-        const recipeData = await recipeResponse.json();
+        let recipeData = await recipeResponse.json();
         const ratingsData = await ratingsResponse.json();
         const statsData = await statsResponse.json();
+        const bakesData = await bakesResponse.json();
+
+        console.log("=== Raw API responses ===");
+        console.log("Recipe data:", recipeData);
+        console.log("Bakes data:", bakesData);
+
+        // Check and potentially update recipe image from bakes
+        console.log("=== Calling checkAndUpdateRecipeImage ===");
+        recipeData = await checkAndUpdateRecipeImage(recipeData, bakesData);
+        console.log("=== After image update, recipe data:", recipeData);
 
         // Update state with fetched data
         setRecipeDetails(recipeData);
@@ -439,8 +574,11 @@ function RecipeView() {
         setLikesCount(statsData.likesCount || 0);
         setSavesCount(statsData.savesCount || 0);
         setBakesCount(statsData.bakesCount || 0);
+        setBakes(bakesData || []);
+
+        console.log("=== State updated successfully ===");
       } catch (error) {
-        console.error("Error fetching recipe data:", error);
+        console.error("=== ERROR in fetchData ===", error);
       } finally {
         setIsLoading(false);
       }
@@ -552,9 +690,10 @@ function RecipeView() {
             </div>
             <div className="w-full max-w-7xl px-4">
               <BakesList
-                recipeId={recipeId}
+                bakes={bakes}
                 currentUserId={currentUserId}
                 isMobile={false}
+                isLoading={isLoading}
               />
             </div>
           </div>
@@ -597,9 +736,10 @@ function RecipeView() {
             </div>
             <div className="mt-8">
               <BakesList
-                recipeId={recipeId}
+                bakes={bakes}
                 currentUserId={currentUserId}
                 isMobile={true}
+                isLoading={isLoading}
               />
             </div>
           </div>
