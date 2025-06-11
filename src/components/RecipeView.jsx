@@ -11,7 +11,7 @@ import {
   Minus,
 } from "lucide-react";
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import HomeCardMobile from "./multipurpose/HomeCardMobile";
 import { useAuth } from "../AuthContext";
@@ -135,13 +135,13 @@ function RecipeOptions({
         </a>
       </li>
       <li>
-        <button
+        <Link
+          to={`/recipe/${recipeId}/bake`}
           className="tooltip tooltip-bottom"
           data-tip="bake"
-          disabled={!currentUserId}
         >
           <ChefHat color="#EBD2AD" />
-        </button>
+        </Link>
       </li>
     </ul>
   );

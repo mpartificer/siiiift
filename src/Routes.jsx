@@ -13,6 +13,7 @@ import ForgotPasswordView from "./components/ForgotPasswordView.jsx";
 import SignUpView from "./components/SignUpView.jsx";
 import RecipeRetrievalView from "./components/RecipeRetrievalView.jsx";
 import SettingsManagementView from "./components/SettingsManagementView.jsx";
+import BakeView from "./components/BakeView.jsx";
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -88,6 +89,14 @@ const router = createHashRouter(
       element: (
         <ProtectedRoute>
           <RecipeView />
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: `/recipe/:recipeid/bake`,
+      element: (
+        <ProtectedRoute>
+          <BakeView />
         </ProtectedRoute>
       ),
     },
