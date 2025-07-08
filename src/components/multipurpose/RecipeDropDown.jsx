@@ -4,7 +4,7 @@ import { useAuth } from "../../AuthContext";
 import axios from "axios";
 import "../../App.css";
 
-const API_URL = import.meta.env.REACT_APP_API_URL || "http://localhost:8080";
+const API_URL = import.meta.env.VITE_APP_API_URL || "http://localhost:8080/api";
 
 const ModificationItem = ({ items, placeholder, index, type }) => {
   const [selectedItem, setSelectedItem] = useState(null);
@@ -127,7 +127,7 @@ const RecipeDropDown = () => {
     setValue("recipeTitle", recipeTitle);
 
     try {
-      const recipeDetails = await apiRequest(`/api/recipes/${recipeId}`);
+      const recipeDetails = await apiRequest(`/recipes/${recipeId}`);
 
       if (!recipeDetails) throw new Error("Recipe details not found");
 
@@ -149,7 +149,7 @@ const RecipeDropDown = () => {
         }
 
         const savedRecipes = await apiRequest(
-          `/api/recipes/dropdown-data/${user.id}`
+          `/recipes/dropdown-data/${user.id}`
         );
 
         setRecipeData(savedRecipes);

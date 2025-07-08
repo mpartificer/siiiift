@@ -25,7 +25,7 @@ function FollowersView() {
   const [bakesCount, setBakesCount] = useState(0);
 
   const API_BASE_URL =
-    import.meta.env.REACT_APP_API_URL || "http://localhost:8080/api";
+    import.meta.env.VITE_APP_API_URL || "http://localhost:8080/api";
 
   useEffect(() => {
     async function fetchData() {

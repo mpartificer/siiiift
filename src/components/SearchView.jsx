@@ -55,7 +55,8 @@ function SearchView() {
   const [error, setError] = useState(null);
 
   // API URL configuration
-  const API_URL = import.meta.env.VITE_APP_API_URL || "http://localhost:8080";
+  const API_URL =
+    import.meta.env.VITE_APP_API_URL || "http://localhost:8080/api";
 
   const performSearch = async () => {
     if (!searchTerm.trim()) return;
@@ -71,7 +72,7 @@ function SearchView() {
       }
 
       const response = await axios.get(
-        `${API_URL}/api/engagement/search/${searchTerm}`,
+        `${API_URL}/engagement/search/${searchTerm}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

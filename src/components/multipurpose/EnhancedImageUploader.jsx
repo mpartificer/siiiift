@@ -12,7 +12,7 @@ function EnhancedImageUploader({ onImagesSelected, onRecipeExtracted }) {
   const { getToken, user } = useAuth();
 
   const API_BASE_URL =
-    import.meta.env.REACT_APP_API_BASE_URL || "http://localhost:8080/api";
+    import.meta.env.VITE_APP_API_URL || "http://localhost:8080/api";
 
   const validImageTypes = [
     "image/jpeg",

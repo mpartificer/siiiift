@@ -9,7 +9,7 @@ import { useAuth } from "../AuthContext";
 import axios from "axios";
 
 const API_BASE_URL =
-  import.meta.env.REACT_APP_API_URL || "http://localhost:8080/api";
+  import.meta.env.VITE_APP_API_URL || "http://localhost:8080/api";
 
 function RecipeBoxHeader({ username }) {
   const navigate = useNavigate();

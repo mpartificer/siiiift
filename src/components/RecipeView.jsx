@@ -18,7 +18,7 @@ import { useAuth } from "../AuthContext";
 
 // API base URL - should be configured from environment variables in a real app
 const API_BASE_URL =
-  import.meta.env.REACT_APP_API_URL || "http://localhost:8080/api";
+  import.meta.env.VITE_APP_API_URL || "http://localhost:8080/api";
 const DEFAULT_IMAGE_URL =
   "https://iivozawppltyhsrkixlk.supabase.co/storage/v1/object/public/recipe-images//ChatGPT%20Image%20May%2019,%202025,%2003_17_24%20PM.png";
 

@@ -31,9 +31,9 @@ function PostReactionBox({
     try {
       const token = getToken();
       const apiUrl =
-        import.meta.env.REACT_APP_API_URL || "http://localhost:8080";
+        import.meta.env.VITE_APP_API_URL || "http://localhost:8080/api";
       const response = await fetch(
-        `${apiUrl}/api/engagement/like/check/${currentUserId}/${bakeId}`,
+        `${apiUrl}/engagement/like/check/${currentUserId}/${bakeId}`,
         {
           method: "GET",
           headers: {
@@ -62,9 +62,9 @@ function PostReactionBox({
     try {
       const token = getToken();
       const apiUrl =
-        import.meta.env.REACT_APP_API_URL || "http://localhost:8080";
+        import.meta.env.VITE_APP_API_URL || "http://localhost:808/api";
       const response = await fetch(
-        `${apiUrl}/api/engagement/like/count/${bakeId}`,
+        `${apiUrl}/engagement/like/count/${bakeId}`,
         {
           method: "GET",
           headers: {
@@ -94,8 +94,8 @@ function PostReactionBox({
       const token = getToken();
       // Use the correct API URL - assuming your backend runs on port 8080 or whatever you've set in .env
       const apiUrl =
-        import.meta.env.REACT_APP_API_URL || "http://localhost:8080";
-      const response = await fetch(`${apiUrl}/api/engagement/like/${bakeId}`, {
+        import.meta.env.VITE_APP_API_URL || "http://localhost:8080/api";
+      const response = await fetch(`${apiUrl}/engagement/like/${bakeId}`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

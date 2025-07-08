@@ -131,7 +131,7 @@ function BakeHistoryCard({
     try {
       console.log(`Fetching like count for bake ${bakeDetail.id}`);
       const response = await axios.get(
-        `/api/engagement/like/count/${bakeDetail.id}`
+        `/engagement/like/count/${bakeDetail.id}`
       );
 
       if (response.data && typeof response.data.likeCount === "number") {
@@ -168,7 +168,7 @@ function BakeHistoryCard({
         `Checking like status for user ${userAuthId} and bake ${bakeDetail.id}`
       );
       const response = await axios.get(
-        `/api/engagement/like/check/${userAuthId}/${bakeDetail.id}`
+        `/engagement/like/check/${userAuthId}/${bakeDetail.id}`
       );
       console.log(`Like status from API: ${response.data.isLiked}`);
       setIsLiked(response.data.isLiked);
@@ -200,13 +200,10 @@ function BakeHistoryCard({
       console.log(
         `Toggling like for bake ${bakeDetail.id} by user ${userAuthId}`
       );
-      const response = await axios.post(
-        `/api/engagement/like/${bakeDetail.id}`,
-        {
-          userId: userAuthId,
-          recipeId: bakeDetail.recipe_id,
-        }
-      );
+      const response = await axios.post(`/engagement/like/${bakeDetail.id}`, {
+        userId: userAuthId,
+        recipeId: bakeDetail.recipe_id,
+      });
 
       console.log(`Toggle like response:`, response.data);
 
@@ -367,7 +364,7 @@ function BakeHistoryView() {
   // Configure axios defaults
   useEffect(() => {
     axios.defaults.baseURL =
-      import.meta.env.REACT_APP_API_URL || "http://localhost:8080";
+      import.meta.env.VITE_APP_API_URL || "http://localhost:8080/api";
     axios.defaults.withCredentials = true;
 
     // Set up a request interceptor to add the auth token to all requests
@@ -416,7 +413,7 @@ function BakeHistoryView() {
 
         // The token will be added by the axios interceptor
         const response = await axios.get(
-          `/api/bakes/history/${username}/${recipeid}`
+          `/bakes/history/${username}/${recipeid}`
         );
         const data = response.data;
 

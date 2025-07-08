@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import axios from "axios"; // Make sure axios is installed
 
-const API_URL = import.meta.env.REACT_APP_API_URL || "http://localhost:8080";
+const API_URL = import.meta.env.VITE_APP_API_URL || "http://localhost:8080";
 
 const signUpSchema = z
   .object({

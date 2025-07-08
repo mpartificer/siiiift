@@ -15,7 +15,7 @@ import { Loader2 } from "lucide-react";
 
 // API base URL (replace with your actual API URL)
 const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:8080/api";
+  import.meta.env.VITE_APP_API_URL || "http://localhost:8080/api";
 
 function ModificationRating() {
   const { control } = useFormContext();

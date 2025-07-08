@@ -14,7 +14,8 @@ function HomeView() {
   const [isLoading, setIsLoading] = useState(true);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
-  const API_URL = import.meta.env.REACT_APP_API_URL || "http://localhost:8080";
+  const API_URL =
+    import.meta.env.VITE_APP_API_URL || "http://localhost:8080/api";
 
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
@@ -66,9 +67,9 @@ function HomeView() {
         headers["Content-Type"] = "application/json";
 
         console.log("Request headers:", headers);
-        console.log("Sending request to:", `${API_URL}/api/bakes/home`);
+        console.log("Sending request to:", `${API_URL}/bakes/home`);
 
-        const response = await axios.get(`${API_URL}/api/bakes/home`, {
+        const response = await axios.get(`${API_URL}/bakes/home`, {
           headers: headers,
         });
 
