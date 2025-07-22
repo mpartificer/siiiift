@@ -1,8 +1,7 @@
 import "../App.css";
+import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
-import CheckBox from "./multipurpose/CheckBox.jsx";
 import HeaderFooter from "./multipurpose/HeaderFooter.jsx";
-import SearchBar from "./multipurpose/SearchBar.jsx";
 import BigSubmitButton from "./multipurpose/BigSubmitButton.jsx";
 import EnhancedImageUploader from "./multipurpose/EnhancedImageUploader.jsx";
 import { useAuth } from "../AuthContext.jsx";
@@ -124,9 +123,8 @@ function RecipeCheckPanel(props) {
             className="text-accent text-sm underline mr-3"
             onClick={toggleEdit}
           >
-            {isEditing ? "Save" : "Edit"}
+            {isEditing ? "save" : "edit"}
           </button>
-          <CheckBox confirmRecipeItem={props.confirmRecipeItem} />
         </div>
       </div>
 
@@ -159,6 +157,7 @@ function InputSelector() {
   });
   const [error, setError] = useState(null);
   const { getToken, user } = useAuth();
+  const navigate = useNavigate();
 
   const API_BASE_URL =
     import.meta.env.VITE_APP_API_URL || "http://localhost:8080/api";
@@ -211,6 +210,19 @@ function InputSelector() {
         parsedData = recipeData;
       }
 
+      console.log("Final parsed data:", parsedData);
+
+      // Handle extracted images from URL scraping
+      let defaultImage = "";
+      if (
+        parsedData.images &&
+        Array.isArray(parsedData.images) &&
+        parsedData.images.length > 0
+      ) {
+        defaultImage = parsedData.images[0]; // Use the first image as default
+        console.log("Using extracted image as default:", defaultImage);
+      }
+
       // Now update the state with the parsed data using functional update to preserve values
       setExtractedRecipe((prevState) => ({
         title: parsedData.title || "",
@@ -220,7 +232,7 @@ function InputSelector() {
         cookTime: parsedData.cook_time || "",
         totalTime: parsedData.total_time || "",
         originalAuthor: parsedData.original_author || "",
-        defaultImage: prevState.defaultImage, // Preserve existing value
+        defaultImage: defaultImage || prevState.defaultImage, // Use extracted image or preserve existing
         originalText: parsedData.original_text || "",
       }));
 
@@ -247,6 +259,7 @@ function InputSelector() {
     if (!url) return;
 
     setIsLoading(true);
+    setError(null);
 
     try {
       if (user) {
@@ -263,26 +276,49 @@ function InputSelector() {
           }),
         });
 
+        // Handle the case where recipe already exists (409 Conflict)
+        if (response.status === 409) {
+          const data = await response.json();
+          console.log(
+            `Recipe already exists, redirecting to recipe ${data.recipeId}`
+          );
+
+          // Show a brief message before redirecting
+          alert(
+            `This recipe already exists in our database: "${data.title}". Redirecting you to the recipe page.`
+          );
+
+          // Navigate to the existing recipe
+          navigate(`/recipe/${data.recipeId}`);
+          return;
+        }
+
+        // Handle successful new recipe extraction (200 OK)
         if (response.ok) {
           const data = await response.json();
+          console.log("Processing new recipe data from URL");
+
+          // Now data is in the same format as image processing - just pass it directly
           handleRecipeExtracted(data);
           return;
-        } else {
-          console.error("Error from server:", await response.json());
         }
-      }
 
-      alert("Please log in to process URLs or upload images directly");
-      setIsLoading(false);
+        // Handle other errors
+        const errorData = await response.json();
+        console.error("Error from server:", errorData);
+        setError(errorData.error || "Failed to process URL");
+      } else {
+        setError("Please log in to process URLs");
+      }
     } catch (error) {
       console.error("Error processing URL:", error);
-      setIsLoading(false);
-      alert(
-        "Error processing URL. Please try again or upload images directly."
+      setError(
+        "Error processing URL. Please try again or check that the URL is valid."
       );
+    } finally {
+      setIsLoading(false);
     }
   };
-
   // Handle recipe field updates from panels
   const handleRecipeFieldUpdate = (fieldName, fieldValue) => {
     const updatedRecipe = { ...extractedRecipe };
@@ -329,7 +365,6 @@ function InputSelector() {
       console.log("Saving recipe to database");
 
       // Format the recipe data according to what the backend expects
-      // Explicitly exclude the defaultImage property
       const recipeDataToSend = {
         title: extractedRecipe.title || "Untitled Recipe",
         ingredients: extractedRecipe.ingredients || [],
@@ -338,7 +373,10 @@ function InputSelector() {
         cook_time: extractedRecipe.cookTime || "",
         total_time: extractedRecipe.totalTime || "",
         original_link: extractedRecipe.originalAuthor || "Unknown",
-        // Note: we're not including the image data at all
+        // Include images if we have them (from URL scraping)
+        images: extractedRecipe.defaultImage
+          ? [extractedRecipe.defaultImage]
+          : [],
       };
 
       // Log the data being sent to help debug
@@ -441,11 +479,39 @@ function InputSelector() {
 
       {inputMethod === "url" ? (
         <div>
-          <SearchBar
-            placeholder="enter recipe url"
-            onSubmit={handleUrlSubmit}
-            isLoading={isLoading}
-          />
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.target);
+              const url = formData.get("url");
+              if (url) {
+                handleUrlSubmit(url);
+              }
+            }}
+            className="relative"
+          >
+            <input
+              type="url"
+              name="url"
+              className="px-4 bg-primary text-secondary py-3 w-full border border-primary rounded-md placeholder:text-secondary placeholder:opacity-70
+               focus:bg-primary focus:text-secondary focus:outline-none focus:ring-2 focus:ring-accent/50
+               disabled:opacity-50 disabled:cursor-not-allowed
+               [&:-webkit-autofill]:shadow-[inset_0_0_0px_1000px_theme(colors.primary)]
+               [&:-webkit-autofill]:[-webkit-text-fill-color:theme(colors.secondary)]
+               [&:-webkit-autofill:focus]:shadow-[inset_0_0_0px_1000px_theme(colors.primary)]
+               [&:-webkit-autofill:focus]:[-webkit-text-fill-color:theme(colors.secondary)]"
+              placeholder="enter recipe url"
+              disabled={isLoading}
+              required
+            />
+            <button
+              type="submit"
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-accent font-semibold text-primary px-4 py-1 rounded-md disabled:opacity-50"
+              disabled={isLoading}
+            >
+              {isLoading ? "..." : "go"}
+            </button>
+          </form>
           {isLoading && !extractedRecipe.title && (
             <div className="mt-2 text-center">
               <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-accent border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
@@ -495,9 +561,9 @@ function InputSelector() {
 
           <div className="mb-4 bg-yellow-50 p-4 rounded-md">
             <p className="text-sm">
-              <strong>Tip:</strong> Please review and edit the recipe details
-              below. The OCR process may not be perfect, especially with
-              handwritten notes or unusual formatting. Click "Edit" on any
+              <strong>tip:</strong> please review and edit the recipe details
+              below - the extraction process may not be perfect, especially with
+              handwritten notes or unusual formatting. click "edit" on any
               section to make changes.
             </p>
           </div>
@@ -541,9 +607,7 @@ function InputSelector() {
           {/* Recipe image display - keep just for display purposes */}
           {extractedRecipe.defaultImage && (
             <div className="mt-4">
-              <p className="font-medium mb-2">
-                recipe image (preview only - will not be saved)
-              </p>
+              <p className="font-medium mb-2">recipe image</p>
               <img
                 src={
                   typeof extractedRecipe.defaultImage === "string"
@@ -558,7 +622,7 @@ function InputSelector() {
 
           <div className="mt-6">
             <BigSubmitButton
-              submitValue={isLoading ? "Saving..." : "Save Recipe"}
+              submitValue={isLoading ? "saving..." : "save recipe"}
               onClick={saveRecipe}
               disabled={isLoading}
             />

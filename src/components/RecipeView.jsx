@@ -11,7 +11,7 @@ import {
   Minus,
 } from "lucide-react";
 import React from "react";
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useParams } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import HomeCardMobile from "./multipurpose/HomeCardMobile";
 import { useAuth } from "../AuthContext";
@@ -305,7 +305,8 @@ function BakesList({ bakes, isMobile, currentUserId, isLoading }) {
 
 function RecipeView() {
   const location = useLocation();
-  const recipeId = location.state.recipeId;
+  const { recipeid } = useParams(); // Get recipeid from URL parameters
+  const recipeId = recipeid || location.state.recipeId;
   const bakesRef = useRef(null);
   const leftColumnRef = useRef(null);
   const [leftColumnHeight, setLeftColumnHeight] = useState(0);
