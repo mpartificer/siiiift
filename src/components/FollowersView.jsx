@@ -53,16 +53,12 @@ function FollowersView() {
           return;
         }
 
-        console.log("Found valid auth token");
-
         const config = {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         };
-
-        console.log(`Fetching profile for user ${userId}`);
 
         const profileResponse = await axios.get(
           `${API_BASE_URL}/users/${userId}/profile`,

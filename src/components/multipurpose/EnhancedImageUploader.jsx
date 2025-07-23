@@ -76,20 +76,16 @@ function EnhancedImageUploader({ onImagesSelected, onRecipeExtracted }) {
   // Convert HEIC/HEIF to JPEG using heic-to library
   const convertHeicToJpeg = async (file) => {
     try {
-      console.log(`Converting ${file.name} to JPEG...`);
       setIsConverting(true);
 
       try {
         // Use the heicTo function to convert the HEIC/HEIF file to JPEG
-        console.log("Calling heicTo with blob...");
 
         const jpeg = await heicTo({
           blob: file,
           format: "image/jpeg", // Explicitly request JPEG format
           quality: 0.8, // Set quality to 80%
         });
-
-        console.log(`Conversion successful, got ${jpeg}`);
 
         setIsConverting(false);
         return jpeg;

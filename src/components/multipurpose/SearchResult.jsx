@@ -30,9 +30,6 @@ function SearchResult({
   useEffect(() => {
     // Only check status if we have the necessary IDs
     if (currentUserId && relevantId) {
-      console.log(
-        `Checking status on mount/update: type=${type}, currentUser=${currentUserId}, relevantId=${relevantId}`
-      );
       checkStatus();
     } else {
       console.warn(
@@ -51,10 +48,6 @@ function SearchResult({
       }
 
       if (type === "user") {
-        console.log(
-          `Checking follow status: follower=${currentUserId}, following=${userId}`
-        );
-
         if (!currentUserId || !userId) {
           console.error("Missing IDs for check:", { currentUserId, userId });
           throw new Error("Missing user IDs for status check");
@@ -68,13 +61,8 @@ function SearchResult({
             },
           }
         );
-        console.log("Follow status response:", response.data);
         setIsFollowingOrSaved(response.data.isFollowing);
       } else if (type === "recipe") {
-        console.log(
-          `Checking save status: user=${currentUserId}, recipe=${recipeId}`
-        );
-
         if (!currentUserId || !recipeId) {
           console.error("Missing IDs for check:", { currentUserId, recipeId });
           throw new Error("Missing IDs for status check");
@@ -88,7 +76,6 @@ function SearchResult({
             },
           }
         );
-        console.log("Save status response:", response.data);
         setIsFollowingOrSaved(response.data.isSaved);
       }
     } catch (error) {
@@ -114,10 +101,6 @@ function SearchResult({
       }
 
       if (type === "user") {
-        console.log(
-          `Toggling follow: followerId=${currentUserId}, followingId=${userId}`
-        );
-
         if (!currentUserId || !userId) {
           console.error("Missing IDs for toggle action:", {
             currentUserId,
@@ -140,13 +123,8 @@ function SearchResult({
             withCredentials: true,
           }
         );
-        console.log("Follow toggle response:", response.data);
         setIsFollowingOrSaved(response.data.isFollowing);
       } else if (type === "recipe") {
-        console.log(
-          `Toggling save: userId=${currentUserId}, recipeId=${recipeId}`
-        );
-
         if (!currentUserId || !recipeId) {
           console.error("Missing IDs for toggle action:", {
             currentUserId,
@@ -168,7 +146,7 @@ function SearchResult({
             withCredentials: true,
           }
         );
-        console.log("Save toggle response:", response.data);
+
         setIsFollowingOrSaved(response.data.isSaved);
       }
     } catch (error) {

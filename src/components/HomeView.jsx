@@ -30,12 +30,7 @@ function HomeView() {
       try {
         setIsLoading(true);
 
-        console.log("Auth context:", auth);
-        console.log("User object:", user);
-        console.log("Session object:", session);
-
         if (!user) {
-          console.log("No user found - please log in");
           setIsLoading(false);
           return;
         }
@@ -43,21 +38,12 @@ function HomeView() {
         let token = null;
         if (typeof getToken === "function") {
           token = getToken();
-          console.log(
-            "Token from getToken():",
-            token ? `${token.substring(0, 10)}...` : "null"
-          );
         } else if (session && session.access_token) {
           token = session.access_token;
-          console.log(
-            "Token from session.access_token:",
-            token ? `${token.substring(0, 10)}...` : "null"
-          );
         }
 
         if (!token) {
           console.error("No authentication token available");
-          console.log("Will try to fetch without authentication");
         }
 
         const headers = {};
@@ -66,14 +52,9 @@ function HomeView() {
         }
         headers["Content-Type"] = "application/json";
 
-        console.log("Request headers:", headers);
-        console.log("Sending request to:", `${API_URL}/bakes/home`);
-
         const response = await axios.get(`${API_URL}/bakes/home`, {
           headers: headers,
         });
-
-        console.log("Response received:", response);
 
         if (isMounted) {
           setBakeDetails(response.data.bakeDetails || []);
@@ -87,8 +68,6 @@ function HomeView() {
           console.error("Response data:", error.response.data);
           console.error("Response headers:", error.response.headers);
         }
-
-        console.log("This should be your server URL:", API_URL);
 
         if (isMounted) {
           setIsLoading(false);

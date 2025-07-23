@@ -75,20 +75,6 @@ function BakeHistoryCard({
       currentUserDetails?.data?.user?.id;
 
     setIsUserLoggedIn(!!userAuthId);
-
-    console.log(`BakeHistoryCard for bake ${bakeDetail?.id || "unknown"}:`);
-    console.log(`- User auth ID: ${userAuthId || "not found"}`);
-    console.log(`- User logged in: ${!!userAuthId}`);
-    console.log(`- Bake has ID: ${!!bakeDetail?.id}`);
-
-    // Log the bake detail info
-    if (bakeDetail) {
-      console.log("Bake detail:", {
-        id: bakeDetail.id,
-        like_count: bakeDetail.like_count,
-        has_like_count: "like_count" in bakeDetail,
-      });
-    }
   }, [currentUserDetails, bakeDetail]);
 
   // Initialize and fetch the like count
@@ -100,22 +86,17 @@ function BakeHistoryCard({
 
     // Use the pre-computed like_count if available
     if (typeof bakeDetail.like_count === "number") {
-      console.log(`Using pre-computed like_count: ${bakeDetail.like_count}`);
       initialCount = bakeDetail.like_count;
     } else {
       // Count from likeDetails array as fallback
       const likesForThisBake = safeLikeDetails.filter(
         (like) => like.bake_id === bakeDetail.id
       );
-      console.log(
-        `Computed like count from likeDetails: ${likesForThisBake.length}`
-      );
       initialCount = likesForThisBake.length;
     }
 
     // Set the initial count
     setLikeCount(initialCount);
-    console.log(`Initially setting like count to: ${initialCount}`);
 
     // Always fetch the latest count from the API to be sure
     fetchLikeCount();
@@ -124,18 +105,15 @@ function BakeHistoryCard({
   // Fetch like count from API
   const fetchLikeCount = async () => {
     if (!bakeDetail?.id) {
-      console.log("Cannot fetch like count: No bake ID available");
       return;
     }
 
     try {
-      console.log(`Fetching like count for bake ${bakeDetail.id}`);
       const response = await axios.get(
         `/engagement/like/count/${bakeDetail.id}`
       );
 
       if (response.data && typeof response.data.likeCount === "number") {
-        console.log(`API returned like count: ${response.data.likeCount}`);
         setLikeCount(response.data.likeCount);
       } else {
         console.warn("API did not return a valid like count:", response.data);
@@ -158,19 +136,10 @@ function BakeHistoryCard({
       currentUserDetails?.data?.user?.user_auth_id ||
       currentUserDetails?.data?.user?.id;
 
-    if (!userAuthId || !bakeDetail?.id) {
-      console.log("Cannot check like status: Missing user auth ID or bake ID");
-      return;
-    }
-
     try {
-      console.log(
-        `Checking like status for user ${userAuthId} and bake ${bakeDetail.id}`
-      );
       const response = await axios.get(
         `/engagement/like/check/${userAuthId}/${bakeDetail.id}`
       );
-      console.log(`Like status from API: ${response.data.isLiked}`);
       setIsLiked(response.data.isLiked);
     } catch (error) {
       console.error("Error checking like status:", error);
@@ -185,27 +154,20 @@ function BakeHistoryCard({
       currentUserDetails?.data?.user?.id;
 
     if (!userAuthId) {
-      console.log("Cannot toggle like: User not logged in");
       return;
     }
 
     if (!bakeDetail?.id) {
-      console.log("Cannot toggle like: Missing bake ID");
       return;
     }
 
     setIsLikeLoading(true);
 
     try {
-      console.log(
-        `Toggling like for bake ${bakeDetail.id} by user ${userAuthId}`
-      );
       const response = await axios.post(`/engagement/like/${bakeDetail.id}`, {
         userId: userAuthId,
         recipeId: bakeDetail.recipe_id,
       });
-
-      console.log(`Toggle like response:`, response.data);
 
       // Make sure we're getting and using the correct values from the response
       if (response.data) {
@@ -214,9 +176,6 @@ function BakeHistoryCard({
         }
 
         if (typeof response.data.likeCount === "number") {
-          console.log(
-            `Setting like count to ${response.data.likeCount} after toggle`
-          );
           setLikeCount(response.data.likeCount);
         }
       }
@@ -324,7 +283,6 @@ function BakeHistoryView() {
   useEffect(() => {
     async function checkAuth() {
       try {
-        console.log("Checking authentication status...");
         const { data, error } = await supabase.auth.getSession();
 
         if (error) {
@@ -334,7 +292,6 @@ function BakeHistoryView() {
           return;
         }
 
-        console.log("Auth session check result:", data);
         setSession(data.session);
         setAuthChecked(true);
 
@@ -354,7 +311,6 @@ function BakeHistoryView() {
     // Set up auth state listener
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (event, newSession) => {
-        console.log("Auth state changed:", event);
         setSession(newSession);
       }
     );
@@ -375,7 +331,6 @@ function BakeHistoryView() {
       function (config) {
         if (session?.access_token) {
           config.headers.Authorization = `Bearer ${session.access_token}`;
-          console.log("Added auth token to request");
         } else {
           console.warn("No auth token available for request");
         }
@@ -406,26 +361,11 @@ function BakeHistoryView() {
       }
 
       try {
-        console.log(
-          `Fetching bake history for ${username} and recipe ${recipeid}`
-        );
-        console.log(
-          "Current session:",
-          session ? "Available" : "Not available"
-        );
-
         // The token will be added by the axios interceptor
         const response = await axios.get(
           `/bakes/history/${username}/${recipeid}`
         );
         const data = response.data;
-
-        console.log("Bake history data received:", {
-          profileData: data.profileData,
-          bakeCount: data.bakeDetails?.length,
-          likeCount: data.likeDetails?.length,
-          modCount: data.modificationDetails?.length,
-        });
 
         setProfileData(data.profileData);
         setBakeDetails(data.bakeDetails || []);

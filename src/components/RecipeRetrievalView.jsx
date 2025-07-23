@@ -167,8 +167,6 @@ function InputSelector() {
   };
 
   const handleRecipeExtracted = (recipeData) => {
-    console.log("Raw recipe data received:", recipeData);
-
     try {
       // Handle case where the data is already a JavaScript object
       let parsedData;
@@ -193,12 +191,10 @@ function InputSelector() {
         }
 
         cleanedJsonString = cleanedJsonString.trim();
-        console.log("Cleaned JSON string:", cleanedJsonString);
 
         // Parse the cleaned JSON string
         try {
           parsedData = JSON.parse(cleanedJsonString);
-          console.log("Successfully parsed JSON:", parsedData);
         } catch (jsonError) {
           console.error("Error parsing JSON:", jsonError);
           setError("Failed to parse recipe data. Please try again.");
@@ -210,8 +206,6 @@ function InputSelector() {
         parsedData = recipeData;
       }
 
-      console.log("Final parsed data:", parsedData);
-
       // Handle extracted images from URL scraping
       let defaultImage = "";
       if (
@@ -220,7 +214,6 @@ function InputSelector() {
         parsedData.images.length > 0
       ) {
         defaultImage = parsedData.images[0]; // Use the first image as default
-        console.log("Using extracted image as default:", defaultImage);
       }
 
       // Now update the state with the parsed data using functional update to preserve values
@@ -235,11 +228,6 @@ function InputSelector() {
         defaultImage: defaultImage || prevState.defaultImage, // Use extracted image or preserve existing
         originalText: parsedData.original_text || "",
       }));
-
-      console.log(
-        "State update dispatched with recipe title:",
-        parsedData.title
-      );
     } catch (error) {
       console.error("Error processing recipe data:", error);
       setError("Failed to process recipe data: " + error.message);
@@ -279,9 +267,6 @@ function InputSelector() {
         // Handle the case where recipe already exists (409 Conflict)
         if (response.status === 409) {
           const data = await response.json();
-          console.log(
-            `Recipe already exists, redirecting to recipe ${data.recipeId}`
-          );
 
           // Show a brief message before redirecting
           alert(
@@ -296,7 +281,6 @@ function InputSelector() {
         // Handle successful new recipe extraction (200 OK)
         if (response.ok) {
           const data = await response.json();
-          console.log("Processing new recipe data from URL");
 
           // Now data is in the same format as image processing - just pass it directly
           handleRecipeExtracted(data);
@@ -362,8 +346,6 @@ function InputSelector() {
     setError(null);
 
     try {
-      console.log("Saving recipe to database");
-
       // Format the recipe data according to what the backend expects
       const recipeDataToSend = {
         title: extractedRecipe.title || "Untitled Recipe",
@@ -378,12 +360,6 @@ function InputSelector() {
           ? [extractedRecipe.defaultImage]
           : [],
       };
-
-      // Log the data being sent to help debug
-      console.log("Sending recipe data:", {
-        userId: user.id,
-        recipeData: recipeDataToSend,
-      });
 
       const token = getToken();
       const response = await fetch(`${API_BASE_URL}/recipes/store-recipe`, {
@@ -443,14 +419,6 @@ function InputSelector() {
   const toggleOriginalText = () => {
     setShowOriginalText(!showOriginalText);
   };
-
-  // Add a useEffect to log state AFTER it has updated for debugging
-  useEffect(() => {
-    console.log(
-      "extractedRecipe state after update (via useEffect):",
-      extractedRecipe
-    );
-  }, [extractedRecipe]);
 
   return (
     <div className="mb-6">

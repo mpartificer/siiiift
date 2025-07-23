@@ -203,7 +203,6 @@ function ContentCap({ userId }) {
       }
 
       const data = await response.json();
-      console.log(data);
       if (data.success) {
         setBakes(data.data || []);
       }
@@ -227,7 +226,6 @@ function ContentCap({ userId }) {
       }
 
       const data = await response.json();
-      console.log(data);
       if (data) {
         setSavedRecipes(data || []);
       }

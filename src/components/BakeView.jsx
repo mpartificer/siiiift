@@ -149,7 +149,6 @@ const BakeView = () => {
     recognition.lang = "en-US";
 
     recognition.onstart = () => {
-      console.log("Speech recognition started");
       setMicrophonePermission("granted");
       setIsListening(true);
     };
@@ -157,7 +156,6 @@ const BakeView = () => {
     recognition.onresult = (event) => {
       const last = event.results.length - 1;
       const command = event.results[last][0].transcript.toLowerCase().trim();
-      console.log("Voice command received:", command);
       handleVoiceCommand(command);
     };
 
@@ -175,9 +173,7 @@ const BakeView = () => {
             if (shouldRestartRef.current && recognitionRef.current) {
               try {
                 recognitionRef.current.start();
-              } catch (e) {
-                console.log("Could not restart recognition:", e);
-              }
+              } catch (e) {}
             }
           }, 1000);
         }
@@ -190,12 +186,10 @@ const BakeView = () => {
     };
 
     recognition.onend = () => {
-      console.log("Speech recognition ended");
       if (shouldRestartRef.current) {
         try {
           recognition.start();
         } catch (e) {
-          console.log("Could not restart recognition:", e);
           setIsListening(false);
           shouldRestartRef.current = false;
         }
@@ -211,9 +205,7 @@ const BakeView = () => {
         shouldRestartRef.current = false;
         try {
           recognition.stop();
-        } catch (e) {
-          console.log("Recognition already stopped");
-        }
+        } catch (e) {}
       }
     };
   }, []);
@@ -232,37 +224,24 @@ const BakeView = () => {
 
   // Navigation functions
   const goToNextStep = useCallback(() => {
-    console.log(
-      "goToNextStep called - current step:",
-      currentStep,
-      "max steps:",
-      recipe?.instructions?.length
-    );
     if (
       recipe &&
       recipe.instructions &&
       currentStep < recipe.instructions.length - 1
     ) {
-      console.log("Moving to next step");
       setCurrentStep((prev) => {
-        console.log("Setting current step from", prev, "to", prev + 1);
         return prev + 1;
       });
     } else {
-      console.log("Cannot go to next step - at end or no recipe");
     }
   }, [recipe, currentStep]);
 
   const goToPreviousStep = useCallback(() => {
-    console.log("goToPreviousStep called - current step:", currentStep);
     if (currentStep > 0) {
-      console.log("Moving to previous step");
       setCurrentStep((prev) => {
-        console.log("Setting current step from", prev, "to", prev - 1);
         return prev - 1;
       });
     } else {
-      console.log("Cannot go to previous step - at beginning");
     }
   }, [currentStep]);
 
@@ -289,33 +268,21 @@ const BakeView = () => {
     const { recipe: currentRecipe, currentStep: currentStepValue } =
       currentStateRef.current;
 
-    console.log("Processing command:", command);
-    console.log("Current recipe:", currentRecipe);
-    console.log("Current step:", currentStepValue);
-    console.log("Total steps:", currentRecipe?.instructions?.length);
-
     if (command.includes("next")) {
-      console.log("Next command detected");
       if (
         currentRecipe &&
         currentRecipe.instructions &&
         currentStepValue < currentRecipe.instructions.length - 1
       ) {
-        console.log("Moving to next step");
         setCurrentStep((prev) => prev + 1);
       } else {
-        console.log("Cannot go to next step - at end or no recipe");
       }
     } else if (command.includes("back") || command.includes("previous")) {
-      console.log("Back command detected");
       if (currentStepValue > 0) {
-        console.log("Moving to previous step");
         setCurrentStep((prev) => prev - 1);
       } else {
-        console.log("Cannot go to previous step - at beginning");
       }
     } else if (command.includes("repeat") || command.includes("again")) {
-      console.log("Repeat command detected");
       if (currentRecipe && currentRecipe.instructions[currentStepValue]) {
         synthRef.current.cancel();
         const utterance = new SpeechSynthesisUtterance(
@@ -328,7 +295,6 @@ const BakeView = () => {
         synthRef.current.speak(utterance);
       }
     } else {
-      console.log("Unknown command:", command);
     }
   }, []);
 
@@ -356,9 +322,7 @@ const BakeView = () => {
       shouldRestartRef.current = false;
       try {
         recognitionRef.current?.stop();
-      } catch (e) {
-        console.log("Recognition already stopped");
-      }
+      } catch (e) {}
       synthRef.current.cancel();
       setIsListening(false);
       setIsSpeaking(false);

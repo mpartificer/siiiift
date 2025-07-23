@@ -80,20 +80,16 @@ function SearchView() {
         }
       );
 
-      console.log("API Response:", response.data);
-
       if (response.data && typeof response.data === "object") {
         let results = [];
 
         // Handle case where response.data itself is the array
         if (Array.isArray(response.data)) {
           results = response.data;
-          console.log("Using response.data as array:", results.length, "items");
         }
         // Handle case where response.data.all exists
         else if (Array.isArray(response.data.all)) {
           results = response.data.all;
-          console.log("Using response.data.all:", results.length, "items");
         }
         // Handle case where response contains userResults and recipeResults
         else if (response.data.userResults || response.data.recipeResults) {
@@ -110,15 +106,6 @@ function SearchView() {
               }))
             : [];
           results = [...users, ...recipes];
-          console.log(
-            "Combined users and recipes:",
-            users.length,
-            "users +",
-            recipes.length,
-            "recipes =",
-            results.length,
-            "total items"
-          );
         }
         // Handle case where response contains users and recipes (original expected format)
         else if (response.data.users || response.data.recipes) {
@@ -132,19 +119,7 @@ function SearchView() {
               }))
             : [];
           results = [...users, ...recipes];
-          console.log(
-            "Combined users and recipes (original format):",
-            users.length,
-            "users +",
-            recipes.length,
-            "recipes =",
-            results.length,
-            "total items"
-          );
         }
-
-        // Log all results to help debug
-        console.log("Processed search results:", results);
 
         // Ensure each result has the correct ID properties
         const normalizedResults = results.map((result) => {
@@ -157,18 +132,10 @@ function SearchView() {
               normalizedResult.userId ||
               normalizedResult.user_auth_id ||
               normalizedResult.id;
-
-            console.log(
-              `User result: id=${normalizedResult.id}, userId=${normalizedResult.userId}, username=${normalizedResult.username}`
-            );
           } else if (normalizedResult.type === "recipe") {
             // Ensure recipeId is set correctly
             normalizedResult.recipeId =
               normalizedResult.recipeId || normalizedResult.id;
-
-            console.log(
-              `Recipe result: id=${normalizedResult.id}, recipeId=${normalizedResult.recipeId}, title=${normalizedResult.title}`
-            );
           }
 
           return normalizedResult;

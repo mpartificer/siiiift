@@ -67,8 +67,6 @@ function RecipeBoxView() {
           return;
         }
 
-        console.log("Found valid auth token");
-
         const config = {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -76,14 +74,10 @@ function RecipeBoxView() {
           },
         };
 
-        console.log(`Fetching profile for user ${userId}`);
-
         const response = await axios.get(
           `${API_BASE_URL}/recipes/recipebox/${userId}`,
           config
         );
-
-        console.log(response);
 
         setUserDetails(response.data.username);
         setSavedRecipes(response.data.savedRecipes);
