@@ -35,15 +35,32 @@ const ModificationItem = ({ items, placeholder, index, type }) => {
         <div
           tabIndex={0}
           role="button"
-          className="btn w-80 bg-secondary modificationDropDown"
+          className="btn bg-secondary text-left overflow-hidden"
+          style={{
+            width: "320px", // Match your w-80 class (320px)
+            maxWidth: "320px",
+            minWidth: "320px",
+            whiteSpace: "nowrap",
+            textOverflow: "ellipsis",
+          }}
           onClick={() => setIsOpen(!isOpen)}
+          title={
+            selectedItem
+              ? typeof selectedItem === "object"
+                ? selectedItem.instruction ||
+                  `${selectedItem.amount} ${selectedItem.substance}`
+                : selectedItem
+              : "select item"
+          }
         >
-          {selectedItem
-            ? typeof selectedItem === "object"
-              ? selectedItem.instruction ||
-                `${selectedItem.amount} ${selectedItem.substance}`
-              : selectedItem
-            : "select item"}
+          <span className="block truncate">
+            {selectedItem
+              ? typeof selectedItem === "object"
+                ? selectedItem.instruction ||
+                  `${selectedItem.amount} ${selectedItem.substance}`
+                : selectedItem
+              : "select item"}
+          </span>
         </div>
         {isOpen && (
           <ul

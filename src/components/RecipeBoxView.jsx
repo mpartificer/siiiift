@@ -15,7 +15,7 @@ function RecipeBoxHeader({ username }) {
   const navigate = useNavigate();
   const pageTitle = `${username}'s recipe box`;
   return (
-    <div className="w-350 md:w-full max-w-4xl flex flex-row justify-between items-center">
+    <div className="w-350 md:w-full max-w-5xl flex flex-row justify-between items-center">
       <div className="pageTitle text-xl">{pageTitle}</div>
       <Plus
         size={30}
@@ -105,7 +105,7 @@ function RecipeBoxView() {
         {windowWidth > 768 ? (
           <div className="mt-16 mb-16 px-8 flex flex-col items-center w-full">
             <RecipeBoxHeader username={userDetails} />
-            <div className="grid grid-cols-2 gap-8 w-full max-w-5xl mt-8">
+            <div className="grid grid-cols-2 gap-8 w-full max-w-5xl mt-4">
               {savedRecipes && savedRecipes.length > 0 ? (
                 savedRecipes.map((recipe) => (
                   <div key={recipe.recipe_id} className="flex justify-center">

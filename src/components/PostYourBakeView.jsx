@@ -21,7 +21,7 @@ function ModificationRating() {
   const { control } = useFormContext();
 
   return (
-    <div className="profilePlateTop">
+    <div className="profilePlateTop w-80 md:w-full space-between">
       <div className="recipeCheckTitle">rate: </div>
       <Controller
         name="rating"
@@ -50,18 +50,14 @@ function BakePostDate() {
   const { control } = useFormContext();
 
   return (
-    <div className="profilePlateTop">
+    <div className="profilePlateTop w-80 md:w-full space-between">
       <div className="recipeCheckTitle">date of bake:</div>
       <Controller
         name="bakeDate"
         control={control}
         defaultValue=""
         render={({ field }) => (
-          <input
-            type="date"
-            {...field}
-            className="w-full dateEntry bg-secondary"
-          />
+          <input type="date" {...field} className="dateEntry bg-secondary" />
         )}
       />
     </div>

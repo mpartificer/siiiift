@@ -240,9 +240,10 @@ function BakeHistoryCard({
   }
 
   return (
-    <div className="recipeCheckPanel border-2 border-primary w-3/5 mx-auto bg-secondary p-4 rounded-lg">
-      <div className="flex flex-col md:flex-row gap-4">
-        <div className="md:w-1/2">
+    <div className="recipeCheckPanel border-2 w-350 border-primary md:w-4/5 mx-auto bg-secondary p-4 rounded-lg">
+      <div className="flex flex-col md:flex-row gap-4 md:h-fit">
+        {/* Left column - Date and Photo (sets the height on desktop) */}
+        <div className="md:w-1/2 md:flex-shrink-0">
           <DateMarker date={bakeDetail.baked_at} />
           <div className="h-96 mt-2">
             <img
@@ -253,8 +254,10 @@ function BakeHistoryCard({
           </div>
         </div>
 
-        <div className="md:w-1/2">
-          <div className="flex items-center gap-2 mb-4">
+        {/* Right column - Content that matches left column height and scrolls */}
+        <div className="md:w-1/2 md:flex md:flex-col md:h-[calc(theme(spacing.96)+theme(spacing.2)+2.5rem)]">
+          {/* Like section - fixed at top */}
+          <div className="flex items-center gap-2 mb-4 md:flex-shrink-0">
             <Heart
               size={30}
               color={isLiked ? "palevioletred" : "#496354"}
@@ -266,7 +269,6 @@ function BakeHistoryCard({
                 opacity: isUserLoggedIn ? 1 : 0.6,
               }}
             />
-            {/* Make sure likeCount is displayed prominently */}
             <span className="font-bold text-lg">
               {likeCount !== undefined ? likeCount : 0}
             </span>
@@ -277,7 +279,8 @@ function BakeHistoryCard({
             )}
           </div>
 
-          <div className="md:max-h-80 md:overflow-y-auto pr-2">
+          {/* Scrollable content area */}
+          <div className="md:flex-1 md:overflow-y-auto md:pr-2">
             {mods && mods.length > 0 && (
               <div className="mb-4">
                 <h2 className="font-bold text-lg mb-2">modifications</h2>

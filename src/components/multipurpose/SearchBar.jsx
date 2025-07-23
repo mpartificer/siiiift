@@ -5,7 +5,7 @@ function SearchBar({ value, onChange }) {
     <input
       type="text"
       placeholder="search"
-      className="w-350 md:w-full bg-secondary searchBar"
+      className="w-350 bg-secondary searchBar"
       value={value}
       onChange={onChange}
     />

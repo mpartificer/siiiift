@@ -22,7 +22,7 @@ function SearchFilter({ filterValue, isActive, onClick }) {
 
 function SearchFilterBar({ activeFilter, setActiveFilter }) {
   return (
-    <div className="searchFilterBar w-350 md:w-96">
+    <div className="searchFilterBar w-350">
       <SearchFilter
         filterValue="all"
         isActive={activeFilter === "all"}
