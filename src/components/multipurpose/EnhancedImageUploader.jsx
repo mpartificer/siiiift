@@ -157,9 +157,7 @@ function EnhancedImageUploader({ onImagesSelected, onRecipeExtracted }) {
       // Check if there are HEIC/HEIF files
       const hasHeicFiles = imageFiles.some((file) => checkIfHeicOrHeif(file));
 
-      if (hasHeicFiles) {
-        setError("Converting HEIC/HEIF files... this may take a moment.");
-      }
+      // REMOVED: Duplicate messaging for HEIC conversion
 
       // Show progress indicator for conversions
       if (hasHeicFiles) {
@@ -205,10 +203,8 @@ function EnhancedImageUploader({ onImagesSelected, onRecipeExtracted }) {
         setError(
           `${failedConversions.length} HEIC/HEIF file(s) couldn't be converted properly for preview. Please try another image format.`
         );
-      } else if (hasHeicFiles) {
-        // Clear the conversion message if successful
-        setError(null);
       }
+      // REMOVED: else clause that cleared error message - this was causing message flashing
 
       // Update the state with the processed files
       setSelectedImages((prev) => [...prev, ...processedFiles]);
@@ -352,7 +348,7 @@ function EnhancedImageUploader({ onImagesSelected, onRecipeExtracted }) {
   };
 
   return (
-    <div className="mt-4 mb-4">
+    <div className="mt-1 mb-4">
       <div
         className={`border-2 border-dashed rounded-lg p-4 text-center ${
           dragActive ? "border-blue-500 bg-blue-50" : "border-primary"
@@ -430,7 +426,7 @@ function EnhancedImageUploader({ onImagesSelected, onRecipeExtracted }) {
                           strokeLinecap="round"
                           strokeLinejoin="round"
                           strokeWidth={2}
-                          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 002 2z"
                         />
                       </svg>
                       {file.name}

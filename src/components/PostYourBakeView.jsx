@@ -9,7 +9,7 @@ import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import HeaderFooter from "./multipurpose/HeaderFooter.jsx";
 import RecipeDropDown from "./multipurpose/RecipeDropDown.jsx";
-import heic2any from "heic2any";
+import EnhancedImageUploader from "./multipurpose/EnhancedImageUploader.jsx";
 import { addGlobalToast } from "./multipurpose/ToastManager.jsx";
 import { Loader2 } from "lucide-react";
 
@@ -66,8 +66,7 @@ function BakePostDate() {
 
 function PostYourBakeView() {
   const navigate = useNavigate();
-  const [files, setFiles] = useState([]);
-  const [message, setMessage] = useState("");
+  const [selectedImages, setSelectedImages] = useState([]);
   const [error, setError] = useState(null);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [isUploading, setIsUploading] = useState(false);
@@ -99,122 +98,15 @@ function PostYourBakeView() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Convert HEIC to JPEG in the browser environment
-  async function convertHeicToJpeg(file) {
-    try {
-      // Convert HEIC to JPEG blob using heic2any
-      const jpegBlob = await heic2any({
-        blob: file,
-        toType: "image/jpeg",
-        quality: 0.8,
-      });
-
-      // Create a new File object with the converted data
-      return new File([jpegBlob], file.name.replace(/\.heic$/i, ".jpg"), {
-        type: "image/jpeg",
-      });
-    } catch (error) {
-      console.error("HEIC conversion error:", error);
-      throw new Error(`Failed to convert HEIC file: ${error.message}`);
-    }
-  }
-
-  const handleFile = async (e) => {
-    setMessage("");
-    let selectedFiles = Array.from(e.target.files);
-    const validImageTypes = [
-      "image/gif",
-      "image/jpeg",
-      "image/png",
-      "image/heic",
-    ];
-
-    try {
-      // Process each file - convert HEIC to JPEG if needed
-      const processedFiles = await Promise.all(
-        selectedFiles.map(async (file) => {
-          const fileType = file.type.toLowerCase();
-
-          if (!validImageTypes.includes(fileType)) {
-            throw new Error("Only images accepted");
-          }
-
-          // Convert HEIC files to JPEG before uploading
-          if (fileType === "image/heic") {
-            return await convertHeicToJpeg(file);
-          }
-
-          return file;
-        })
-      );
-
-      setFiles((prevFiles) => [...prevFiles, ...processedFiles]);
-    } catch (error) {
-      setMessage(error.message);
-    }
+  // Handle images selected from EnhancedImageUploader
+  const handleImagesSelected = (images) => {
+    setSelectedImages(images);
+    setError(null);
   };
 
-  const removeImage = (i) => {
-    setFiles(files.filter((x) => x.name !== i));
-  };
-
-  const PostImageUpload = () => {
-    return (
-      <div className="w-5/6 md:w-full md:max-w-sm flex-shrink-0">
-        <div className="rounded-lg shadow-xl bg-primary">
-          <div className="m-4 md:mt-0">
-            <span className="flex justify-center items-center text-[12px] mb-1 text-red-500">
-              {message}
-            </span>
-            <div className="flex w-full">
-              <label className="flex cursor-pointer flex-col w-full h-64 md:h-96 border-2 rounded-md border-dashed hover:bg-secondary">
-                <div className="flex flex-col items-center justify-center pt-7">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="w-12 h-12 text-gray-400 group-hover:text-gray-600"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <p className="p-3 text-center text-sm tracking-wider text-gray-400 group-hover:text-gray-600">
-                    select a photo of your bake - we recommend a nice
-                    cross-section so we can examine all the layers and textures
-                  </p>
-                </div>
-                <input
-                  type="file"
-                  onChange={handleFile}
-                  className="opacity-0"
-                  multiple="multiple"
-                  name="files[]"
-                />
-              </label>
-            </div>
-            <div className="flex flex-wrap gap-2 mt-2">
-              {files.map((file, key) => (
-                <div key={key} className="overflow-hidden relative">
-                  <i
-                    onClick={() => {
-                      removeImage(file.name);
-                    }}
-                    className="mdi mdi-close absolute right-1 hover:text-white cursor-pointer"
-                  ></i>
-                  <img
-                    className="h-20 w-20 rounded-md"
-                    src={URL.createObjectURL(file)}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+  // We don't want to use the recipe extraction functionality here
+  const handleRecipeExtracted = () => {
+    // Do nothing - we're not using server-side recipe extraction in this component
   };
 
   const onSubmit = async (formData) => {
@@ -222,8 +114,8 @@ function PostYourBakeView() {
     setIsUploading(true);
 
     try {
-      // Check if any files were selected
-      if (files.length === 0) {
+      // Check if any images were selected
+      if (selectedImages.length === 0) {
         throw new Error("Please select at least one image for your bake");
       }
 
@@ -237,9 +129,11 @@ function PostYourBakeView() {
       // Create form data for API request
       const apiFormData = new FormData();
 
-      // Add files to form data (already converted to JPEG if they were HEIC)
-      files.forEach((file) => {
-        apiFormData.append("files", file);
+      // Add images to form data
+      selectedImages.forEach((file) => {
+        // Use the original file object for upload
+        const fileToUpload = file.preview ? file : file;
+        apiFormData.append("files", fileToUpload);
       });
 
       // Add form data as JSON
@@ -286,7 +180,7 @@ function PostYourBakeView() {
       });
 
       // Reset form and navigate
-      setFiles([]);
+      setSelectedImages([]);
       methods.reset();
 
       // Navigate to the page specified in the response
@@ -313,6 +207,43 @@ function PostYourBakeView() {
     } finally {
       setIsUploading(false);
     }
+  };
+
+  const PostImageUpload = () => {
+    return (
+      <div className="w-5/6 md:w-full md:max-w-sm flex-shrink-0">
+        <EnhancedImageUploader
+          onImagesSelected={handleImagesSelected}
+          onRecipeExtracted={handleRecipeExtracted}
+        />
+        {selectedImages.length > 0 && (
+          <div className="mt-4">
+            <p className="font-medium mb-2 text-sm">
+              selected images for your bake ({selectedImages.length})
+            </p>
+            <div className="grid grid-cols-2 gap-2">
+              {selectedImages.map((file, index) => (
+                <div key={index} className="relative">
+                  {file.preview && !file.conversionFailed ? (
+                    <img
+                      src={file.preview}
+                      alt={`Bake image ${index + 1}`}
+                      className="h-20 w-full object-cover rounded border"
+                    />
+                  ) : (
+                    <div className="h-20 w-full flex items-center justify-center rounded border bg-gray-100">
+                      <span className="text-xs text-gray-500 text-center p-1">
+                        {file.name}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -343,7 +274,6 @@ function PostYourBakeView() {
                 )}
               </button>
               {error && <div className="error">{error}</div>}
-              {message && <div className="success">{message}</div>}
             </div>
           </form>
         </FormProvider>
@@ -373,7 +303,6 @@ function PostYourBakeView() {
                 )}
               </button>
               {error && <div className="error">{error}</div>}
-              {message && <div className="success">{message}</div>}
             </div>
           </form>
         </FormProvider>
