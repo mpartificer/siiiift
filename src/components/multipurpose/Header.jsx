@@ -64,26 +64,57 @@ function Header() {
                 year.
               </p>
 
+              <p className="mb-4">
+                Now with powerful recipe retrieval functionality, siiiift can
+                analyze recipes from URLs, images, or text - meaning you can get
+                AI feedback on literally any bake, anywhere. Plus, it integrates
+                No Hands Baking! functionality, allowing recipes to be read
+                aloud with voice-controlled pacing to keep your hands free while
+                you work!
+              </p>
+
               <div className="space-y-4">
                 <section>
                   <h4 className="font-semibold mb-2 text-primary">
                     tech stack
                   </h4>
-                  <p>
-                    siiiift is powered by React.js, and borrows from other
-                    libraries such as Google Gemini, Supabase (Database,
-                    Authentication, and Edge functions) TailwindCSS, DaisyUI,
-                    and more.
-                  </p>
+                  <div className="text-sm space-y-2">
+                    <div>
+                      <strong>Frontend:</strong> React.js, TailwindCSS, DaisyUI,
+                      Lucide Icons
+                    </div>
+                    <div>
+                      <strong>Backend:</strong> Node.js, Express, Render hosting
+                    </div>
+                    <div>
+                      <strong>Database & Auth:</strong> Supabase (Database,
+                      Storage, Authentication, Edge Functions)
+                    </div>
+                    <div>
+                      <strong>AI & Processing:</strong> Google Gemini, Cheerio
+                      (web scraping), Sharp (image processing)
+                    </div>
+                    <div>
+                      <strong>Voice Integration:</strong> Web Speech API
+                    </div>
+                    <div>
+                      <strong>Development:</strong> ESLint, Prettier, Jest,
+                      Supertest, Bottleneck (rate limiting)
+                    </div>
+                  </div>
                 </section>
 
                 <section>
                   <h4 className="font-semibold mb-2 text-primary">about me</h4>
-                  <p>
+                  <p className="mb-2">
                     my name is Megan Forsey and I am a hobby baker and the
-                    architect of siiiift. I built this project to learn React,
-                    but to be honest, I'm also just so over trying to figure out
-                    pie crust on my own.
+                    architect of siiiift. I built this project to learn
+                    full-stack development, but to be honest, I'm also just so
+                    over trying to figure out pie crust on my own. Inspired by
+                    that classic "OOPS! YOU ADDED TOO MUCH" cookie meme, I
+                    realized visual textures can be incredibly helpful for
+                    interpreting baking quality - helping bakers make mistakes
+                    once and then learn from them.
                   </p>
                   <div className="flex gap-4 mt-2">
                     <a
