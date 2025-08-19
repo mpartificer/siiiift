@@ -61,7 +61,7 @@ function SignUpView() {
   const checkUsernameAvailability = async (username) => {
     try {
       // Updated to use the correct endpoint path that matches your backend
-      const response = await axios.get(`${API_URL}/api/auth/check/${username}`);
+      const response = await axios.get(`${API_URL}/auth/check/${username}`);
 
       // Check the response structure based on your authEndpoints.js
       // Your authEndpoint returns { success: true, data: data }
